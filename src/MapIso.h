@@ -20,7 +20,6 @@
 #include "TileSet.h"
 #include "MapCollision.h"
 #include "Settings.h"
-#include "UtilsParsing.h"
 #include "CampaignManager.h"
 
 using namespace std;

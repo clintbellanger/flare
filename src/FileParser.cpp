@@ -26,7 +26,7 @@ void FileParser::close() {
  */
 bool FileParser::next() {
 
-	string starts_with = "";
+	string starts_with;
 	new_section = false;
 	
 	while (!infile.eof()) {
@@ -70,6 +70,23 @@ string FileParser::getRawLine() {
 		line = getLine(infile);
 	}
 	return line;
+}
+
+string FileParser::nextValue() {
+	if (val == "") {
+		return ""; // not found
+	}
+	string s;
+	unsigned int seppos = val.find_first_of(',');
+	if (seppos == string::npos) {
+		s = val;
+		val = "";
+	}
+	else {
+		s = val.substr(0, seppos);
+		val = val.substr(seppos+1, val.length());
+	}
+	return s;
 }
 
 FileParser::~FileParser() {
