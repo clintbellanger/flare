@@ -7,11 +7,20 @@
 
 #include "MenuTalker.h"
 
-MenuTalker::MenuTalker(SDL_Surface *_screen, FontEngine *_font, CampaignManager *_camp) {
+MenuTalker::MenuTalker(SDL_Surface *_screen, InputState *_inp , FontEngine *_font, CampaignManager *_camp) {
 	screen = _screen;
 	font = _font;
+	inp = _inp;
 	camp = _camp;
 	npc = NULL;
+
+	advanceButton = new WidgetButton(screen, font, inp, "./images/menus/buttons/right.png");
+	advanceButton->pos.x = VIEW_W_HALF + 288;
+	advanceButton->pos.y = VIEW_H_HALF + 184;
+
+	closeButton = new WidgetButton(screen, font, inp, "./images/menus/buttons/button_x.png");
+	closeButton->pos.x = VIEW_W_HALF + 288;
+	closeButton->pos.y = VIEW_H_HALF + 112;
 	
 	visible = false;
 
@@ -48,24 +57,31 @@ void MenuTalker::chooseDialogNode() {
 /**
  * Menu interaction (enter/space/click to continue)
  */
-void MenuTalker::logic(bool pressing_accept) {
+void MenuTalker::logic() {
 
 	if (!visible || npc==NULL) return;
 	
 	bool more;
-	
-	if (pressing_accept && accept_lock)
+
+	if (advanceButton->checkClick() || closeButton->checkClick()) {
+		// button was clicked
+		event_cursor++;
+		more = npc->processDialog(dialog_node, event_cursor);
+	}
+	else if	(inp->pressing[ACCEPT] && accept_lock) {
 		return;
-	else if (!pressing_accept) {
+	}
+	else if (!inp->pressing[ACCEPT]) {
 		accept_lock = false;
 		return;
 	}
-	else accept_lock = true;
-	
-	// pressed next/more
-	event_cursor++;
-	more = npc->processDialog(dialog_node, event_cursor);
-	
+	else {
+		accept_lock = true;
+		// pressed next/more
+		event_cursor++;
+		more = npc->processDialog(dialog_node, event_cursor);
+	}
+
 	if (!more) {
 		// end dialog
 		npc = NULL;
@@ -112,6 +128,19 @@ void MenuTalker::render() {
 	// text overlay
 	line = line + npc->dialog[dialog_node][event_cursor].s;
 	font->render(line, offset_x+48, offset_y+336, JUSTIFY_LEFT, screen, 544, FONT_WHITE);
+
+	// show advance button if there are more event components, or close button if not
+	if (event_cursor < NPC_MAX_EVENTS-1) {
+		if (npc->dialog[dialog_node][event_cursor+1].type != "") {
+			advanceButton->render();
+		}
+		else {
+			closeButton->render();
+		}
+	}
+	else {
+		closeButton->render();
+	}
 }
 
 
