@@ -79,6 +79,7 @@ Set (FLARE_SOURCES
 	../src/Utils.cpp
 	../src/UtilsParsing.cpp
 	../src/WidgetButton.cpp
+	../src/WidgetInput.cpp
 	../src/main.cpp
 	../src/GameState.cpp
 	../src/GameStateTitle.cpp
