@@ -27,3 +27,9 @@ cooldown=25
 absorb_min=0
 absorb_max=1
 
+<<<<<<< HEAD
+animations=antlion_hatchling
+animation_speed=120
+
+=======
+>>>>>>> ef45bedfe284aefe462f1b80f2901f2c9ab54cf2
