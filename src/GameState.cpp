@@ -21,3 +21,5 @@ void GameState::logic() {
 void GameState::render() {
 }
 
+GameState::~GameState() {
+}

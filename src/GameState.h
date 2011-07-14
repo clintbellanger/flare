@@ -10,6 +10,7 @@
 class GameState {
 public:
 	GameState(SDL_Surface *_screen, InputState *_inp, FontEngine *_font);
+	virtual ~GameState();
 
 	virtual void logic();
 	virtual void render();
