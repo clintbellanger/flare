@@ -367,7 +367,6 @@ void GameStateLoad::render() {
 	}
 	
 	Point label;
-	stringstream ss;
 
 	if( loading_requested || loading || loaded ) {
 		label.x = button_action->pos.x + ( button_action->pos.w / 2 );
@@ -389,11 +388,9 @@ void GameStateLoad::render() {
 			font->render(stats[slot].name, label.x, label.y, JUSTIFY_LEFT, screen, FONT_WHITE);
 
 			// level
-			ss.str("");
 			label.x = slot_pos[slot].x + level_pos.x;
 			label.y = slot_pos[slot].y + level_pos.y;		
-			ss << msg->get("character_level_class", stats[slot].level, stats[slot].character_class);
-			font->render(ss.str(), label.x, label.y, JUSTIFY_LEFT, screen, FONT_WHITE);
+			font->render(msg->get("character_level_class", stats[slot].level, msg->get(stats[slot].character_class)), label.x, label.y, JUSTIFY_LEFT, screen, FONT_WHITE);
 			
 			// map
 			label.x = slot_pos[slot].x + map_pos.x;

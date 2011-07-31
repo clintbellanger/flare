@@ -37,8 +37,6 @@ public:
 	StatBlock();
 	~StatBlock();
 
-	MessageEngine *msg;
-
 	void load(string filename);
 	void takeDamage(int dmg);
 	void recalc();
