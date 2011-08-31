@@ -8,7 +8,7 @@ WidgetInput::WidgetInput(SDL_Surface* _screen, FontEngine *_font, InputState *_i
 	pressed = false;
 	max_characters = 20;
 	
-	loadGraphics("images/menus/input.png");
+	loadGraphics(PATH_MOD + "images/menus/input.png");
 
 	// position
 	pos.w = background->w;

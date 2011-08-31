@@ -9,8 +9,8 @@ GameStateTitle::GameStateTitle(SDL_Surface *_screen, InputState *_inp, FontEngin
 	loadGraphics();
 	
 	// set up buttons
-	button_play = new WidgetButton(screen, font, inp, "images/menus/buttons/button_default.png");
-	button_exit = new WidgetButton(screen, font, inp, "images/menus/buttons/button_default.png");
+	button_play = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_default.png");
+	button_exit = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_default.png");
 	
 	button_play->label = msg->get("play_button");
 	button_play->pos.x = VIEW_W_HALF - button_play->pos.w/2;
@@ -27,7 +27,7 @@ GameStateTitle::GameStateTitle(SDL_Surface *_screen, InputState *_inp, FontEngin
 
 void GameStateTitle::loadGraphics() {
 
-	logo = IMG_Load((PATH_DATA + "images/menus/logo.png").c_str());
+	logo = IMG_Load((PATH_MOD + "images/menus/logo.png").c_str());
 
 	if(!logo) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());

@@ -75,6 +75,7 @@ public:
 	// story and dialog options
 	Event_Component dialog[NPC_MAX_DIALOG][NPC_MAX_EVENTS];
 	int dialog_count;
+	int translation_dialog;
 	
 };
 

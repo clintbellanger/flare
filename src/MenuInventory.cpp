@@ -44,7 +44,7 @@ MenuInventory::MenuInventory(SDL_Surface *_screen, InputState *_inp, FontEngine 
 	changed_artifact = true;
 	log_msg = "";
 	
-	closeButton = new WidgetButton(screen, font, inp, "images/menus/buttons/button_x.png");
+	closeButton = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_x.png");
 	closeButton->pos.x = VIEW_W - 26;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 
@@ -52,7 +52,7 @@ MenuInventory::MenuInventory(SDL_Surface *_screen, InputState *_inp, FontEngine 
 
 void MenuInventory::loadGraphics() {
 
-	background = IMG_Load((PATH_DATA + "images/menus/inventory.png").c_str());
+	background = IMG_Load((PATH_MOD + "images/menus/inventory.png").c_str());
 	if(!background) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
 		SDL_Quit();

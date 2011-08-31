@@ -18,21 +18,21 @@ GameStateNew::GameStateNew(SDL_Surface *_screen, InputState *_inp, FontEngine *_
 	current_option = 0;
 	portrait_image = NULL;
 	
-	button_exit = new WidgetButton(screen, font, inp, "images/menus/buttons/button_default.png");
+	button_exit = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_default.png");
 	button_exit->label = msg->get("cancel_button");
 	button_exit->pos.x = VIEW_W_HALF - button_exit->pos.w/2;
 	button_exit->pos.y = VIEW_H - button_exit->pos.h;
 	
-	button_create = new WidgetButton(screen, font, inp, "images/menus/buttons/button_default.png");
+	button_create = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_default.png");
 	button_create->label = msg->get("create_button");
 	button_create->pos.x = VIEW_W_HALF + button_create->pos.w/2;
 	button_create->pos.y = VIEW_H - button_create->pos.h;
 
-	button_prev = new WidgetButton(screen, font, inp, "images/menus/buttons/left.png");
+	button_prev = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/left.png");
 	button_prev->pos.x = VIEW_W_HALF - 160 - button_prev->pos.w;
 	button_prev->pos.y = VIEW_H_HALF - button_prev->pos.h;
 	
-	button_next = new WidgetButton(screen, font, inp, "images/menus/buttons/right.png");
+	button_next = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/right.png");
 	button_next->pos.x = VIEW_W_HALF + 160;
 	button_next->pos.y = VIEW_H_HALF - button_next->pos.h;
 
@@ -47,7 +47,7 @@ GameStateNew::GameStateNew(SDL_Surface *_screen, InputState *_inp, FontEngine *_
 void GameStateNew::loadGraphics() {
 	portrait_border = NULL;
 	
-	portrait_border = IMG_Load((PATH_DATA + "images/menus/portrait_border.png").c_str());
+	portrait_border = IMG_Load((PATH_MOD + "images/menus/portrait_border.png").c_str());
 	if(!portrait_border) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
 		SDL_Quit();
@@ -65,7 +65,7 @@ void GameStateNew::loadPortrait(string portrait_filename) {
 	SDL_FreeSurface(portrait_image);
 	portrait_image = NULL;
 	
-	portrait_image = IMG_Load((PATH_DATA + "images/portraits/" + portrait_filename + ".png").c_str());
+	portrait_image = IMG_Load((PATH_MOD + "images/portraits/" + portrait_filename + ".png").c_str());
 	if (!portrait_image) return;
 	
 	// optimize
@@ -81,7 +81,7 @@ void GameStateNew::loadPortrait(string portrait_filename) {
  */
 void GameStateNew::loadOptions(string filename) {
 	FileParser fin;
-	if (!fin.open(PATH_DATA + "engine/" + filename)) return;
+	if (!fin.open(PATH_MOD + "engine/" + filename)) return;
 	
 	while (fin.next()) {
 	

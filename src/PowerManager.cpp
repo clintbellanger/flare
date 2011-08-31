@@ -45,7 +45,10 @@ void PowerManager::loadPowers() {
 	FileParser infile;
 	int input_id = 0;
 	
-	if (infile.open((PATH_DATA + "powers/powers.txt").c_str())) {
+	FileParser translation_infile;
+	int translation_id = 0;
+	
+	if (infile.open((PATH_MOD + "powers/powers.txt").c_str())) {
 		while (infile.next()) {
 			// id needs to be the first component of each power.  That is how we write
 			// data to the correct power.
@@ -58,12 +61,7 @@ void PowerManager::loadPowers() {
 				else if (infile.val == "missile") powers[input_id].type = POWTYPE_MISSILE;
 				else if (infile.val == "repeater") powers[input_id].type = POWTYPE_REPEATER;
 			}
-			else if (infile.key == "name") {
-				powers[input_id].name = infile.val;
-			}
-			else if (infile.key == "description") {
-				powers[input_id].description = infile.val;
-			}
+
 			else if (infile.key == "icon") {
 				powers[input_id].icon = atoi(infile.val.c_str());
 			}
@@ -304,6 +302,22 @@ void PowerManager::loadPowers() {
 		}
 		infile.close();
 	}
+	
+	/* Translation block */
+	
+	if (translation_infile.open(PATH_MOD + "language/powers/powers.txt")) {
+		while (translation_infile.next()) {
+
+			if (translation_infile.key == "id") 
+				translation_id = atoi(translation_infile.val.c_str());
+			else if (translation_infile.key == "name") 
+				powers[translation_id].name = translation_infile.val;
+			else if (translation_infile.key == "description") 
+				powers[translation_id].description = translation_infile.val;
+			
+		}
+		translation_infile.close();
+	}
 }
 
 /**
@@ -325,7 +339,7 @@ int PowerManager::loadGFX(string filename) {
 	}
 
 	// we don't already have this sprite loaded, so load it
-	gfx[gfx_count] = IMG_Load((PATH_DATA + "images/powers/" + filename).c_str());
+	gfx[gfx_count] = IMG_Load((PATH_MOD + "images/powers/" + filename).c_str());
 	if(!gfx[gfx_count]) {
 		fprintf(stderr, "Couldn't load power sprites: %s\n", IMG_GetError());
 		return -1;
@@ -361,7 +375,7 @@ int PowerManager::loadSFX(string filename) {
 	}
 
 	// we don't already have this sound loaded, so load it
-	sfx[sfx_count] = Mix_LoadWAV((PATH_DATA + "soundfx/powers/" + filename).c_str());
+	sfx[sfx_count] = Mix_LoadWAV((PATH_MOD + "soundfx/powers/" + filename).c_str());
 	if(!sfx[sfx_count]) {
 		fprintf(stderr, "Couldn't load power soundfx: %s\n", filename.c_str());
 		return -1;
@@ -376,7 +390,7 @@ int PowerManager::loadSFX(string filename) {
 
 void PowerManager::loadGraphics() {
 
-	runes = IMG_Load((PATH_DATA + "images/powers/runes.png").c_str());
+	runes = IMG_Load((PATH_MOD + "images/powers/runes.png").c_str());
 	
 	if(!runes) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());

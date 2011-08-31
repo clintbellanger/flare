@@ -58,7 +58,7 @@ MenuLog::MenuLog(SDL_Surface *_screen, InputState *_inp, FontEngine *_font, Mess
 	
 	loadGraphics();
 
-	closeButton = new WidgetButton(screen, font, inp, "images/menus/buttons/button_x.png");
+	closeButton = new WidgetButton(screen, font, inp, "mods/fantasycore_en/images/menus/buttons/button_x.png");
 	closeButton->pos.x = 294;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 	
@@ -66,9 +66,9 @@ MenuLog::MenuLog(SDL_Surface *_screen, InputState *_inp, FontEngine *_font, Mess
 
 void MenuLog::loadGraphics() {
 
-	background = IMG_Load((PATH_DATA + "images/menus/log.png").c_str());
-	tab_active = IMG_Load((PATH_DATA + "images/menus/tab_active.png").c_str());
-	tab_inactive = IMG_Load((PATH_DATA + "images/menus/tab_inactive.png").c_str());
+	background = IMG_Load((PATH_MOD + "images/menus/log.png").c_str());
+	tab_active = IMG_Load((PATH_MOD + "images/menus/tab_active.png").c_str());
+	tab_inactive = IMG_Load((PATH_MOD + "images/menus/tab_inactive.png").c_str());
 	
 	
 	if(!background || !tab_active || !tab_inactive) {
