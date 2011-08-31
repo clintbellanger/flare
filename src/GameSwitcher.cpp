@@ -37,7 +37,7 @@ GameSwitcher::GameSwitcher(SDL_Surface *_screen, InputState *_inp, MessageEngine
 
 void GameSwitcher::loadMusic() {
 
-	music = Mix_LoadMUS((PATH_DATA + "music/title_theme.ogg").c_str());
+	music = Mix_LoadMUS((PATH_MOD + "music/title_theme.ogg").c_str());
 	if (!music) {
 	  printf("Mix_LoadMUS: %s\n", Mix_GetError());
 	  SDL_Quit();

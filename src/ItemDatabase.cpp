@@ -33,11 +33,13 @@ ItemDatabase::ItemDatabase(SDL_Surface *_screen, FontEngine *_font, MessageEngin
 
 void ItemDatabase::load() {
 	FileParser infile;
+	FileParser translation_infile;
 	int id = 0;
+	int translation_id = 0;
 	string s;
 	int bonus_counter = 0;
 	
-	if (infile.open(PATH_DATA + "items/items.txt")) {
+	if (infile.open(PATH_MOD + "items/items.txt")) {
 		while (infile.next()) {
 			if (infile.key == "id") {
 				id = atoi(infile.val.c_str());
@@ -45,8 +47,6 @@ void ItemDatabase::load() {
 				// new item, reset bonus counter
 				bonus_counter = 0;
 			}
-			else if (infile.key == "name")
-				items[id].name = infile.val;
 			else if (infile.key == "level")
 				items[id].level = atoi(infile.val.c_str());
 			else if (infile.key == "icon") {
@@ -144,8 +144,6 @@ void ItemDatabase::load() {
 				items[id].power = atoi(infile.val.c_str());
 			else if (infile.key == "power_mod")
 				items[id].power_mod = atoi(infile.val.c_str());
-			else if (infile.key == "power_desc")
-				items[id].power_desc = infile.val;
 			else if (infile.key == "price")
 				items[id].price = atoi(infile.val.c_str());
 			else if (infile.key == "max_quantity")
@@ -156,26 +154,43 @@ void ItemDatabase::load() {
 				items[id].rand_vendor = atoi(infile.val.c_str());
 			else if (infile.key == "pickup_status")
 				items[id].pickup_status = infile.val;
-				
+		
 		}
 		infile.close();
 	}
+	
+		/* Translation block */
+		 	if (translation_infile.open(PATH_MOD + "language/items/items.txt")) {
+				while (translation_infile.next()) {
+					
+					if (translation_infile.key == "id") 
+						translation_id = atoi(translation_infile.val.c_str());
+					else if (translation_infile.key == "name") 
+							items[translation_id].name = translation_infile.val;
+					else if (translation_infile.key == "power_desc")
+			          	items[translation_id].power_desc = translation_infile.val;
+					
+				}
+				translation_infile.close();
+		 	}
+		/* End of translating block */	
+		
 }
 
 void ItemDatabase::loadSounds() {
 
-	sfx[SFX_BOOK] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_book.ogg").c_str());
-	sfx[SFX_CLOTH] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_cloth.ogg").c_str());
-	sfx[SFX_COINS] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_coins.ogg").c_str());
-	sfx[SFX_GEM] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_gem.ogg").c_str());
-	sfx[SFX_LEATHER] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_leather.ogg").c_str());
-	sfx[SFX_METAL] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_metal.ogg").c_str());
-	sfx[SFX_PAGE] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_page.ogg").c_str());
-	sfx[SFX_MAILLE] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_maille.ogg").c_str());
-	sfx[SFX_OBJECT] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_object.ogg").c_str());
-	sfx[SFX_HEAVY] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_heavy.ogg").c_str());
-	sfx[SFX_WOOD] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_wood.ogg").c_str());
-	sfx[SFX_POTION] = Mix_LoadWAV((PATH_DATA + "soundfx/inventory/inventory_potion.ogg").c_str());
+	sfx[SFX_BOOK] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_book.ogg").c_str());
+	sfx[SFX_CLOTH] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_cloth.ogg").c_str());
+	sfx[SFX_COINS] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_coins.ogg").c_str());
+	sfx[SFX_GEM] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_gem.ogg").c_str());
+	sfx[SFX_LEATHER] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_leather.ogg").c_str());
+	sfx[SFX_METAL] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_metal.ogg").c_str());
+	sfx[SFX_PAGE] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_page.ogg").c_str());
+	sfx[SFX_MAILLE] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_maille.ogg").c_str());
+	sfx[SFX_OBJECT] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_object.ogg").c_str());
+	sfx[SFX_HEAVY] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_heavy.ogg").c_str());
+	sfx[SFX_WOOD] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_wood.ogg").c_str());
+	sfx[SFX_POTION] = Mix_LoadWAV((PATH_MOD + "soundfx/inventory/inventory_potion.ogg").c_str());
 	
 }
 
@@ -184,8 +199,8 @@ void ItemDatabase::loadSounds() {
  */
 void ItemDatabase::loadIcons() {
 	
-	icons32 = IMG_Load((PATH_DATA + "images/icons/icons32.png").c_str());
-	icons64 = IMG_Load((PATH_DATA + "images/icons/icons64.png").c_str());
+	icons32 = IMG_Load((PATH_MOD + "images/icons/icons32.png").c_str());
+	icons64 = IMG_Load((PATH_MOD + "images/icons/icons64.png").c_str());
 	
 	if(!icons32 || !icons64) {
 		fprintf(stderr, "Couldn't load icons: %s\n", IMG_GetError());

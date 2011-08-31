@@ -21,6 +21,8 @@ using namespace std;
 string PATH_CONF = "";
 string PATH_USER = "";
 string PATH_DATA = "";
+string PATH_MOD = "";
+string COREMOD = ""; 
 
 // Tile Settings
 int UNITS_PER_TILE = 64;
@@ -58,6 +60,7 @@ bool MENUS_PAUSE = false;
  * PATH_CONF is for user-configurable settings files (e.g. keybindings)
  * PATH_USER is for user-specific data (e.g. save games)
  * PATH_DATA is for common game data (e.g. images, music)
+ * PATH_MOD is for function determinig the main path to the mod dir
  */
 #ifdef _WIN32
 void setPaths() {
@@ -66,6 +69,9 @@ void setPaths() {
 	PATH_CONF = "./config/";
 	PATH_USER = "./saves/";
 	PATH_DATA = "./";
+	COREMOD = "mods/fantasycore_en/"; //temporary
+	PATH_MOD = PATH_DATA + COREMOD; //TODO: COREMOD determined elswhere	
+	
 	// TODO: place config and save data in the user's home, windows style
 	mkdir(PATH_CONF.c_str());
 	mkdir(PATH_USER.c_str());
@@ -160,6 +166,10 @@ void setPaths() {
 	
 	// finally assume the local folder
 	PATH_DATA = "./";
+	COREMOD = "mods/fantasycore_en/"; //temporary
+	PATH_MOD = PATH_DATA + COREMOD; //TODO: COREMOD determined elswhere
+	
+	//
 }
 #endif
 

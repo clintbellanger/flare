@@ -48,7 +48,7 @@ LootManager::LootManager(ItemDatabase *_items, MenuTooltip *_tip, EnemyManager *
 	
 	loadGraphics();
 	calcTables();
-	loot_flip = Mix_LoadWAV((PATH_DATA + "soundfx/flying_loot.ogg").c_str());
+	loot_flip = Mix_LoadWAV((PATH_MOD + "soundfx/flying_loot.ogg").c_str());
 	full_msg = false;
 	
 	anim_loot_frames = 6;
@@ -79,7 +79,7 @@ void LootManager::loadGraphics() {
 			}
 			
 			if (new_anim) {
-				flying_loot[animation_count] = IMG_Load((PATH_DATA + "images/loot/" + anim_id + ".png").c_str());
+				flying_loot[animation_count] = IMG_Load((PATH_MOD + "images/loot/" + anim_id + ".png").c_str());
 				
 				if (flying_loot[animation_count]) {
 					animation_id[animation_count] = anim_id;
@@ -90,9 +90,9 @@ void LootManager::loadGraphics() {
 	}
 	
 	// gold
-	flying_gold[0] = IMG_Load((PATH_DATA + "images/loot/coins5.png").c_str());
-	flying_gold[1] = IMG_Load((PATH_DATA + "images/loot/coins25.png").c_str());
-	flying_gold[2] = IMG_Load((PATH_DATA + "images/loot/coins100.png").c_str());
+	flying_gold[0] = IMG_Load((PATH_MOD + "images/loot/coins5.png").c_str());
+	flying_gold[1] = IMG_Load((PATH_MOD + "images/loot/coins25.png").c_str());
+	flying_gold[2] = IMG_Load((PATH_MOD + "images/loot/coins100.png").c_str());
 	
 	// set magic pink transparency
 	for (int i=0; i<animation_count; i++) {

@@ -36,8 +36,8 @@ MenuExperience::MenuExperience(SDL_Surface *_screen, FontEngine *_font) {
 
 void MenuExperience::loadGraphics() {
 
-	background = IMG_Load((PATH_DATA + "images/menus/menu_xp.png").c_str());
-	bar = IMG_Load((PATH_DATA + "images/menus/bar_xp.png").c_str());
+	background = IMG_Load((PATH_MOD + "images/menus/menu_xp.png").c_str());
+	bar = IMG_Load((PATH_MOD + "images/menus/bar_xp.png").c_str());
 	
 	if(!background || !bar) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());

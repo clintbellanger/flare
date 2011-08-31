@@ -25,6 +25,7 @@ private:
 	
 	Event_Component quests[MAX_QUESTS][MAX_QUEST_EVENTS];
 	int quest_count;
+	int translation_quest;
 	
 public:
 	QuestLog(CampaignManager *_camp, MenuLog *_log);

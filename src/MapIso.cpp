@@ -165,6 +165,7 @@ void MapIso::push_enemy_group(Map_Group g){
  */
 int MapIso::load(string filename) {
 	FileParser infile;
+	FileParser translation_infile;
 	string val;
 	string cur_layer;
 	string data_format;
@@ -174,7 +175,7 @@ int MapIso::load(string filename) {
 	event_count = 0;
 	bool collider_set = false;
   
-	if (infile.open(PATH_DATA + "maps/" + filename)) {
+	if (infile.open(PATH_MOD + "maps/" + filename)) {
 		while (infile.next()) {
 			if (infile.new_section) {
 				data_format = "dec"; // default
@@ -211,10 +212,7 @@ int MapIso::load(string filename) {
 				
 			}
 			if (infile.section == "header") {
-				if (infile.key == "title") {
-					this->title = infile.val;
-				}
-				else if (infile.key == "width") {
+				if (infile.key == "width") {
 					this->w = atoi(infile.val.c_str());
 				}
 				else if (infile.key == "height") {
@@ -432,6 +430,19 @@ int MapIso::load(string filename) {
 		}
 	}
 
+/* Translation block */
+	if (translation_infile.open(PATH_MOD + "language/maps/" + filename)) {
+		while (translation_infile.next()) {
+
+			if (translation_infile.section == "header") {
+				if (translation_infile.key == "title") 
+					this->title = translation_infile.val;
+				}
+			}
+			translation_infile.close();
+		}
+
+/* End of translation */
 
 	
 	if (this->new_music) {
@@ -450,7 +461,7 @@ void MapIso::loadMusic() {
 		Mix_FreeMusic(music);
 		music = NULL;
 	}
-	music = Mix_LoadMUS((PATH_DATA + "music/" + this->music_filename).c_str());
+	music = Mix_LoadMUS((PATH_MOD + "music/" + this->music_filename).c_str());
 	if (!music) {
 	  printf("Mix_LoadMUS: %s\n", Mix_GetError());
 	  SDL_Quit();

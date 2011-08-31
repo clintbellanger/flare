@@ -16,7 +16,7 @@
 
 MessageEngine::MessageEngine() {
 	FileParser infile;
-	if (infile.open(PATH_DATA + "engine/messages.txt")) {
+	if (infile.open(PATH_MOD + "language/engine/messages.txt")) {
 		while (infile.next()) {
 				messages.insert(pair<string,string>(infile.key, infile.val));
 		}

@@ -28,7 +28,7 @@ void QuestLog::loadAll() {
 	ifstream infile;
 	string line;
 	
-	infile.open((PATH_DATA + "quests/index.txt").c_str(), ios::in);
+	infile.open((PATH_MOD + "quests/index.txt").c_str(), ios::in);
 	
 	if (infile.is_open()) {
 		while (!infile.eof()) {
@@ -49,15 +49,21 @@ void QuestLog::loadAll() {
 void QuestLog::load(string filename) {
 
 	FileParser infile;
+	FileParser translation_infile;
 	int event_count = 0;
+	int translation_event = 0;
+	int count;
 	
-	if (infile.open(PATH_DATA + "quests/" + filename)) {
+	translation_quest = quest_count;
+	
+	if (infile.open(PATH_MOD + "quests/" + filename) ) {
 		while (infile.next()) {
 			if (infile.new_section) {
 				if (infile.section == "quest") {
 					quest_count++;
 					event_count = 0;
 				}
+					
 			}
 			
 			quests[quest_count-1][event_count].type = infile.key;
@@ -70,6 +76,31 @@ void QuestLog::load(string filename) {
 		}
 		infile.close();
 	}
+	
+
+	if (translation_infile.open(PATH_MOD + "language/quests/" + filename)) {
+		while (translation_infile.next()) {
+			if (translation_infile.new_section) {
+				if (translation_infile.section == "quest") {
+					
+					translation_quest++;		
+    			   count=0;
+  				   while (quests[translation_quest-1][count].s != "\0")
+     			      count++;
+
+				}
+			}
+			
+			
+			//let's make it always in the same place
+			quests[translation_quest-1][count].type = translation_infile.key;
+			quests[translation_quest-1][count].s = translation_infile.val;
+			count++;
+
+		}
+		translation_infile.close();
+	}
+	
 }
 
 void QuestLog::logic() {

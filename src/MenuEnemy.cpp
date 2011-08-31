@@ -20,8 +20,8 @@ MenuEnemy::MenuEnemy(SDL_Surface *_screen, FontEngine *_font, MessageEngine *_ms
 
 void MenuEnemy::loadGraphics() {
 
-	background = IMG_Load((PATH_DATA + "images/menus/bar_enemy.png").c_str());
-	bar_hp = IMG_Load((PATH_DATA + "images/menus/bar_hp.png").c_str());
+	background = IMG_Load((PATH_MOD + "images/menus/bar_enemy.png").c_str());
+	bar_hp = IMG_Load((PATH_MOD + "images/menus/bar_hp.png").c_str());
 	
 	if(!background || !bar_hp) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
