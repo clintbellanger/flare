@@ -34,7 +34,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
-Entity::Entity(MapIso* _map) : sprites(NULL), activeAnimation(NULL), map(_map) {
+Entity::Entity(MapIso* _map) : activeAnimation(NULL), map(_map) {
 }
 
 /**
@@ -129,14 +129,14 @@ void Entity::loadAnimations(const string& filename) {
 		exit(1);
 	}
 
-	string name = "";
+	string name;
 	int position = 0;
 	int frames = 0;
 	int duration = 0;
 	Point render_size;
 	Point render_offset;
-	string type = "";
-	string firstAnimation = "";
+	string type;
+	string firstAnimation;
 
 	// Parse the file and on each new section create an animation object from the data parsed previously
 

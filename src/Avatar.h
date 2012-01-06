@@ -25,11 +25,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 
 #include "Entity.h"
+#include "ScopedPtr.h"
+#include "SmartChunk.h"
+#include "SmartSurface.h"
 
 #include <string>
-
-class SDL_Surface;
-class Mix_Chunk;
 
 class Hazard;
 class PowerManager;
@@ -61,12 +61,12 @@ private:
 	bool lockShoot;
 	bool animFwd;
 	
-	Mix_Chunk *sound_melee;
-	Mix_Chunk *sound_hit;
-	Mix_Chunk *sound_die;
-	Mix_Chunk *sound_block;
-	Mix_Chunk *sound_steps[4];
-	Mix_Chunk *level_up;
+	SmartChunk sound_melee;
+	SmartChunk sound_hit;
+	SmartChunk sound_die;
+	SmartChunk sound_block;
+	SmartChunk sound_steps[4];
+	SmartChunk level_up;
 
 	std::string img_main;
 	std::string img_armor;
@@ -74,7 +74,6 @@ private:
 
 public:
 	Avatar(PowerManager *_powers, MapIso *_map);
-	~Avatar();
 	
 	void init();
 	void loadGraphics(const std::string& img_main, std::string img_armor, const std::string& img_off);
@@ -90,7 +89,7 @@ public:
 	virtual Renderable getRender();
 
 	// vars
-	Hazard *haz;
+	ScopedPtr<Hazard> haz;
 	int current_power;
 	Point act_target;
 	bool drag_walking;

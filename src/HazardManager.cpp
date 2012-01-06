@@ -135,10 +135,10 @@ void HazardManager::checkNewHazards() {
 	}
 
 	// check hero hazards
-	if (hero->haz != NULL) {
-		h[hazard_count] = hero->haz;
+	if (hero->haz) {
+		h[hazard_count] = hero->haz.get();
 		hazard_count++;
-		hero->haz = NULL;
+		hero->haz.reset();
 	}
 	
 	// check monster hazards

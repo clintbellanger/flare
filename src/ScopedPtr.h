@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
+#ifndef SCOPED_PTR_H
+#define SCOPED_PTR_H
+
 #include "Assert.h"
 
 #include <cstddef>
@@ -126,3 +129,4 @@ bool operator!=(T1* lhs, ScopedPtr<T2> rhs) {
 	return rhs.get() != lhs;
 }
 
+#endif
