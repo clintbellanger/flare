@@ -25,18 +25,18 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include "SmartSurface.h"
 #include "StatBlock.h"
 #include "Utils.h"
 #include <vector>
 
-class SDL_Surface;
 class Animation;
 class MapIso;
 class Renderable;
 
 class Entity {
 protected:
-	SDL_Surface *sprites;
+	SmartSurface sprites;
 	Animation *activeAnimation;
 	MapIso* map;
 	std::vector<Animation*> animations;

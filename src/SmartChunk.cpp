@@ -57,8 +57,8 @@ void SmartChunk::reset_and_load(std::string const& name) {
 }
 
 void SmartChunk::play_channel(int channel, int loops) {
-	if (!is_null)
-		Mix_PlayChannel(channel, loops);
+	if (!is_null())
+		Mix_PlayChannel(channel, chunk_, loops);
 }
 
 SmartChunk::operator bool() const {
