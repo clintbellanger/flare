@@ -16,7 +16,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "SmartSurface.h"
-#include <cassert>
+#include "Assert.h"
+#include "ModManager.h"
+#include "SharedResources.h"
+
+#include <SDL_image.h>
+
 
 SmartSurface::SmartSurface() : surface_(NULL) {}
 
@@ -33,7 +38,7 @@ SDL_Surface* SmartSurface::release() {
 }
 
 SDL_Surface* SmartSurface::get() const {
-	assert(surface_ && "Invalid surface requested");
+	FlareAssert(surface_ && "Invalid surface requested");
 	return surface_;
 }
 
@@ -47,8 +52,23 @@ void SmartSurface::reset(SDL_Surface* surface) {
 	surface_ = surface;
 }
 
+void SmartSurface::reset_and_load(std::string const& name) {
+	reset(IMG_Load(mods->locate(name).c_str()));
+	if(is_null()) {
+		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
+		FlareAssert(false);
+	}
+}
+
+void SmartSurface::display_format_alpha() {
+	FlareAssert(surface_);
+	// Optimize?
+	reset(SDL_DisplayFormatAlpha(surface_));
+	FlareAssert(surface_);
+}
+
 SmartSurface::operator bool() const {
-	return surface_ == NULL;
+	return surface_ != NULL;
 }
 
 bool SmartSurface::operator!() const{
@@ -56,22 +76,22 @@ bool SmartSurface::operator!() const{
 }
 
 SDL_Surface& SmartSurface::operator*() {
-	assert(surface_ && "Invalid surface dereferenced.");
+	FlareAssert(surface_ && "Invalid surface dereferenced.");
 	return *surface_;
 }
 
 SDL_Surface const& SmartSurface::operator*() const {
-	assert(surface_ && "Invalid surface dereferenced.");
+	FlareAssert(surface_ && "Invalid surface dereferenced.");
 	return *surface_;
 }
 
 SDL_Surface* SmartSurface::operator->() {
-	assert(surface_ && "Invalid surface dereferenced.");
+	FlareAssert(surface_ && "Invalid surface dereferenced.");
 	return surface_;
 }
 
 SDL_Surface const* SmartSurface::operator->() const {
-	assert(surface_ && "Invalid surface dereferenced.");
+	FlareAssert(surface_ && "Invalid surface dereferenced.");
 	return surface_;
 }
 

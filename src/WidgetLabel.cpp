@@ -22,7 +22,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "WidgetLabel.h"
+#include "FontEngine.h"
 #include "SharedResources.h"
+#include "Utils.h"
 
 using namespace std;
 

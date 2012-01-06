@@ -31,6 +31,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "GameSwitcher.h"
 #include "GameStateTitle.h"
 #include "GameStateLoad.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
 
 GameSwitcher::GameSwitcher() {

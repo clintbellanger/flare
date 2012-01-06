@@ -22,9 +22,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "QuestLog.h"
+#include "CampaignManager.h"
 #include "FileParser.h"
+#include "MenuLog.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
 #include "UtilsFileSystem.h"
+#include "UtilsParsing.h"
 
 #include <fstream>
 

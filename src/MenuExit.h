@@ -23,11 +23,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_EXIT_H
 
 #include "Menu.h"
-#include "WidgetButton.h"
-#include "SharedResources.h"
+#include "WidgetLabel.h"
 
-#include <SDL_image.h>
-
+class WidgetButton;
 
 class MenuExit : public Menu {
 protected:

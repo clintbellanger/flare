@@ -22,9 +22,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ITEM_STORAGE_H
 #define ITEM_STORAGE_H
 
-#include "ItemManager.h"
 #include <SDL.h>
 
+#include <string>
+
+class ItemManager;
+class ItemStack;
 
 class ItemStorage {
 protected:

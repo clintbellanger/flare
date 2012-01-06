@@ -23,8 +23,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "Entity.h"
+#include "Animation.h"
+#include "MapIso.h"
+#include "ModManager.h"
 #include "FileParser.h"
 #include "SharedResources.h"
+#include "UtilsParsing.h"
+
+#include <iostream>
 
 using namespace std;
 
@@ -219,7 +225,7 @@ bool Entity::setAnimation(const string& animationName) {
 	}
 
 	// search animations for the requested animation and set the active animation to it if found
-	for (vector<Animation*>::iterator it = animations.begin(); it!=animations.end(); it++) {
+	for (vector<Animation*>::iterator it = animations.begin(); it!=animations.end(); ++it) {
 		if ((*it) != NULL && (*it)->getName() == animationName) {
 			activeAnimation = *it;
 			activeAnimation->reset();
@@ -233,7 +239,7 @@ bool Entity::setAnimation(const string& animationName) {
 Entity::~Entity () {
 
 	// delete all loaded animations
-	for (vector<Animation*>::const_iterator it = animations.begin(); it != animations.end(); it++)
+	for (vector<Animation*>::const_iterator it = animations.begin(); it != animations.end(); ++it)
 	{
 		delete *it;
 	} 

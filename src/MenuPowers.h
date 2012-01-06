@@ -22,17 +22,18 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_POWERS_H
 #define MENU_POWERS_H
 
-#include "InputState.h"
-#include "Utils.h"
-#include "FontEngine.h"
-#include "StatBlock.h"
-#include "WidgetTooltip.h"
-#include "PowerManager.h"
-#include "WidgetButton.h"
+#include "WidgetLabel.h"
 #include "SharedResources.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
+
+class SDL_Surface;
+class Point;
+class PowerManager;
+class StatBlock;
+class TooltipData;
+class WidgetButton;
 
 class MenuPowers {
 private:

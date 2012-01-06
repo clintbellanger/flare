@@ -27,8 +27,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Settings.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
 
+class SDL_Surface;
 
 const int STYLE_FLOAT = 0;
 const int STYLE_TOPLABEL = 1;

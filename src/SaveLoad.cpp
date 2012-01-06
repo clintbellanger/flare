@@ -24,7 +24,20 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "GameStatePlay.h"
+#include "Avatar.h"
+#include "CampaignManager.h"
+#include "FileParser.h"
+#include "MapIso.h"
+#include "MenuActionBar.h"
+#include "MenuCharacter.h"
+#include "MenuInventory.h"
+#include "MenuManager.h"
+#include "MenuTalker.h"
+#include "ModManager.h"
+#include "SharedResources.h"
 #include "UtilsParsing.h"
+#include "UtilsFileSystem.h"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>

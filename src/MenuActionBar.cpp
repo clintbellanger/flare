@@ -22,8 +22,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
  
 #include "MenuActionBar.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
 #include "WidgetLabel.h"
+#include "WidgetTooltip.h"
+
+#include <SDL_mixer.h>
+#include <SDL_image.h>
 
 #include <string>
 #include <sstream>

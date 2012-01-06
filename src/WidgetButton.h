@@ -22,17 +22,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef WIDGET_BUTTON_H
 #define WIDGET_BUTTON_H
 
-#include "Utils.h"
-#include "FontEngine.h"
-#include "InputState.h"
 #include "WidgetLabel.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 
 #include <string>
 
+class SDL_Surface;
+class Mix_Chunk;
 
 const int BUTTON_GFX_NORMAL = 0;
 const int BUTTON_GFX_PRESSED = 1;

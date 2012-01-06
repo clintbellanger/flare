@@ -20,6 +20,21 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuManager.h"
+#include "MenuActionBar.h"
+#include "MenuCharacter.h"
+#include "MenuEnemy.h"
+#include "MenuExit.h"
+#include "MenuExperience.h"
+#include "MenuHUDLog.h"
+#include "MenuHPMP.h"
+#include "MenuInventory.h"
+#include "MenuLog.h"
+#include "MenuMiniMap.h"
+#include "MenuPowers.h"
+#include "MenuTalker.h"
+#include "MenuVendor.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
 
 MenuManager::MenuManager(PowerManager *_powers, StatBlock *_stats, CampaignManager *_camp) {

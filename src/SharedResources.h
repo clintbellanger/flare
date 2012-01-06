@@ -27,11 +27,12 @@ Created and destroyed by main.cpp
 #ifndef SHARED_RESOURCES_H
 #define SHARED_RESOURCES_H
 
-#include <SDL.h>
-#include "ModManager.h"
-#include "MessageEngine.h"
-#include "InputState.h"
-#include "FontEngine.h"
+class SDL_Surface;
+
+class ModManager;
+class MessageEngine;
+class InputState;
+class FontEngine;
 
 extern SDL_Surface *screen;
 extern ModManager *mods;

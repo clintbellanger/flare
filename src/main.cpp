@@ -15,20 +15,25 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
+#include "FontEngine.h"
+#include "GameSwitcher.h"
+#include "InputState.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
+#include "SharedResources.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
 #include <ctime>
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
 using namespace std;
-
-#include "Settings.h"
-#include "GameSwitcher.h"
-#include "SharedResources.h"
 
 GameSwitcher *gswitch;
 

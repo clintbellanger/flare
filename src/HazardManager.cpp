@@ -22,6 +22,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "HazardManager.h"
+#include "Avatar.h"
+#include "Enemy.h"
+#include "EnemyManager.h"
+#include "Hazard.h"
+#include "PowerManager.h"
 
 HazardManager::HazardManager(PowerManager *_powers, Avatar *_hero, EnemyManager *_enemies) {
 	powers = _powers;

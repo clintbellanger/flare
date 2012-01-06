@@ -22,21 +22,19 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_VENDOR_H
 #define MENU_VENDOR_H
 
-#include "InputState.h"
-#include "Utils.h"
-#include "FontEngine.h"
 #include "MenuItemStorage.h"
-#include "WidgetTooltip.h"
-#include "StatBlock.h"
-#include "WidgetButton.h"
-#include "NPC.h"
-#include "SharedResources.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
 
 #include <string>
 
+class SDL_Surface;
+
+class ItemManager;
+class NPC;
+class StatBlock;
+class TooltipData;
+class WidgetButton;
 
 const int VENDOR_SLOTS = 80;
 

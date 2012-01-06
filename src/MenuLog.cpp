@@ -20,8 +20,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuLog.h"
+#include "FontEngine.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
 #include "WidgetLabel.h"
+
+#include <SDL_image.h>
 
 using namespace std;
 

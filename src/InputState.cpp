@@ -23,6 +23,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "InputState.h"
 #include "Settings.h"
+#include "FileParser.h"
+#include "UtilsParsing.h"
 
 using namespace std;
 
