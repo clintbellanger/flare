@@ -15,7 +15,8 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
-#include <cassert>
+#include "Assert.h"
+
 #include <cstddef>
 
 /**
@@ -48,7 +49,7 @@ public:
 
 	//! Return the owned pointer, but keep ownership of it.
 	T* get() {
-		assert(ptr_ && "Requested null pointer.");
+		FlareAssert(ptr_ && "Requested null pointer.");
 		return ptr_;
 	}
 
@@ -60,7 +61,7 @@ public:
 
 	//! Return the owned pointer and surrender ownership of it.
 	T* release() {
-		assert(ptr_ && "Requested release of null pointer.");
+		FlareAssert(ptr_ && "Requested release of null pointer.");
 		T* retval = ptr_;
 		ptr_ = NULL;
 		return retval;
@@ -75,24 +76,24 @@ public:
 	// operator overloads -- do the same thing as on a raw pointer, but check
 	// for NULL.
 	T& operator*() {
-		assert(ptr_ && "Dereferencing null pointer.");
+		FlareAssert(ptr_ && "Dereferencing null pointer.");
 		return *ptr_;
 	}
 	T const& operator*() const {
-		assert(ptr_ && "Dereferencing null pointer.");
+		FlareAssert(ptr_ && "Dereferencing null pointer.");
 		return *ptr_;
 	}
 	T* operator->() {
-		assert(ptr_ && "Dereferencing null pointer.");
+		FlareAssert(ptr_ && "Dereferencing null pointer.");
 		return ptr_;
 	}
 	T const* operator->() const {
-		assert(ptr_ && "Dereferencing null pointer.");
+		FlareAssert(ptr_ && "Dereferencing null pointer.");
 		return ptr_;
 	}
 
 	operator bool() const {
-		return ptr_ == NULL;
+		return ptr_ != NULL;
 	}
 
 	bool operator!() const {

@@ -42,6 +42,7 @@ BOOST_AUTO_TEST_CASE(Get) {
 BOOST_AUTO_TEST_CASE(Reset) {
 	TrackedObject::in_existence = 0;
 	ScopedPtr<TrackedObject> ptr(new TrackedObject());
+	BOOST_CHECK(ptr);
 	BOOST_CHECK_EQUAL(1, TrackedObject::in_existence);
 	ptr.reset();
 	BOOST_CHECK_EQUAL(0, TrackedObject::in_existence);

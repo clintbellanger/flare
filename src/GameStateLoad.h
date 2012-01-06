@@ -28,6 +28,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define GAMESTATELOAD_H
 
 #include "GameState.h"
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "StatBlock.h"
 
 #include <SDL.h>
@@ -53,20 +55,20 @@ private:
 	void loadPortrait(int slot);
 	std::string getMapName(const std::string& map_filename);
 
-	ItemManager *items;
-	WidgetButton *button_exit;
-	WidgetButton *button_action;
-	WidgetButton *button_alternate;
-	WidgetLabel *label_loading;
-	WidgetLabel *label_slots;
+	ScopedPtr<ItemManager> items;
+	ScopedPtr<WidgetButton> button_exit;
+	ScopedPtr<WidgetButton> button_action;
+	ScopedPtr<WidgetButton> button_alternate;
+	ScopedPtr<WidgetLabel> label_loading;
+	ScopedPtr<WidgetLabel> label_slots;
 
-	MenuConfirm *confirm;
+	ScopedPtr<MenuConfirm> confirm;
 
-	SDL_Surface *background;
-	SDL_Surface *selection;
-	SDL_Surface *portrait_border;
-	SDL_Surface *portrait;
-	SDL_Surface *sprites[GAME_SLOT_MAX];
+	SmartSurface background;
+	SmartSurface selection;
+	SmartSurface portrait_border;
+	SmartSurface portrait;
+	SmartSurface sprites[GAME_SLOT_MAX];
 	StatBlock stats[GAME_SLOT_MAX];
 	int equipped[GAME_SLOT_MAX][3];	
 	SDL_Rect slot_pos[GAME_SLOT_MAX];
@@ -87,7 +89,6 @@ private:
 	
 public:
 	GameStateLoad();
-	~GameStateLoad();
 
 	void logic();
 	void logicLoading();

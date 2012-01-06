@@ -25,6 +25,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define STAT_BLOCK_H
 
 #include "Utils.h"
+#include "PowerManager.h"
 
 #include <string>
 
@@ -155,7 +156,7 @@ public:
 	Point pos;
 	Point forced_speed;
 	int direction;
-	int hero_cooldown[1024]; //TODO: fix this to use POWER_COUNT... right now it can't #include "PowerManager.h"
+	int hero_cooldown[POWER_COUNT]; 
 		
 	// state
 	int cur_state;
