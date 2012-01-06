@@ -25,20 +25,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 
 #include "Entity.h"
-#include "Utils.h"
-#include "InputState.h"
-#include "MapIso.h"
-#include "StatBlock.h"
-#include "Hazard.h"
-#include "PowerManager.h"
-#include "SharedResources.h"
-#include "MenuManager.h"
-
-#include <SDL.h>
-#include <SDL_image.h>
 
 #include <string>
 
+class SDL_Surface;
+class Mix_Chunk;
+
+class Hazard;
+class PowerManager;
+class MapIso;
+class Point;
 
 /**
  * Avatar State enum

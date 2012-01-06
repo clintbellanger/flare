@@ -21,7 +21,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "FontEngine.h"
 #include "FileParser.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "Utils.h"
+#include "UtilsParsing.h"
+
+
 #include <iostream>
 #include <sstream>
 

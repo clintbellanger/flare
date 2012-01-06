@@ -25,10 +25,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "MapIso.h"
-#include "Animation.h"
+#include "StatBlock.h"
 #include "Utils.h"
 #include <vector>
+
+class SDL_Surface;
+class Animation;
+class MapIso;
+class Renderable;
 
 class Entity {
 protected:

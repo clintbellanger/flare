@@ -20,6 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuHUDLog.h"
+#include "FontEngine.h"
 #include "SharedResources.h"
 
 using namespace std;

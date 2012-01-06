@@ -22,11 +22,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENEMY_MANAGER_H
 #define ENEMY_MANAGER_H
 
-#include "Settings.h"
-#include "MapIso.h"
-#include "Enemy.h"
 #include "Utils.h"
-#include "PowerManager.h"
+
+class Mix_Chunk;
+class SDL_Surface;
+
+class Enemy;
+class MapIso;
+class PowerManager;
+class Renderable;
+class StatBlock;
 
 // TODO: rename these to something more specific to EnemyManager
 const int max_sfx = 8;

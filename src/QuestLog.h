@@ -24,10 +24,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef QUEST_LOG_H
 #define QUEST_LOG_H
 
-#include <string>
 #include "Utils.h"
-#include "CampaignManager.h"
-#include "MenuLog.h"
+
+#include <string>
+
+class CampaignManager;
+class MenuLog;
 
 const int MAX_QUESTS = 1024;
 const int MAX_QUEST_EVENTS = 8;

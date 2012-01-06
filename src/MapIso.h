@@ -25,22 +25,23 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MAP_ISO_H
 
 #include "Utils.h"
-#include "TileSet.h"
 #include "MapCollision.h"
-#include "Settings.h"
-#include "CampaignManager.h"
-#include "EnemyGroupManager.h"
+#include "TileSet.h"
 #include "WidgetTooltip.h"
-#include "PowerManager.h"
-#include "StatBlock.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
 #include <SDL_mixer.h>
 
 #include <string>
 #include <queue>
 
+class SDL_Surface;
+class Mix_Chunk;
+
+class CampaignManager;
+class EnemyGroupManager;
+class PowerManager;
+class StatBlock;
 
 struct Map_Enemy {
 	std::string type;

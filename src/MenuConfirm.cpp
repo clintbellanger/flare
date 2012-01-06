@@ -16,8 +16,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "MenuConfirm.h"
+#include "FontEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
 #include "WidgetLabel.h"
+
+#include <SDL_image.h>
 
 using namespace std;
 

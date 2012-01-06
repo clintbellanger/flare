@@ -23,7 +23,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "StatBlock.h"
 #include "FileParser.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
+#include "UtilsParsing.h"
 
 using namespace std;
 

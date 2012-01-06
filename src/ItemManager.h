@@ -22,17 +22,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ITEM_MANAGER_H
 #define ITEM_MANAGER_H
 
-#include "UtilsParsing.h"
-#include "StatBlock.h"
-#include "WidgetTooltip.h"
-#include "SharedResources.h"
-
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 
 #include <string>
 
+class SDL_Surface;
+class Mix_Chunk;
+
+class TooltipData;
+class StatBlock;
 
 const int MAX_ITEM_ID = 10000;
 

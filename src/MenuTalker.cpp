@@ -20,7 +20,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuTalker.h"
+#include "FontEngine.h"
+#include "InputState.h"
+#include "ModManager.h"
+#include "NPC.h"
+#include "Settings.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
+
+#include <SDL_image.h>
 
 using namespace std;
 

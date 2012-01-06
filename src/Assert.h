@@ -1,5 +1,5 @@
 /*
-Copyright 2011 kitano
+Copyright 2011 Clint Bellanger
 
 This file is part of FLARE.
 
@@ -15,33 +15,20 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
-/**
- * class Menu
- *
- * The base class for Menu objects
- */
+// This macro should be used instead of the standard cassert, as it does
+// cleanup.
 
-#ifndef MENU_H
-#define MENU_H
+#ifdef __PRETTY_FUNCTION__
+#define FLARE_FUNCTION __PRETTY_FUNCTION__
+#else
+#define FLARE_FUNCTION __FUNCTION__
+#endif
 
-#include <SDL.h>
+void AssertionError(char const* exp, char const* file, char const* func, int line);
 
-class SDL_Surface;
-
-class Menu {
-protected:
-
-	SDL_Surface *background;
-
-public:
-	Menu();
-	virtual ~Menu();
-
-	bool visible;
-	SDL_Rect window_area;
-
-	virtual void render() = 0;
-};
-
+#ifndef NDEBUG
+#define FlareAssert(expr) do { if (expr); else AssertionError(#expr, __FILE__, FLARE_FUNCTION, __LINE__); } while(false)
+#else
+#define FlareAssert(expr) do {} while(false)
 #endif
 

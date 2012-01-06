@@ -20,8 +20,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuPowers.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
-#include "WidgetLabel.h"
+#include "StatBlock.h"
+#include "WidgetButton.h"
+#include "WidgetTooltip.h"
 
 #include <string>
 #include <sstream>

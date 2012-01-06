@@ -16,7 +16,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "WidgetInput.h"
+#include "FontEngine.h"
+#include "InputState.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
+
+#include <SDL_image.h>
 
 using namespace std;
 

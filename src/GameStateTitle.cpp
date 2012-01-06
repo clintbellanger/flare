@@ -16,8 +16,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "GameStateLoad.h"
+#include "FontEngine.h"
 #include "GameStateTitle.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
+
+#include <SDL_image.h>
 
 GameStateTitle::GameStateTitle() : GameState() {
 

@@ -61,6 +61,7 @@ EndIf (NOT SDLTTF_FOUND)
 
 Set (FLARE_SOURCES_EXCEPT_MAIN
 
+	./src/Assert.cpp
 	./src/Entity.cpp
 	./src/Animation.cpp
 	./src/AStarNode.cpp

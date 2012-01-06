@@ -24,8 +24,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef SMART_SURFACE_H
 #define SMART_SURFACE_H
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <string>
+
+class SDL_Surface;
 
 class SmartSurface {
 private:
@@ -43,6 +44,8 @@ public:
 	SDL_Surface* get() const;
 	bool is_null() const;
 	void reset(SDL_Surface* surface = NULL);
+	void reset_and_load(std::string const& name);
+	void display_format_alpha();
 
 	operator bool() const;
 	bool operator!() const;

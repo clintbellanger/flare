@@ -22,8 +22,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
  
 #include "MapIso.h"
+#include "CampaignManager.h"
+#include "EnemyGroupManager.h"
 #include "FileParser.h"
+#include "InputState.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
+#include "UtilsFileSystem.h"
+#include "UtilsParsing.h"
 
 using namespace std;
 
@@ -167,7 +176,7 @@ void MapIso::push_enemy_group(Map_Group g) {
 	for(int i = 0; i < number; i++) {
 		Enemy_Level enemy_lev = EnemyGroupManager::instance().getRandomEnemy(g.category, g.levelmin, g.levelmax);
 		Map_Enemy group_member;
-		if ((enemy_lev.type != "") && (valid_locations.size() != 0)){
+		if (!enemy_lev.type.empty() && !valid_locations.empty()){
 			group_member.type = enemy_lev.type;
 			int index = rand() % valid_locations.size();
 			group_member.pos = valid_locations.at(index);
