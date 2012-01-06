@@ -61,10 +61,16 @@ void SmartSurface::reset_and_load(std::string const& name) {
 }
 
 void SmartSurface::display_format_alpha() {
-	FlareAssert(surface_);
 	// Optimize?
 	reset(SDL_DisplayFormatAlpha(surface_));
-	FlareAssert(surface_);
+}
+
+void SmartSurface::set_color_key(Uint32 flag, Uint32 key) {
+	SDL_SetColorKey(surface_, flag, key); 
+}
+
+Uint32 SmartSurface::map_rgb(Uint8 r, Uint8 g, Uint8 b) {
+	return SDL_MapRGB(surface_->format, r, g, b);
 }
 
 SmartSurface::operator bool() const {

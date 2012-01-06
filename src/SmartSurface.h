@@ -24,6 +24,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef SMART_SURFACE_H
 #define SMART_SURFACE_H
 
+#include <SDL.h>
+
 #include <string>
 
 class SDL_Surface;
@@ -46,6 +48,8 @@ public:
 	void reset(SDL_Surface* surface = NULL);
 	void reset_and_load(std::string const& name);
 	void display_format_alpha();
+	void set_color_key(Uint32 flag, Uint32 key);
+	Uint32 map_rgb(Uint8 r, Uint8 g, Uint8 b);
 
 	operator bool() const;
 	bool operator!() const;
