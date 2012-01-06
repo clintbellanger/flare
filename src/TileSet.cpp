@@ -54,7 +54,6 @@ void TileSet::loadGraphics(const std::string& filename) {
 	
 	// only set a color key if the tile set doesn't have an alpha channel
 	if (!alpha_background) {
-		FlareAssert(sprites);
 		SDL_SetColorKey( sprites.get(), SDL_SRCCOLORKEY, SDL_MapRGB(sprites->format, 255, 0, 255) ); 
 	}
 	
