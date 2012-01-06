@@ -545,8 +545,8 @@ bool Enemy::takeHit(Hazard h) {
 		}
 		
 		// substract absorption from armor
-		int absorption;
 		if (!h.trait_armor_penetration) { // armor penetration ignores all absorption
+			int absorption;
 			if (stats.absorb_min == stats.absorb_max) absorption = stats.absorb_min;
 			else absorption = stats.absorb_min + (rand() % (stats.absorb_max - stats.absorb_min + 1));
 			dmg = dmg - absorption;

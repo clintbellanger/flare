@@ -36,6 +36,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <queue>
 
 class SDL_Surface;
+class Mix_Chunk;
 
 class CampaignManager;
 class EnemyGroupManager;

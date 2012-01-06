@@ -84,136 +84,136 @@ void ItemManager::loadAll() {
  */
 void ItemManager::load(const string& filename) {
 	FileParser infile;
+	if (!infile.open(filename))
+		return;
+
 	int id = 0;
 	string s;
 	int bonus_counter = 0;
 
-	if (infile.open(filename)) {
-	
-		while (infile.next()) {
-			if (infile.key == "id") {
-				id = atoi(infile.val.c_str());
-				
-				// new item, reset bonus counter
-				bonus_counter = 0;
-			}
-			else if (infile.key == "name")
-				items[id].name = msg->get(infile.val);
-			else if (infile.key == "level")
-				items[id].level = atoi(infile.val.c_str());
-			else if (infile.key == "icon") {
-				items[id].icon32 = atoi(infile.nextValue().c_str());
-				items[id].icon64 = atoi(infile.nextValue().c_str());
-			}
-			else if (infile.key == "quality") {
-				if (infile.val == "low")
-					items[id].quality = ITEM_QUALITY_LOW;
-				else if (infile.val == "high")
-					items[id].quality = ITEM_QUALITY_HIGH;
-				else if (infile.val == "epic")
-					items[id].quality = ITEM_QUALITY_EPIC;
-			}
-			else if (infile.key == "type") {
-				if (infile.val == "main")
-					items[id].type = ITEM_TYPE_MAIN;
-				else if (infile.val == "body")
-					items[id].type = ITEM_TYPE_BODY;
-				else if (infile.val == "off")
-					items[id].type = ITEM_TYPE_OFF;
-				else if (infile.val == "artifact")
-					items[id].type = ITEM_TYPE_ARTIFACT;
-				else if (infile.val == "consumable")
-					items[id].type = ITEM_TYPE_CONSUMABLE;
-				else if (infile.val == "gem")
-					items[id].type = ITEM_TYPE_GEM;
-				else if (infile.val == "quest")
-					items[id].type = ITEM_TYPE_QUEST;
-			}
-			else if (infile.key == "dmg") {
-				items[id].dmg_min = atoi(infile.nextValue().c_str());
-				if (infile.val.length() > 0)
-					items[id].dmg_max = atoi(infile.nextValue().c_str());
-				else
-					items[id].dmg_max = items[id].dmg_min;
-			}
-			else if (infile.key == "abs") {
-				items[id].abs_min = atoi(infile.nextValue().c_str());
-				if (infile.val.length() > 0)
-					items[id].abs_max = atoi(infile.nextValue().c_str());
-				else
-					items[id].abs_max = items[id].abs_min;
-			}
-			else if (infile.key == "req") {
-				s = infile.nextValue();
-				if (s == "p")
-					items[id].req_stat = REQUIRES_PHYS;
-				else if (s == "m")
-					items[id].req_stat = REQUIRES_MENT;
-				else if (s == "o")
-					items[id].req_stat = REQUIRES_OFF;
-				else if (s == "d")
-					items[id].req_stat = REQUIRES_DEF;
-				items[id].req_val = atoi(infile.nextValue().c_str());
-			}
-			else if (infile.key == "bonus") {
-				if (bonus_counter < ITEM_MAX_BONUSES) {
-					items[id].bonus_stat[bonus_counter] = infile.nextValue();
-					items[id].bonus_val[bonus_counter] = atoi(infile.nextValue().c_str());
-					bonus_counter++;
-				}
-			}
-			else if (infile.key == "sfx") {
-				if (infile.val == "book")
-					items[id].sfx = SFX_BOOK;
-				else if (infile.val == "cloth")
-					items[id].sfx = SFX_CLOTH;
-				else if (infile.val == "coins")
-					items[id].sfx = SFX_COINS;
-				else if (infile.val == "gem")
-					items[id].sfx = SFX_GEM;
-				else if (infile.val == "leather")
-					items[id].sfx = SFX_LEATHER;
-				else if (infile.val == "metal")
-					items[id].sfx = SFX_METAL;
-				else if (infile.val == "page")
-					items[id].sfx = SFX_PAGE;
-				else if (infile.val == "maille")
-					items[id].sfx = SFX_MAILLE;
-				else if (infile.val == "object")
-					items[id].sfx = SFX_OBJECT;
-				else if (infile.val == "heavy")
-					items[id].sfx = SFX_HEAVY;
-				else if (infile.val == "wood")
-					items[id].sfx = SFX_WOOD;
-				else if (infile.val == "potion")
-					items[id].sfx = SFX_POTION;
-			}
-			else if (infile.key == "gfx")
-				items[id].gfx = infile.val;
-			else if (infile.key == "loot")
-				items[id].loot = infile.val;
-			else if (infile.key == "power")
-				items[id].power = atoi(infile.val.c_str());
-			else if (infile.key == "power_mod")
-				items[id].power_mod = atoi(infile.val.c_str());
-			else if (infile.key == "power_desc")
-				items[id].power_desc = msg->get(infile.val);
-			else if (infile.key == "price")
-				items[id].price = atoi(infile.val.c_str());
-			else if (infile.key == "max_quantity")
-				items[id].max_quantity = atoi(infile.val.c_str());
-			else if (infile.key == "rand_loot")
-				items[id].rand_loot = atoi(infile.val.c_str());
-			else if (infile.key == "rand_vendor")
-				items[id].rand_vendor = atoi(infile.val.c_str());
-			else if (infile.key == "pickup_status")
-				items[id].pickup_status = infile.val;
-			else if (infile.key == "stepfx")
-				items[id].stepfx = infile.val;
-				
+	while (infile.next()) {
+		if (infile.key == "id") {
+			id = atoi(infile.val.c_str());
+			
+			// new item, reset bonus counter
+			bonus_counter = 0;
 		}
-		infile.close();
+		else if (infile.key == "name")
+			items[id].name = msg->get(infile.val);
+		else if (infile.key == "level")
+			items[id].level = atoi(infile.val.c_str());
+		else if (infile.key == "icon") {
+			items[id].icon32 = atoi(infile.nextValue().c_str());
+			items[id].icon64 = atoi(infile.nextValue().c_str());
+		}
+		else if (infile.key == "quality") {
+			if (infile.val == "low")
+				items[id].quality = ITEM_QUALITY_LOW;
+			else if (infile.val == "high")
+				items[id].quality = ITEM_QUALITY_HIGH;
+			else if (infile.val == "epic")
+				items[id].quality = ITEM_QUALITY_EPIC;
+		}
+		else if (infile.key == "type") {
+			if (infile.val == "main")
+				items[id].type = ITEM_TYPE_MAIN;
+			else if (infile.val == "body")
+				items[id].type = ITEM_TYPE_BODY;
+			else if (infile.val == "off")
+				items[id].type = ITEM_TYPE_OFF;
+			else if (infile.val == "artifact")
+				items[id].type = ITEM_TYPE_ARTIFACT;
+			else if (infile.val == "consumable")
+				items[id].type = ITEM_TYPE_CONSUMABLE;
+			else if (infile.val == "gem")
+				items[id].type = ITEM_TYPE_GEM;
+			else if (infile.val == "quest")
+				items[id].type = ITEM_TYPE_QUEST;
+		}
+		else if (infile.key == "dmg") {
+			items[id].dmg_min = atoi(infile.nextValue().c_str());
+			if (infile.val.length() > 0)
+				items[id].dmg_max = atoi(infile.nextValue().c_str());
+			else
+				items[id].dmg_max = items[id].dmg_min;
+		}
+		else if (infile.key == "abs") {
+			items[id].abs_min = atoi(infile.nextValue().c_str());
+			if (infile.val.length() > 0)
+				items[id].abs_max = atoi(infile.nextValue().c_str());
+			else
+				items[id].abs_max = items[id].abs_min;
+		}
+		else if (infile.key == "req") {
+			s = infile.nextValue();
+			if (s == "p")
+				items[id].req_stat = REQUIRES_PHYS;
+			else if (s == "m")
+				items[id].req_stat = REQUIRES_MENT;
+			else if (s == "o")
+				items[id].req_stat = REQUIRES_OFF;
+			else if (s == "d")
+				items[id].req_stat = REQUIRES_DEF;
+			items[id].req_val = atoi(infile.nextValue().c_str());
+		}
+		else if (infile.key == "bonus") {
+			if (bonus_counter < ITEM_MAX_BONUSES) {
+				items[id].bonus_stat[bonus_counter] = infile.nextValue();
+				items[id].bonus_val[bonus_counter] = atoi(infile.nextValue().c_str());
+				bonus_counter++;
+			}
+		}
+		else if (infile.key == "sfx") {
+			if (infile.val == "book")
+				items[id].sfx = SFX_BOOK;
+			else if (infile.val == "cloth")
+				items[id].sfx = SFX_CLOTH;
+			else if (infile.val == "coins")
+				items[id].sfx = SFX_COINS;
+			else if (infile.val == "gem")
+				items[id].sfx = SFX_GEM;
+			else if (infile.val == "leather")
+				items[id].sfx = SFX_LEATHER;
+			else if (infile.val == "metal")
+				items[id].sfx = SFX_METAL;
+			else if (infile.val == "page")
+				items[id].sfx = SFX_PAGE;
+			else if (infile.val == "maille")
+				items[id].sfx = SFX_MAILLE;
+			else if (infile.val == "object")
+				items[id].sfx = SFX_OBJECT;
+			else if (infile.val == "heavy")
+				items[id].sfx = SFX_HEAVY;
+			else if (infile.val == "wood")
+				items[id].sfx = SFX_WOOD;
+			else if (infile.val == "potion")
+				items[id].sfx = SFX_POTION;
+		}
+		else if (infile.key == "gfx")
+			items[id].gfx = infile.val;
+		else if (infile.key == "loot")
+			items[id].loot = infile.val;
+		else if (infile.key == "power")
+			items[id].power = atoi(infile.val.c_str());
+		else if (infile.key == "power_mod")
+			items[id].power_mod = atoi(infile.val.c_str());
+		else if (infile.key == "power_desc")
+			items[id].power_desc = msg->get(infile.val);
+		else if (infile.key == "price")
+			items[id].price = atoi(infile.val.c_str());
+		else if (infile.key == "max_quantity")
+			items[id].max_quantity = atoi(infile.val.c_str());
+		else if (infile.key == "rand_loot")
+			items[id].rand_loot = atoi(infile.val.c_str());
+		else if (infile.key == "rand_vendor")
+			items[id].rand_vendor = atoi(infile.val.c_str());
+		else if (infile.key == "pickup_status")
+			items[id].pickup_status = infile.val;
+		else if (infile.key == "stepfx")
+			items[id].stepfx = infile.val;
+			
 	}
+	infile.close();
 }
 
 void ItemManager::loadSounds() {

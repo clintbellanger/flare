@@ -26,9 +26,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "WidgetTooltip.h"
 
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 class SDL_Surface;
+class Mix_Chunk;
 
 class CampaignManager;
 class PowerManager;

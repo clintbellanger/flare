@@ -26,6 +26,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "MapCollision.h"
 #include "Settings.h"
 
+#include <algorithm>
+
 using namespace std;
 
 
@@ -111,9 +113,7 @@ void Hazard::logic() {
 
 bool Hazard::hasEntity(Entity *ent)
 {
-	for(vector<Entity*>::iterator it = entitiesCollided.begin(); it != entitiesCollided.end(); it++)
-		if(*it == ent) return true;
-	return false;
+	return std::find(entitiesCollided.begin(), entitiesCollided.end(), ent) != entitiesCollided.end();
 }
 
 void Hazard::addEntity(Entity *ent)

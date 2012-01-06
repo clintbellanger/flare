@@ -26,11 +26,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Utils.h"
 #include "ItemStorage.h"
 
-#include <SDL_mixer.h>
-
 #include <string>
 
 class SDL_Surface;
+class Mix_Chunk;
 
 class ItemManager;
 class MapIso;
