@@ -54,3 +54,8 @@ void AssertionError(char const* exp, char const* file, char const* func, int lin
 	
 	abort();
 }
+
+void SoftAssertionError(char const* exp, char const* file, char const* func, char const* err_msg, int line) {
+	std::cerr << "Warning: ";
+	std::cerr << file << ":" << line << ": " << func << ": `" << exp << "' failed: " << err_msg << std::endl;
+}

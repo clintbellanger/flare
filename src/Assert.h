@@ -25,10 +25,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #endif
 
 void AssertionError(char const* exp, char const* file, char const* func, int line);
+void SoftAssertionError(char const* exp, char const* file, char const* func, char const* err_msg, int line);
 
 #ifndef NDEBUG
 #define FlareAssert(expr) do { if (expr); else AssertionError(#expr, __FILE__, FLARE_FUNCTION, __LINE__); } while(false)
+#define FlareSoftAssert(expr, msg) do { if (expr); else SoftAssertionError(#expr, __FILE__, FLARE_FUNCTION, msg, __LINE__); } while (false)
 #else
 #define FlareAssert(expr) do {} while(false)
+#define FlareSoftAssert(expr, msg) do {} while(false)
 #endif
 
