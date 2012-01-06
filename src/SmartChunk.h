@@ -16,48 +16,46 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 /**
- * class SmartSurface
+ * class SmartChunk
  *
- * Wraps an SDL_Surface, calling SDL_Surface on it when it goes out of scope
+ * Wraps a Mix_Chunk, calling Mix_FreeChunk on it when it goes out of scope.
  */
  
-#ifndef SMART_SURFACE_H
-#define SMART_SURFACE_H
-
-#include <SDL.h>
+#ifndef SMART_CHUNK_H
+#define SMART_CHUNK_H
 
 #include <string>
 
-class SDL_Surface;
+class Mix_Chunk;
 
-class SmartSurface {
+class SmartChunk {
 private:
-	SDL_Surface* surface_;
-	SmartSurface(SmartSurface const& surface);
-	SmartSurface& operator=(SmartSurface const& surface);
+	Mix_Chunk* chunk_;
+	SmartChunk(SmartChunk const& chunk);
+	SmartChunk& operator=(SmartChunk const& chunk);
 
 public:
-	SmartSurface();
-	explicit SmartSurface(SDL_Surface* surface);
-	~SmartSurface();
+	SmartChunk();
+	explicit SmartChunk(Mix_Chunk* chunk);
+	~SmartChunk();
 
-	SDL_Surface* release();
-	// fails if SDL_Surface is invalid.
-	SDL_Surface* get() const;
+	Mix_Chunk* release();
+	// fails if Mix_Chunk is invalid.
+	Mix_Chunk* get() const;
 	bool is_null() const;
-	void reset(SDL_Surface* surface = NULL);
+	void reset(Mix_Chunk* chunk = NULL);
 	void reset_and_load(std::string const& name);
-	void display_format_alpha();
-	void set_color_key(Uint32 flag, Uint32 key);
-	Uint32 map_rgb(Uint8 r, Uint8 g, Uint8 b);
+
+	// noop if chunk is null
+	void play_channel(int i, int j);
 
 	operator bool() const;
 	bool operator!() const;
 
-	SDL_Surface& operator*();
-	SDL_Surface const& operator*() const;
-	SDL_Surface* operator->();
-	SDL_Surface const* operator->() const;
+	Mix_Chunk& operator*();
+	Mix_Chunk const& operator*() const;
+	Mix_Chunk* operator->();
+	Mix_Chunk const* operator->() const;
 };
 
 #endif

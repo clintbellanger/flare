@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
+#include "main.h"
 #include "FontEngine.h"
 #include "GameSwitcher.h"
 #include "InputState.h"
@@ -146,7 +147,7 @@ static void mainLoop () {
 	}
 }
 
-static void cleanup() {
+void cleanup() {
 	delete gswitch;
 	
 	delete font;

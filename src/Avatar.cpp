@@ -55,7 +55,6 @@ void Avatar::init() {
 	// name, base, look are set by GameStateNew so don't reset it here
 
 	// other init
-	sprites = 0;
 	stats.cur_state = AVATAR_STANCE;
 	stats.pos.x = map->spawn.x;
 	stats.pos.y = map->spawn.y;
@@ -82,34 +81,22 @@ void Avatar::init() {
 	stats.dspeed = 10;
 	stats.recalc();
 	
-	log_msg = "";
-
 	stats.cooldown_ticks = 0;
 	
-	haz = NULL;
-
-	img_main = "";
-	img_armor = "";
-	img_off = "";
-
 	for (int i = 0; i < POWER_COUNT; i++) {
 		stats.hero_cooldown[i] = 0;
-	}
-	
-	for (int i=0; i<4; i++) {
-		sound_steps[i] = NULL;
 	}
 }
 
 void Avatar::loadGraphics(const string& _img_main, string _img_armor, const string& _img_off) {
-	SDL_Surface *gfx_main = NULL;
-	SDL_Surface *gfx_off = NULL;
-	SDL_Surface *gfx_head = NULL;
+	SmartSurface gfx_main;
+	SmartSurface gfx_off;
+	SmartSurface gfx_head;
 	SDL_Rect src;
 	SDL_Rect dest;
 	
 	// Default appearance
-	if (_img_armor == "") _img_armor = "clothes";
+	if (_img_armor.empty()) _img_armor = "clothes";
 	
 	// Check if we really need to change the graphics
 	if (_img_main != img_main || _img_armor != img_armor || _img_off != img_off) {
@@ -118,16 +105,17 @@ void Avatar::loadGraphics(const string& _img_main, string _img_armor, const stri
 		img_off = _img_off;
 	
 		// composite the hero graphic
-		if (sprites) SDL_FreeSurface(sprites);
-		sprites = IMG_Load(mods->locate("images/avatar/" + stats.base + "/" + img_armor + ".png").c_str());
-		if (img_main != "") gfx_main = IMG_Load(mods->locate("images/avatar/" + stats.base + "/" + img_main + ".png").c_str());
-		if (img_off != "") gfx_off = IMG_Load(mods->locate("images/avatar/" + stats.base + "/" + img_off + ".png").c_str());
-		gfx_head = IMG_Load(mods->locate("images/avatar/" + stats.base + "/" + stats.head + ".png").c_str());
+		sprites.reset_and_load("images/avatar/" + stats.base + "/" + img_armor + ".png");
+		if (!img_main.empty())
+			gfx_main.reset_and_load("images/avatar/" + stats.base + "/" + img_main + ".png");
+		if (!img_off.empty())
+			gfx_off.reset_and_load("images/avatar/" + stats.base + "/" + img_off + ".png");
+		gfx_head.reset_and_load("images/avatar/" + stats.base + "/" + stats.head + ".png");
 
-		SDL_SetColorKey( sprites, SDL_SRCCOLORKEY, SDL_MapRGB(sprites->format, 255, 0, 255) ); 
-		if (gfx_main) SDL_SetColorKey( gfx_main, SDL_SRCCOLORKEY, SDL_MapRGB(gfx_main->format, 255, 0, 255) ); 
-		if (gfx_off) SDL_SetColorKey( gfx_off, SDL_SRCCOLORKEY, SDL_MapRGB(gfx_off->format, 255, 0, 255) ); 
-		if (gfx_head) SDL_SetColorKey( gfx_head, SDL_SRCCOLORKEY, SDL_MapRGB(gfx_head->format, 255, 0, 255) ); 
+		sprites.set_color_key(SDL_SRCCOLORKEY, sprites.map_rgb(255, 0, 255)); 
+		if (gfx_main) gfx_main.set_color_key(SDL_SRCCOLORKEY, gfx_main.map_rgb(255, 0, 255)); 
+		if (gfx_off) gfx_off.set_color_key(SDL_SRCCOLORKEY, gfx_off.map_rgb(255, 0, 255)); 
+		if (gfx_head) gfx_head.set_color_key(SDL_SRCCOLORKEY, gfx_head.map_rgb(255, 0, 255)); 
 		
 		// assuming the hero is right-handed, we know the layer z-order
 		// copy the furthest hand first
@@ -135,51 +123,40 @@ void Avatar::loadGraphics(const string& _img_main, string _img_armor, const stri
 		src.h = dest.h = 256;
 		src.x = dest.x = 0;
 		src.y = dest.y = 0;
-		if (gfx_main) SDL_BlitSurface(gfx_main, &src, sprites, &dest); // row 0,1 main hand
+		if (gfx_main) SDL_BlitSurface(gfx_main.get(), &src, sprites.get(), &dest); // row 0,1 main hand
 		src.y = dest.y = 768;
-		if (gfx_main) SDL_BlitSurface(gfx_main, &src, sprites, &dest); // row 6,7 main hand
+		if (gfx_main) SDL_BlitSurface(gfx_main.get(), &src, sprites.get(), &dest); // row 6,7 main hand
 		src.h = dest.h = 512;
 		src.y = dest.y = 256;
-		if (gfx_off) SDL_BlitSurface(gfx_off, &src, sprites, &dest); // row 2-5 off hand
+		if (gfx_off) SDL_BlitSurface(gfx_off.get(), &src, sprites.get(), &dest); // row 2-5 off hand
 		
 		// copy the head in the middle
 		src.h = dest.h = 1024;
 		src.y = dest.y = 0;
-		if (gfx_head) SDL_BlitSurface(gfx_head, &src, sprites, &dest); // head
+		if (gfx_head) SDL_BlitSurface(gfx_head.get(), &src, sprites.get(), &dest); // head
 		
 		// copy the closest hand last
 		src.w = dest.w = 4096;
 		src.h = dest.h = 256;
 		src.x = dest.x = 0;
 		src.y = dest.y = 0;
-		if (gfx_off) SDL_BlitSurface(gfx_off, &src, sprites, &dest); // row 0,1 off hand
+		if (gfx_off) SDL_BlitSurface(gfx_off.get(), &src, sprites.get(), &dest); // row 0,1 off hand
 		src.y = dest.y = 768;
-		if (gfx_off) SDL_BlitSurface(gfx_off, &src, sprites, &dest); // row 6,7 off hand
+		if (gfx_off) SDL_BlitSurface(gfx_off.get(), &src, sprites.get(), &dest); // row 6,7 off hand
 		src.h = dest.h = 512;
 		src.y = dest.y = 256;
-		if (gfx_main) SDL_BlitSurface(gfx_main, &src, sprites, &dest); // row 2-5 main hand
+		if (gfx_main) SDL_BlitSurface(gfx_main.get(), &src, sprites.get(), &dest); // row 2-5 main hand
 		
-		if (gfx_main) SDL_FreeSurface(gfx_main);
-		if (gfx_off) SDL_FreeSurface(gfx_off);
-		if (gfx_head) SDL_FreeSurface(gfx_head);
-		
-		// optimize
-		SDL_Surface *cleanup = sprites;
-		sprites = SDL_DisplayFormatAlpha(sprites);
-		SDL_FreeSurface(cleanup);
+		sprites.display_format_alpha();
 	}
 }
 
 void Avatar::loadSounds() {
-	sound_melee = Mix_LoadWAV(mods->locate("soundfx/melee_attack.ogg").c_str());
-	sound_hit = Mix_LoadWAV(mods->locate("soundfx/" + stats.base + "_hit.ogg").c_str());
-	sound_die = Mix_LoadWAV(mods->locate("soundfx/" + stats.base + "_die.ogg").c_str());
-	sound_block = Mix_LoadWAV(mods->locate("soundfx/powers/block.ogg").c_str());
-	level_up = Mix_LoadWAV(mods->locate("soundfx/level_up.ogg").c_str());
-				
-	if (!sound_melee || !sound_hit || !sound_die || !level_up) {
-		printf("Mix_LoadWAV: %s\n", Mix_GetError());
-	}
+	sound_melee.reset_and_load("soundfx/melee_attack.ogg");
+	sound_hit.reset_and_load("soundfx/" + stats.base + "_hit.ogg");
+	sound_die.reset_and_load("soundfx/" + stats.base + "_die.ogg");
+	sound_block.reset_and_load("soundfx/powers/block.ogg");
+	level_up.reset_and_load("soundfx/level_up.ogg");
 }
 
 /**
@@ -189,23 +166,15 @@ void Avatar::loadStepFX(const string& stepname) {
 	
 	// TODO: put default step sound in engine config file
 	string filename = "cloth";
-	if (stepname != "") {
+	if (!stepname.empty()) {
 		filename = stepname;
 	}
 
-	// clear previous sounds
-	for (int i=0; i<4; i++) {
-		if (sound_steps[i] != NULL) {
-			Mix_FreeChunk(sound_steps[i]);
-			sound_steps[i] = NULL;
-		}
-	}
-	
 	// load new sounds
-	sound_steps[0] = Mix_LoadWAV(mods->locate("soundfx/steps/step_" + filename + "1.ogg").c_str());
-	sound_steps[1] = Mix_LoadWAV(mods->locate("soundfx/steps/step_" + filename + "2.ogg").c_str());
-	sound_steps[2] = Mix_LoadWAV(mods->locate("soundfx/steps/step_" + filename + "3.ogg").c_str());
-	sound_steps[3] = Mix_LoadWAV(mods->locate("soundfx/steps/step_" + filename + "4.ogg").c_str());
+	sound_steps[0].reset_and_load("soundfx/steps/step_" + filename + "1.ogg");
+	sound_steps[1].reset_and_load("soundfx/steps/step_" + filename + "2.ogg");
+	sound_steps[2].reset_and_load("soundfx/steps/step_" + filename + "3.ogg");
+	sound_steps[3].reset_and_load("soundfx/steps/step_" + filename + "4.ogg");
 	
 }
 
@@ -283,7 +252,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 		}
 		log_msg = ss.str();
 		stats.recalc();
-		Mix_PlayChannel(-1, level_up, 0);
+		level_up.play_channel(-1, 0);
 	}
 
 	// check for bleeding spurt
@@ -392,7 +361,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 			stepfx = rand() % 4;
 			
 			if (activeAnimation->getCurFrame() == 1 || activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2) {
-				Mix_PlayChannel(-1, sound_steps[stepfx], 0);
+				sound_steps[stepfx].play_channel(-1, 0);
 			}
 
 			// allowed to move or use powers?
@@ -476,7 +445,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 			setAnimation("melee");
 
 			if (activeAnimation->getCurFrame() == 1) {
-				Mix_PlayChannel(-1, sound_melee, 0);
+				sound_melee.play_channel(-1, 0);
 			}
 			
 			// do power
@@ -546,7 +515,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 			setAnimation("die");
 				
 			if (activeAnimation->getCurFrame() == 1 && activeAnimation->getTimesPlayed() < 1) {
-				Mix_PlayChannel(-1, sound_die, 0);
+				sound_die.play_channel(-1, 0);
 				log_msg = msg->get("You are defeated.  You lose half your gold.  Press Enter to continue.");
 			}
 
@@ -632,7 +601,7 @@ bool Avatar::takeHit(Hazard h) {
 			if (dmg < 1 && !stats.blocking) dmg = 1; // when blocking, dmg can be reduced to 0
 			if (dmg <= 0) {
 				dmg = 0;
-				Mix_PlayChannel(-1, sound_block, 0);
+				sound_block.play_channel(-1, 0);
 				activeAnimation->reset(); // shield stutter
 			}
 		}
@@ -679,7 +648,7 @@ bool Avatar::takeHit(Hazard h) {
 			stats.death_penalty = true;
 		}
 		else if (prev_hp > stats.hp) { // only interrupt if damage was taken
-			Mix_PlayChannel(-1, sound_hit, 0);
+			sound_hit.play_channel(-1, 0);
 			stats.cur_state = AVATAR_HIT;
 		}
 		
@@ -695,24 +664,9 @@ bool Avatar::takeHit(Hazard h) {
  */
 Renderable Avatar::getRender() {
 	Renderable r = activeAnimation->getCurrentFrame(stats.direction);
-	r.sprite = sprites;
+	r.sprite = sprites.get();
 	r.map_pos.x = stats.pos.x;
 	r.map_pos.y = stats.pos.y;
 	return r;
 }
 
-Avatar::~Avatar() {
-
-	SDL_FreeSurface(sprites);
-	Mix_FreeChunk(sound_melee);
-	Mix_FreeChunk(sound_hit);
-	Mix_FreeChunk(sound_die);
-	Mix_FreeChunk(sound_block);
-	Mix_FreeChunk(sound_steps[0]);
-	Mix_FreeChunk(sound_steps[1]);
-	Mix_FreeChunk(sound_steps[2]);
-	Mix_FreeChunk(sound_steps[3]);
-	Mix_FreeChunk(level_up);
-			
-	delete haz;
-}
