@@ -21,9 +21,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "ItemManager.h"
 #include "FileParser.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
 #include "UtilsFileSystem.h"
+#include "UtilsParsing.h"
 #include "WidgetLabel.h"
+#include "WidgetTooltip.h"
+
+#include <SDL_image.h>
+#include <SDL_mixer.h>
 
 #include <sstream>
 #include <fstream>

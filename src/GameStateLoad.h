@@ -27,27 +27,21 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef GAMESTATELOAD_H
 #define GAMESTATELOAD_H
 
-#include "Settings.h"
-#include "InputState.h"
-#include "FontEngine.h"
-#include "WidgetButton.h"
-#include "FileParser.h"
-#include "Settings.h"
-#include "StatBlock.h"
-#include "ItemManager.h"
 #include "GameState.h"
-#include "MenuConfirm.h"
-#include "SharedResources.h"
+#include "StatBlock.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 
 #include <string>
 #include <sstream>
 
+class SDL_Surface;
 
+class ItemManager;
+class MenuConfirm;
 class WidgetLabel;
+class WidgetButton;
+
 
 
 const int GAME_SLOT_MAX = 4;

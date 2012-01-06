@@ -16,6 +16,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "Utils.h"
+#include "Settings.h"
 
 #include <cmath>
 

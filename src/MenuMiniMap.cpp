@@ -19,8 +19,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  * class MenuMiniMap
  */
 
-
 #include "MenuMiniMap.h"
+#include "MapCollision.h"
+#include "Settings.h"
 #include "SharedResources.h"
 
 MenuMiniMap::MenuMiniMap() {

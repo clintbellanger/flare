@@ -22,9 +22,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuExperience.h"
+#include "FontEngine.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
 #include "WidgetLabel.h"
 
+#include <SDL_image.h>
 #include <SDL_mixer.h>
 
 #include <string>

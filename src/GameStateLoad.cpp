@@ -19,13 +19,22 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  * GameStateLoad
  */
 #include "GameStateLoad.h"
+#include "FontEngine.h"
 #include "GameStateTitle.h"
 #include "GameStatePlay.h"
 #include "GameStateNew.h"
+#include "InputState.h"
+#include "ItemManager.h"
 #include "MenuConfirm.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
 #include "WidgetLabel.h"
+#include "FileParser.h"
 
+#include <SDL_image.h>
 
 using namespace std;
 

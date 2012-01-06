@@ -20,8 +20,18 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuInventory.h"
+#include "InputState.h"
+#include "ItemManager.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
+#include "WidgetButton.h"
 #include "WidgetLabel.h"
+#include "WidgetTooltip.h"
+
+#include <SDL_image.h>
 
 #include <sstream>
 

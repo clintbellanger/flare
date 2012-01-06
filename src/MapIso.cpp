@@ -22,8 +22,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
  
 #include "MapIso.h"
+#include "CampaignManager.h"
+#include "EnemyGroupManager.h"
 #include "FileParser.h"
+#include "InputState.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
+#include "UtilsFileSystem.h"
+#include "UtilsParsing.h"
 
 using namespace std;
 

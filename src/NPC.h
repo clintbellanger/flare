@@ -24,13 +24,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "Entity.h"
 #include "Utils.h"
-#include "ItemManager.h"
 #include "ItemStorage.h"
-#include "MapIso.h"
-#include <SDL.h>
-#include <SDL_image.h>
+
 #include <SDL_mixer.h>
+
 #include <string>
+
+class SDL_Surface;
+
+class ItemManager;
+class MapIso;
 
 const int NPC_VENDOR_MAX_STOCK = 80;
 const int NPC_MAX_VOX = 8;

@@ -27,15 +27,19 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Utils.h"
 #include "ItemManager.h"
 #include "WidgetTooltip.h"
-#include "EnemyManager.h"
-#include "SharedResources.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
 #include <SDL_mixer.h>
 
 #include <string>
 
+class EnemyManager;
+class ItemManager;
+class MapIso;
+class Renderable;
+class WidgetTooltip;
+
+class SDL_Surface;
 
 struct LootDef {
 	ItemStack stack;

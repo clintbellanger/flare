@@ -16,6 +16,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "SmartSurface.h"
+
+#include <SDL_image.h>
+
 #include <cassert>
 
 SmartSurface::SmartSurface() : surface_(NULL) {}

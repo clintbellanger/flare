@@ -20,6 +20,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuItemStorage.h"
+#include "ItemManager.h"
+#include "InputState.h"
+#include "StatBlock.h"
+#include "WidgetTooltip.h"
 
 using namespace std;
 

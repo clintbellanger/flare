@@ -23,6 +23,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "NPCManager.h"
+#include "ItemManager.h"
+#include "LootManager.h"
+#include "MapIso.h"
+#include "NPC.h"
 
 using namespace std;
 

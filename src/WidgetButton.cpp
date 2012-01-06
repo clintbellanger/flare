@@ -20,7 +20,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "WidgetButton.h"
+#include "FontEngine.h"
+#include "InputState.h"
 #include "SharedResources.h"
+
+#include <SDL_image.h>
 
 using namespace std;
 

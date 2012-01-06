@@ -24,10 +24,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "Settings.h"
 #include <SDL.h>
-#include <SDL_image.h>
 #include <string>
+
+class SDL_Surface;
 
 struct Point {
 	int x,y;

@@ -21,8 +21,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "PowerManager.h"
 #include "FileParser.h"
+#include "Hazard.h"
+#include "MapCollision.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "Settings.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
 #include "UtilsFileSystem.h"
+
+#include <SDL_image.h>
+#include <SDL_mixer.h>
 
 #include <cmath>
 

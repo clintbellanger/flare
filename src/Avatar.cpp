@@ -22,9 +22,19 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "Avatar.h"
+#include "Animation.h"
+#include "Hazard.h"
+#include "InputState.h"
+#include "MapIso.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "PowerManager.h"
 #include "SharedResources.h"
 
+#include <SDL_image.h>
+
 #include <sstream>
+#include <cmath>
 
 using namespace std;
 

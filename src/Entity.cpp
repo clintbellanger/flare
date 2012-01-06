@@ -23,8 +23,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "Entity.h"
+#include "Animation.h"
+#include "MapIso.h"
+#include "ModManager.h"
 #include "FileParser.h"
 #include "SharedResources.h"
+#include "UtilsParsing.h"
+
+#include <iostream>
 
 using namespace std;
 

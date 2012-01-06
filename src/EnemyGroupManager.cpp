@@ -18,6 +18,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "EnemyGroupManager.h"
 #include "SharedResources.h"
+#include "MapIso.h"
+#include "ModManager.h"
+#include "FileParser.h"
+#include "UtilsFileSystem.h"
 
 using namespace std;
 

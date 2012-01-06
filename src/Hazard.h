@@ -25,15 +25,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef HAZARD_H
 #define HAZARD_H
 
-class Entity;
+#include "Utils.h"
 
 #include <vector>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include "Utils.h"
-#include "MapCollision.h"
-#include "StatBlock.h"
+
+class SDL_Surface;
+
+class Entity;
+class MapCollision;
+class StatBlock;
 
 // the spell/power's source type: eg. which team did it come from?
 const int SOURCE_TYPE_HERO = 0;

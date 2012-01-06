@@ -22,9 +22,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
  
 #include "TileSet.h"
-#include "UtilsParsing.h"
-#include "SharedResources.h"
 #include "FileParser.h"
+#include "ModManager.h"
+#include "SharedResources.h"
+#include "UtilsParsing.h"
+
+#include <SDL_image.h>
 
 #include <cstdio>
 

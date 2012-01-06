@@ -20,6 +20,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "ItemStorage.h"
+#include "Utils.h"
+#include "UtilsParsing.h"
+#include "ItemManager.h"
 
 #include <sstream>
 

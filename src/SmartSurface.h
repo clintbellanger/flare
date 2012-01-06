@@ -24,8 +24,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef SMART_SURFACE_H
 #define SMART_SURFACE_H
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <cstddef>
+
+class SDL_Surface;
 
 class SmartSurface {
 private:

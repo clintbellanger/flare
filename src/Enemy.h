@@ -25,18 +25,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <math.h>
 #include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 
 #include "Entity.h"
-#include "Utils.h"
-#include "InputState.h"
-#include "MapIso.h"
-#include "StatBlock.h"
-#include "Hazard.h"
-#include "Settings.h"
-#include "PowerManager.h"
+
+class PowerManager;
+class MapIso;
+class Hazard;
+class Point;
 
 // active states
 const int ENEMY_STANCE = 0;

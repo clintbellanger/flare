@@ -22,7 +22,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuHPMP.h"
+#include "FontEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "StatBlock.h"
+#include "WidgetLabel.h"
+
+#include <SDL_image.h>
 
 #include <string>
 #include <sstream>

@@ -22,19 +22,20 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_CHARACTER_H
 #define MENU_CHARACTER_H
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 #include "Utils.h"
-#include "FontEngine.h"
-#include "StatBlock.h"
 #include "WidgetTooltip.h"
-#include "InputState.h"
-#include "WidgetButton.h"
-#include "SharedResources.h"
-#include "WidgetLabel.h"
+
+#include <SDL.h>
+#include <SDL_mixer.h>
+
 #include <string>
 #include <sstream>
+
+class SDL_Surface;
+
+class StatBlock;
+class WidgetButton;
+class WidgetLabel;
 
 const int CSTAT_NAME = 0;
 const int CSTAT_LEVEL = 1;

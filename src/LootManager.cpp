@@ -22,7 +22,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
  
 #include "LootManager.h"
+#include "Enemy.h"
+#include "EnemyManager.h"
+#include "MapIso.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+
+#include <SDL_image.h>
  
 #include <sstream>
 

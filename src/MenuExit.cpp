@@ -20,9 +20,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuExit.h"
+#include "FontEngine.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
 #include "WidgetLabel.h"
 
+#include <SDL_image.h>
 
 MenuExit::MenuExit() : Menu() {
 

@@ -25,16 +25,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 
 #include "Settings.h"
-#include "Utils.h"
-#include "UtilsParsing.h"
 
 #include <SDL.h>
-#include <SDL_image.h>
 #include <SDL_ttf.h>
 
 #include <fstream>
 #include <string>
 
+class Point;
+class SDL_Surface;
 
 const int JUSTIFY_LEFT = 0;
 const int JUSTIFY_RIGHT = 1;
