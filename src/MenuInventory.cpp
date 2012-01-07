@@ -158,19 +158,20 @@ int MenuInventory::areaOver(Point mouse) {
  *
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
-void MenuInventory::checkTooltip(Point mouse, TooltipData& tip) {
+TooltipData MenuInventory::checkTooltip(Point mouse) {
 	int area;
-	tip.clear();
+	TooltipData tip;
 	
 	area = areaOver( mouse);
 	if( area > -1) {
-		inventory[area].checkTooltip(mouse, stats, false, tip);
+		tip = inventory[area].checkTooltip(mouse, stats, false);
 	}
 	else if (mouse.x >= window_area.x + 224 && mouse.y >= window_area.y+96 && mouse.x < window_area.x+288 && mouse.y < window_area.y+128) {
 		// TODO: I think we should add a little "?" icon in a corner, and show this title on it.
 		tip.lines[tip.num_lines++] = msg->get("Use SHIFT to move only one item.");
 		tip.lines[tip.num_lines++] = msg->get("CTRL-click a carried item to sell it.");
 	}
+	return tip;
 }
 
 /**

@@ -262,25 +262,25 @@ void MenuActionBar::renderItemCounts() {
 /**
  * On mouseover, show tooltip for buttons
  */
-void MenuActionBar::checkTooltip(Point mouse, TooltipData& tip) {
-	tip.clear();
+TooltipData MenuActionBar::checkTooltip(Point mouse) {
+	TooltipData tip;
 
 	//int offset_x = (VIEW_W - 640)/2;
 	if (isWithin(menus[0], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Character Menu (C)");
-		return;
+		return tip;
 	}
 	if (isWithin(menus[1], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Inventory Menu (I)");
-		return;
+		return tip;
 	}
 	if (isWithin(menus[2], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Power Menu (P)");
-		return;
+		return tip;
 	}
 	if (isWithin(menus[3], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Log Menu (L)");
-		return;
+		return tip;
 	}
 	for (int i=0; i<12; i++) {
 		if (hotkeys[i] != -1) {
@@ -289,6 +289,7 @@ void MenuActionBar::checkTooltip(Point mouse, TooltipData& tip) {
 			}
 		}
 	}
+	return tip;
 }
 
 /**

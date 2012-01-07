@@ -66,7 +66,7 @@ public:
 	MenuPowers(StatBlock *_stats, PowerManager *_powers);
 	void logic();
 	void render();
-	void checkTooltip(Point mouse, TooltipData& tip);
+	TooltipData checkTooltip(Point mouse);
 	bool requirementsMet(int power_index);
 	int click(Point mouse);
 	

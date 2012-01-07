@@ -229,8 +229,8 @@ void MenuPowers::displayBuild(int value, int x) {
 /**
  * Show mouseover descriptions of disciplines and powers
  */
-void MenuPowers::checkTooltip(Point mouse, TooltipData& tip) {
-	tip.clear();
+TooltipData MenuPowers::checkTooltip(Point mouse) {
+	TooltipData tip;
 
 	int offset_x = (VIEW_W - 320);
 	int offset_y = (VIEW_H - 416)/2;
@@ -238,19 +238,19 @@ void MenuPowers::checkTooltip(Point mouse, TooltipData& tip) {
 	if (mouse.y >= offset_y+32 && mouse.y <= offset_y+80) {
 		if (mouse.x >= offset_x+48 && mouse.x <= offset_x+80) {
 			tip.lines[tip.num_lines++] = msg->get("Physical + Offense grants melee and ranged attacks");
-			return;
+			return tip;
 		}
 		if (mouse.x >= offset_x+112 && mouse.x <= offset_x+144) {
 			tip.lines[tip.num_lines++] = msg->get("Physical + Defense grants melee protection");
-			return;
+			return tip;
 		}
 		if (mouse.x >= offset_x+176 && mouse.x <= offset_x+208) {
 			tip.lines[tip.num_lines++] = msg->get("Mental + Offense grants elemental spell attacks");
-			return;
+			return tip;
 		}
 		if (mouse.x >= offset_x+240 && mouse.x <= offset_x+272) {
 			tip.lines[tip.num_lines++] = msg->get("Mental + Defense grants healing and magical protection");
-			return;
+			return tip;
 		}
 	}
 	else {
@@ -291,9 +291,10 @@ void MenuPowers::checkTooltip(Point mouse, TooltipData& tip) {
 					tip.lines[tip.num_lines++] = msg->get("Cooldown: %d seconds", powers->powers[i].cooldown / 1000.0);
 				}
 
-				return;
+				return tip;
 			}
 		}
 	}
+	return tip;
 }
 

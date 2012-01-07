@@ -535,22 +535,20 @@ void MenuCharacter::displayProficiencies(int value, int y) {
 /**
  * Display various mouseovers tooltips depending on cursor location
  */
-void MenuCharacter::checkTooltip(TooltipData& tip) {
+TooltipData MenuCharacter::checkTooltip() {
 	for (int i=0; i<CSTAT_COUNT; i++) {
 		if (isWithin(cstat[i].hover, inp->mouse) && cstat[i].tip.num_lines > 0) {
-			tip = cstat[i].tip; // FIXME:  This kills cstat[i].tip!
-			return;
+			return cstat[i].tip;
 		}
 	}
 
 	for (int i=0; i<CPROF_COUNT; i++) {
 		if (isWithin(cprof[i].hover, inp->mouse) && cprof[i].tip.num_lines > 0) {
-			tip = cprof[i].tip; // FIXME:  This kills cprof[i].tip!
-			return;
+			return cprof[i].tip; 
 		}
 	}
 
-	tip.clear();
+	return TooltipData();
 }
 
 /**

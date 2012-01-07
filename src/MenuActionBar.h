@@ -73,7 +73,7 @@ public:
 	void set(int power_id[12]);
 	void clear();
 
-	void checkTooltip(Point mouse, TooltipData& tip);
+	TooltipData checkTooltip(Point mouse);
 	
 	int hotkeys[12]; // refer to power_index in PowerManager
 	SDL_Rect slots[12]; // the location of hotkey slots

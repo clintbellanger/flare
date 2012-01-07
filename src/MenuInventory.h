@@ -68,7 +68,7 @@ public:
 	~MenuInventory();
 	void logic();
 	void render();
-	void checkTooltip(Point mouse, TooltipData& tip);
+	TooltipData checkTooltip(Point mouse);
 
 	ItemStack click(InputState * input);
 	void itemReturn(ItemStack stack);

@@ -153,10 +153,8 @@ public:
 	void playSound(int item);
 	void playCoinsSound();	
 
-	// As TooltipData is impossible to return by value, these two return
-	// through a reference parameter.
-	void getTooltip(int item, StatBlock *stats, bool vendor_view, TooltipData& tip);
-	void getShortTooltip(ItemStack item, TooltipData& tip);
+	TooltipData getTooltip(int item, StatBlock *stats, bool vendor_view);
+	TooltipData getShortTooltip(ItemStack item);
 
 	Item *items;
 	int vendor_ratio;

@@ -23,6 +23,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define WIDGET_TOOLTIP_H
 
 #include "Array.h"
+#include "Assert.h"
 #include "FontEngine.h"
 #include "Settings.h"
 #include "SmartSurface.h"
@@ -35,10 +36,10 @@ const int STYLE_TOPLABEL = 1;
 
 const int TOOLTIP_MAX_LINES = 16;
 
-// Warning!  This class steals ownership on copy!
-// There's no safe way to copy things over from a const reference without a
-// const_cast, so I'm going to leave it impossible to return instances of this
-// by value.
+// Warning!  Copying does not copy over all members!
+// If you want to really copy everything over completely, use .copy().
+// If you want to steal the members (leave them empty in the original),
+// use .steal().
 struct TooltipData {
 	int num_lines;
 	Array<std::string, TOOLTIP_MAX_LINES> lines;
@@ -48,26 +49,40 @@ struct TooltipData {
 	TooltipData() : num_lines(0), colors(0) {
 	}
 
+	TooltipData(TooltipData const& tip) : num_lines(tip.num_lines),
+		lines(tip.lines), colors(tip.colors) {
+		FlareSoftAssert(!tip.tip_buffer, "A TooltipData with a non-null buffer has been copied over: possible trouble ahead.");
+	}
+
+	TooltipData& operator=(TooltipData const& tip) {
+		if (this == &tip)
+			return *this;
+		FlareSoftAssert(!tip.tip_buffer, "A TooltipData with a non-null buffer has been copied over: possible trouble ahead.");
+		num_lines = tip.num_lines;
+		lines = tip.lines;
+		colors = tip.colors;
+		return *this;
+	}
+
 	void clear() {
 		num_lines = 0;
 		lines.reset();
 		colors.reset();
 		tip_buffer.reset();
 	}
-
-	TooltipData(TooltipData& tip) : num_lines(tip.num_lines),
-		lines(tip.lines), colors(tip.colors) {
-		tip_buffer.steal(tip.tip_buffer);
+	
+	void copy(TooltipData const& tip) {
+		FlareAssert(!"Not implemented -- don't know enough SDL.");
+		// TODO: This should eventually be implemented.
 	}
 
-	TooltipData& operator=(TooltipData& tip) {
+	void steal(TooltipData& tip) {
 		if (this == &tip)
-			return *this;
+			return;
 		num_lines = tip.num_lines;
 		lines = tip.lines;
 		colors = tip.colors;
 		tip_buffer.steal(tip.tip_buffer);
-		return *this;
 	}
 };
 

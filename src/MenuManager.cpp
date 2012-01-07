@@ -517,22 +517,22 @@ void MenuManager::render() {
 	// Find tooltips depending on mouse position
 	if (inp->mouse.x < 320 && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (chr->visible) {
-			chr->checkTooltip(tip_new);
+			tip_new = chr->checkTooltip();
 		}
 		else if (vendor->visible) {
-			vendor->checkTooltip(inp->mouse, tip_new);
+			tip_new = vendor->checkTooltip(inp->mouse);
 		}
 	}
 	else if (inp->mouse.x >= offset_x && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (pow->visible) {
-			pow->checkTooltip(inp->mouse, tip_new);
+			tip_new = pow->checkTooltip(inp->mouse);
 		}
 		else if (inv->visible && !dragging) {
-			inv->checkTooltip(inp->mouse, tip_new);
+			tip_new = inv->checkTooltip(inp->mouse);
 		}
 	}
 	else if (inp->mouse.y >= VIEW_H-32) {
-		 act->checkTooltip(inp->mouse, tip_new);
+		 tip_new = act->checkTooltip(inp->mouse);
 	}
 
 	if (tip_new.num_lines > 0) {
@@ -543,7 +543,7 @@ void MenuManager::render() {
 		// TODO: comparing the first line of a tooltip works in all existing cases,
 		// but may not hold true in the future.
 		if (tip_new.lines[0] != tip_buf.lines[0]) {
-			tip->clear(tip_buf);
+			tip_buf.clear();
 			tip_buf = tip_new;
 		}
 		tip->render(tip_buf, inp->mouse, STYLE_FLOAT);

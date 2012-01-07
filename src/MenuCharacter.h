@@ -125,7 +125,7 @@ public:
 	void logic();
 	void render();
 	void refreshStats();
-	void checkTooltip(TooltipData& tip);
+	TooltipData checkTooltip();
 	bool checkUpgrade();
 
 	bool visible;

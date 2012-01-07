@@ -299,12 +299,11 @@ void ItemManager::playCoinsSound() {
 	Mix_PlayChannel(-1, sfx[SFX_COINS], 0);
 }
 
-void ItemManager::getShortTooltip(ItemStack stack, TooltipData& tip) {
+TooltipData ItemManager::getShortTooltip(ItemStack stack) {
+	TooltipData tip;
 	stringstream ss;
 	
-	tip.clear();
-	
-	if (stack.item == 0) return;
+	if (stack.item == 0) return tip;
 
 	// name
 	if( stack.quantity > 1) {
@@ -324,15 +323,16 @@ void ItemManager::getShortTooltip(ItemStack stack, TooltipData& tip) {
 	else if (items[stack.item].quality == ITEM_QUALITY_EPIC) {
 		tip.colors[0] = FONT_BLUE;
 	}
+	return tip;
 }
 
 /**
  * Create detailed tooltip showing all relevant item info
  */
-void ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view, TooltipData& tip) {
-	tip.clear();
+TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view) {
+	TooltipData tip;
 	
-	if (item == 0) return;
+	if (item == 0) return tip;
 	
 	// name
 	tip.lines[tip.num_lines++] = items[item].name;
@@ -464,6 +464,7 @@ void ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view, Toolt
 		}
 
 	}
+	return tip;
 }
 
 ItemManager::~ItemManager() {

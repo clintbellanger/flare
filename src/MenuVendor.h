@@ -59,7 +59,7 @@ public:
 	ItemStack click(InputState * input);
 	void itemReturn(ItemStack stack);
 	void add(ItemStack stack);
-	void checkTooltip(Point mouse, TooltipData& tip);
+	TooltipData checkTooltip(Point mouse);
 	bool full();
 	void setInventory();
 	void saveInventory();

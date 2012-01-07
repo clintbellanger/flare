@@ -127,8 +127,8 @@ void MenuVendor::add(ItemStack stack) {
 	saveInventory();
 }
 
-void MenuVendor::checkTooltip(Point mouse, TooltipData& tip) {
-	return stock.checkTooltip( mouse, stats, true, tip);
+TooltipData MenuVendor::checkTooltip(Point mouse) {
+	return stock.checkTooltip(mouse, stats, true);
 }
 
 bool MenuVendor::full() {

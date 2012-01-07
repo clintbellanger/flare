@@ -43,7 +43,7 @@ public:
 	// rendering
 	void render();
 	int slotOver(Point mouse);
-	void checkTooltip(Point mouse, StatBlock *stats, bool vendor_view, TooltipData& tip);
+	TooltipData checkTooltip(Point mouse, StatBlock *stats, bool vendor_view);
 	ItemStack click(InputState * input);
 	void itemReturn(ItemStack stack);
 

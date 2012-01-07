@@ -250,7 +250,7 @@ void LootManager::renderTooltips(Point cam) {
 			if (!loot[i].tip.tip_buffer) {
 
 				if (loot[i].stack.item > 0) {
-					items->getShortTooltip(loot[i].stack, loot[i].tip);
+					loot[i].tip = items->getShortTooltip(loot[i].stack);
 				}
 				else {
 					loot[i].tip.num_lines = 1;
@@ -425,8 +425,7 @@ void LootManager::removeLoot(int index) {
 		loot[i].pos.y = loot[i+1].pos.y;
 		loot[i].frame = loot[i+1].frame;
 		loot[i].gold = loot[i+1].gold;
-		// This clears loot[i+1].tip
-		loot[i].tip = loot[i+1].tip;
+		loot[i].tip.steal(loot[i+1].tip);
 	}
 		
 	// TODO: This requires too much knowledge of the underworkings of
