@@ -22,17 +22,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ITEM_MANAGER_H
 #define ITEM_MANAGER_H
 
+#include "SmartChunk.h"
+#include "SmartSurface.h"
+
 #include <SDL.h>
 
+#include <map>
 #include <string>
-
-class SDL_Surface;
-class Mix_Chunk;
+#include <vector>
 
 class TooltipData;
 class StatBlock;
-
-const int MAX_ITEM_ID = 10000;
 
 const int ICON_SIZE_32 = 32;
 const int ICON_SIZE_64 = 64;
@@ -70,9 +70,8 @@ const int ITEM_QUALITY_NORMAL = 1;
 const int ITEM_QUALITY_HIGH = 2;
 const int ITEM_QUALITY_EPIC = 3;
 
-const int ITEM_MAX_BONUSES = 8;
-
 struct Item {
+	typedef std::vector<std::pair<std::string, int> > BonusVector;
 	std::string name;          // item name displayed on long and short tool tips
 	int level;            // rough estimate of quality, used in the loot algorithm
 	int quality;          // low, normal, high, epic; corresponds to item name color
@@ -85,8 +84,8 @@ struct Item {
 	int abs_max;          // maximum absorb amount (armors and shields only)
 	int req_stat;         // physical, mental, offense, defense
 	int req_val;          // 1-5 (used with req_stat)
-	std::string *bonus_stat;   // stat to increase/decrease e.g. hp, accuracy, speed
-	int *bonus_val;       // amount to increase (used with bonus_stat)
+	// Stat to increase/decrease and amount to do so by
+	BonusVector bonus_stat;
 	int sfx;              // the item sound when it hits the floor or inventory, etc
 	std::string gfx;           // the sprite layer shown when this item is equipped
 	std::string loot;          // the flying loot animation for this item
@@ -101,7 +100,6 @@ struct Item {
 	std::string stepfx;        // sound effect played when walking (armors only)
 
 	Item() {
-		name = "";
 		level = 0;
 		quality = ITEM_QUALITY_NORMAL;
 		icon32 = 0;
@@ -114,17 +112,12 @@ struct Item {
 		req_stat = 0;
 		req_val = 0;
 		sfx = SFX_NONE;
-		gfx = "";
-		loot = "";
 		power = -1;
 		power_mod = -1;
-		power_desc = "";
 		price = 0;
 		max_quantity = 1;
 		rand_loot = 1;
 		rand_vendor = 1;
-		pickup_status = "";
-		stepfx = "";
 	}
 };
 
@@ -136,15 +129,14 @@ struct ItemStack {
 
 class ItemManager {
 private:
-	SDL_Surface *icons32;
-	SDL_Surface *icons64; // item db is the only module that currently uses the 64px icons
+	SmartSurface icons32;
+	SmartSurface icons64; // item db is the only module that currently uses the 64px icons
 	SDL_Rect src;
 	SDL_Rect dest;
-	Mix_Chunk *sfx[12];
+	SmartChunk sfx[12];
 
 public:
 	ItemManager();
-	~ItemManager();
 	void load(const std::string& filename);
 	void loadAll();
 	void loadSounds();
@@ -156,7 +148,7 @@ public:
 	TooltipData getTooltip(int item, StatBlock *stats, bool vendor_view);
 	TooltipData getShortTooltip(ItemStack item);
 
-	Item *items;
+	std::map<int, Item> items;
 	int vendor_ratio;
 };
 

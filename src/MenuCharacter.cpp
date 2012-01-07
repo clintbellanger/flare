@@ -44,17 +44,17 @@ MenuCharacter::MenuCharacter(StatBlock *_stats) {
 	int offset_y = (VIEW_H - 416)/2;
 	
 	// button setup
-	closeButton = new WidgetButton("images/menus/buttons/button_x.png");
+	closeButton.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = 294;
 	closeButton->pos.y = offset_y + 2;
 
 	// menu title
-	labelCharacter = new WidgetLabel();
+	labelCharacter.reset(new WidgetLabel());
 	labelCharacter->set(160, offset_y+16, JUSTIFY_CENTER, VALIGN_CENTER, msg->get("Character"), FONT_WHITE);
 	
 	for (int i=0; i<CSTAT_COUNT; i++) {
-		cstat[i].label = new WidgetLabel();
-		cstat[i].value = new WidgetLabel();
+		cstat[i].label.reset(new WidgetLabel());
+		cstat[i].value.reset(new WidgetLabel());
 		cstat[i].hover.x = cstat[i].hover.y = 0;
 		cstat[i].hover.w = cstat[i].hover.h = 0;
 	}
@@ -128,28 +128,13 @@ MenuCharacter::MenuCharacter(StatBlock *_stats) {
 }
 
 void MenuCharacter::loadGraphics() {
-
-	background = IMG_Load(mods->locate("images/menus/character.png").c_str());
-	proficiency = IMG_Load(mods->locate("images/menus/character_proficiency.png").c_str());
-	upgrade = IMG_Load(mods->locate("images/menus/upgrade.png").c_str());
-	if(!background || !proficiency || !upgrade) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
+	background.reset_and_load("images/menus/character.png");
+	proficiency.reset_and_load("images/menus/character_proficiency.png");
+	upgrade.reset_and_load("images/menus/upgrade.png");
 	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = proficiency;
-	proficiency = SDL_DisplayFormatAlpha(proficiency);
-	SDL_FreeSurface(cleanup);
-
-	cleanup = upgrade;
-	upgrade = SDL_DisplayFormatAlpha(upgrade);
-	SDL_FreeSurface(cleanup);
-		
+	background.display_format_alpha(); 
+	proficiency.display_format_alpha(); 
+	upgrade.display_format_alpha(); 
 }
 
 /**
@@ -445,7 +430,7 @@ void MenuCharacter::render() {
 	dest.y = offset_y;
 	src.w = dest.w = 320;
 	src.h = dest.h = 416;
-	SDL_BlitSurface(background, &src, screen, &dest);
+	SDL_BlitSurface(background.get(), &src, screen, &dest);
 	
 	// close button
 	closeButton->render();
@@ -484,22 +469,22 @@ void MenuCharacter::render() {
 		// physical
 		if (stats->physical_character < 5) { // && mouse.x >= 16 && mouse.y >= offset_y+96
 			dest.y = offset_y + 96;
-			SDL_BlitSurface(upgrade, &src, screen, &dest);
+			SDL_BlitSurface(upgrade.get(), &src, screen, &dest);
 		}
 		// mental
 		if (stats->mental_character < 5) { // && mouse.x >= 16 && mouse.y >= offset_y+160
 			dest.y = offset_y + 160;
-			SDL_BlitSurface(upgrade, &src, screen, &dest);
+			SDL_BlitSurface(upgrade.get(), &src, screen, &dest);
 		}
 		// offense
 		if (stats->offense_character < 5) { // && mouse.x >= 16 && mouse.y >= offset_y+224
 			dest.y = offset_y + 224;
-			SDL_BlitSurface(upgrade, &src, screen, &dest);
+			SDL_BlitSurface(upgrade.get(), &src, screen, &dest);
 		}
 		// defense
 		if (stats->defense_character < 5) { // && mouse.x >= 16 && mouse.y >= offset_y+288
 			dest.y = offset_y + 288;
-			SDL_BlitSurface(upgrade, &src, screen, &dest);
+			SDL_BlitSurface(upgrade.get(), &src, screen, &dest);
 		}
 
 		
@@ -528,7 +513,7 @@ void MenuCharacter::displayProficiencies(int value, int y) {
 	
 	for (int i=2; i<= actual_value; i++) {
 		dest.x = 112 + (i-2) * 48;
-		SDL_BlitSurface(proficiency, &src, screen, &dest);
+		SDL_BlitSurface(proficiency.get(), &src, screen, &dest);
 	}
 }
 
@@ -538,13 +523,13 @@ void MenuCharacter::displayProficiencies(int value, int y) {
 TooltipData MenuCharacter::checkTooltip() {
 	for (int i=0; i<CSTAT_COUNT; i++) {
 		if (isWithin(cstat[i].hover, inp->mouse) && cstat[i].tip.num_lines > 0) {
-			return cstat[i].tip;
+			return cstat[i].tip;  // Warning, will not copy tip_buffer.
 		}
 	}
 
 	for (int i=0; i<CPROF_COUNT; i++) {
 		if (isWithin(cprof[i].hover, inp->mouse) && cprof[i].tip.num_lines > 0) {
-			return cprof[i].tip; 
+			return cprof[i].tip;  // Warning, will not copy tip_buffer.
 		}
 	}
 
@@ -603,15 +588,3 @@ bool MenuCharacter::checkUpgrade() {
 	return false;
 }
 
-MenuCharacter::~MenuCharacter() {
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(proficiency);
-	SDL_FreeSurface(upgrade);
-	delete closeButton;
-	
-	delete labelCharacter;
-	for (int i=0; i<CSTAT_COUNT; i++) {
-		delete cstat[i].label;
-		delete cstat[i].value;
-	}
-}

@@ -22,6 +22,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_CHARACTER_H
 #define MENU_CHARACTER_H
 
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "Utils.h"
 #include "WidgetTooltip.h"
 
@@ -31,7 +33,6 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <string>
 #include <sstream>
 
-class SDL_Surface;
 
 class StatBlock;
 class WidgetButton;
@@ -78,8 +79,8 @@ const int CPROF_D5 = 15;
 const int CPROF_COUNT = 16;
 
 struct CharStat {
-	WidgetLabel *label;
-	WidgetLabel *value;
+	ScopedPtr<WidgetLabel> label;
+	ScopedPtr<WidgetLabel> value;
 	SDL_Rect hover;
 	TooltipData tip;
 	
@@ -107,11 +108,11 @@ class MenuCharacter {
 private:
 	StatBlock *stats;
 
-	SDL_Surface *background;
-	SDL_Surface *proficiency;
-	SDL_Surface *upgrade;
-	WidgetButton *closeButton;	
-	WidgetLabel *labelCharacter;
+	SmartSurface background;
+	SmartSurface proficiency;
+	SmartSurface upgrade;
+	ScopedPtr<WidgetButton> closeButton;	
+	ScopedPtr<WidgetLabel> labelCharacter;
 	CharStat cstat[CSTAT_COUNT];
 	CharProf cprof[CPROF_COUNT];
 
@@ -121,7 +122,6 @@ private:
 	
 public:
 	MenuCharacter(StatBlock *stats);
-	~MenuCharacter();
 	void logic();
 	void render();
 	void refreshStats();

@@ -46,22 +46,11 @@ MenuEnemy::MenuEnemy() {
 
 void MenuEnemy::loadGraphics() {
 
-	background = IMG_Load(mods->locate("images/menus/bar_enemy.png").c_str());
-	bar_hp = IMG_Load(mods->locate("images/menus/bar_hp.png").c_str());
+	background.reset_and_load("images/menus/bar_enemy.png");
+	bar_hp.reset_and_load("images/menus/bar_hp.png");
 	
-	if(!background || !bar_hp) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
-	cleanup = bar_hp;
-	bar_hp = SDL_DisplayFormatAlpha(bar_hp);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha();
+	bar_hp.display_format_alpha(); 
 }
 
 void MenuEnemy::handleNewMap() {
@@ -88,7 +77,7 @@ void MenuEnemy::render() {
 	dest.w = 106;
 	dest.h = 33;
 	
-	SDL_BlitSurface(background, NULL, screen, &dest);
+	SDL_BlitSurface(background.get(), NULL, screen, &dest);
 	
 	if (enemy->stats.maxhp == 0)
 		hp_bar_length = 0;
@@ -105,7 +94,7 @@ void MenuEnemy::render() {
 	src.h = 12;
 	src.w = hp_bar_length;	
 	
-	SDL_BlitSurface(bar_hp, &src, screen, &dest);
+	SDL_BlitSurface(bar_hp.get(), &src, screen, &dest);
 	
 	stringstream ss;
 	ss.str("");
@@ -126,7 +115,3 @@ void MenuEnemy::render() {
 	//SDL_UpdateRects(screen, 1, &dest);
 }
 
-MenuEnemy::~MenuEnemy() {
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(bar_hp);		
-}

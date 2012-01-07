@@ -90,15 +90,15 @@ LootManager::LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_m
 void LootManager::loadGraphics() {
 
 	string anim_id;
-	bool new_anim;
 
 	// check all items in the item database
-	for (int i=0; i<MAX_ITEM_ID; i++) {
-		anim_id = items->items[i].loot;
+	std::map<int, Item>::iterator end = items->items.end();
+	for (std::map<int, Item>::iterator it = items->items.begin(); it != end; ++it) {
+		anim_id = it->second.loot;
 		
-		new_anim = true;
+		bool new_anim = true;
 		
-		if (anim_id != "") {
+		if (!anim_id.empty()) {
 			
 			// do we have this animation loaded already?
 			for (int j=0; j<animation_count; j++) {

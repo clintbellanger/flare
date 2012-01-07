@@ -25,6 +25,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_ENEMY_H
 
 #include "Settings.h"
+#include "SmartSurface.h"
 #include "StatBlock.h"
 
 class SDL_Surface;
@@ -35,11 +36,10 @@ const int MENU_ENEMY_TIMEOUT = FRAMES_PER_SEC * 10;
 
 class MenuEnemy {
 private:
-	SDL_Surface *background;
-	SDL_Surface *bar_hp;
+	SmartSurface background;
+	SmartSurface bar_hp;
 public:
 	MenuEnemy();
-	~MenuEnemy();
 	Enemy *enemy;
 	void loadGraphics();
 	void handleNewMap();

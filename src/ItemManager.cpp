@@ -40,17 +40,6 @@ using namespace std;
 
 
 ItemManager::ItemManager() {
-	
-	items = new Item[MAX_ITEM_ID];
-	
-	for (int i=0; i<MAX_ITEM_ID; i++) {
-		items[i].bonus_stat = new string[ITEM_MAX_BONUSES];
-		items[i].bonus_val = new int[ITEM_MAX_BONUSES];
-		for (int j=0; j<ITEM_MAX_BONUSES; j++) {
-			items[i].bonus_val[j] = 0;
-		}
-	}
-
 	vendor_ratio = 4; // this means scrap/vendor pays 1/4th price to buy items from hero
 	loadAll();
 	loadSounds();
@@ -61,19 +50,18 @@ ItemManager::ItemManager() {
  * Load all items files in all mods
  */
 void ItemManager::loadAll() {
-
+	FlareAssert(mods && "No ModManager present!");
 	string test_path;
 
 	// load each items.txt file. Individual item IDs can be overwritten with mods.
-	for (unsigned int i = 0; i < mods->mod_list.size(); i++) {
-
-		test_path = PATH_DATA + "mods/" + mods->mod_list[i] + "/items/items.txt";
+	std::vector<std::string>::iterator end = mods->mod_list.end();
+	for (std::vector<std::string>::iterator it = mods->mod_list.begin(); it != end; ++it) {
+		test_path = PATH_DATA + "mods/" + *it + "/items/items.txt";
 
 		if (fileExists(test_path)) {
 			this->load(test_path);
 		}
 	}
-
 }
 
 /**
@@ -88,14 +76,10 @@ void ItemManager::load(const string& filename) {
 
 	int id = 0;
 	string s;
-	int bonus_counter = 0;
 
 	while (infile.next()) {
 		if (infile.key == "id") {
 			id = atoi(infile.val.c_str());
-			
-			// new item, reset bonus counter
-			bonus_counter = 0;
 		}
 		else if (infile.key == "name")
 			items[id].name = msg->get(infile.val);
@@ -156,11 +140,9 @@ void ItemManager::load(const string& filename) {
 			items[id].req_val = atoi(infile.nextValue().c_str());
 		}
 		else if (infile.key == "bonus") {
-			if (bonus_counter < ITEM_MAX_BONUSES) {
-				items[id].bonus_stat[bonus_counter] = infile.nextValue();
-				items[id].bonus_val[bonus_counter] = atoi(infile.nextValue().c_str());
-				bonus_counter++;
-			}
+			std::string stat = infile.nextValue();
+			int bonus = atoi(infile.nextValue().c_str());
+			items[id].bonus_stat.push_back(make_pair(stat, bonus));
 		}
 		else if (infile.key == "sfx") {
 			if (infile.val == "book")
@@ -216,43 +198,29 @@ void ItemManager::load(const string& filename) {
 }
 
 void ItemManager::loadSounds() {
-
-	sfx[SFX_BOOK] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_book.ogg").c_str());
-	sfx[SFX_CLOTH] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_cloth.ogg").c_str());
-	sfx[SFX_COINS] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_coins.ogg").c_str());
-	sfx[SFX_GEM] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_gem.ogg").c_str());
-	sfx[SFX_LEATHER] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_leather.ogg").c_str());
-	sfx[SFX_METAL] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_metal.ogg").c_str());
-	sfx[SFX_PAGE] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_page.ogg").c_str());
-	sfx[SFX_MAILLE] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_maille.ogg").c_str());
-	sfx[SFX_OBJECT] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_object.ogg").c_str());
-	sfx[SFX_HEAVY] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_heavy.ogg").c_str());
-	sfx[SFX_WOOD] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_wood.ogg").c_str());
-	sfx[SFX_POTION] = Mix_LoadWAV(mods->locate("soundfx/inventory/inventory_potion.ogg").c_str());
-
+	sfx[SFX_BOOK].reset_and_load("soundfx/inventory/inventory_book.ogg");
+	sfx[SFX_CLOTH].reset_and_load("soundfx/inventory/inventory_cloth.ogg");
+	sfx[SFX_COINS].reset_and_load("soundfx/inventory/inventory_coins.ogg");
+	sfx[SFX_GEM].reset_and_load("soundfx/inventory/inventory_gem.ogg");
+	sfx[SFX_LEATHER].reset_and_load("soundfx/inventory/inventory_leather.ogg");
+	sfx[SFX_METAL].reset_and_load("soundfx/inventory/inventory_metal.ogg");
+	sfx[SFX_PAGE].reset_and_load("soundfx/inventory/inventory_page.ogg");
+	sfx[SFX_MAILLE].reset_and_load("soundfx/inventory/inventory_maille.ogg");
+	sfx[SFX_OBJECT].reset_and_load("soundfx/inventory/inventory_object.ogg");
+	sfx[SFX_HEAVY].reset_and_load("soundfx/inventory/inventory_heavy.ogg");
+	sfx[SFX_WOOD].reset_and_load("soundfx/inventory/inventory_wood.ogg");
+	sfx[SFX_POTION].reset_and_load("soundfx/inventory/inventory_potion.ogg");
 }
 
 /**
  * Icon sets
  */
 void ItemManager::loadIcons() {
+	icons32.reset_and_load("images/icons/icons32.png");
+	icons64.reset_and_load("images/icons/icons64.png");
 	
-	icons32 = IMG_Load(mods->locate("images/icons/icons32.png").c_str());
-	icons64 = IMG_Load(mods->locate("images/icons/icons64.png").c_str());
-	
-	if(!icons32 || !icons64) {
-		fprintf(stderr, "Couldn't load icons: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = icons32;
-	icons32 = SDL_DisplayFormatAlpha(icons32);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = icons64;
-	icons64 = SDL_DisplayFormatAlpha(icons64);
-	SDL_FreeSurface(cleanup);
+	icons32.display_format_alpha(); 
+	icons64.display_format_alpha();
 }
 
 /**
@@ -269,13 +237,13 @@ void ItemManager::renderIcon(ItemStack stack, int x, int y, int size) {
 		columns = icons32->w / 32;
 		src.x = (items[stack.item].icon32 % columns) * size;
 		src.y = (items[stack.item].icon32 / columns) * size;
-		SDL_BlitSurface(icons32, &src, screen, &dest);
+		SDL_BlitSurface(icons32.get(), &src, screen, &dest);
 	}
 	else if (size == ICON_SIZE_64) {
 		columns = icons64->w / 64;
 		src.x = (items[stack.item].icon64 % columns) * size;
 		src.y = (items[stack.item].icon64 / columns) * size;
-		SDL_BlitSurface(icons64, &src, screen, &dest);
+		SDL_BlitSurface(icons64.get(), &src, screen, &dest);
 	}
 	
 	if( stack.quantity > 1 || items[stack.item].max_quantity > 1) {
@@ -291,12 +259,11 @@ void ItemManager::renderIcon(ItemStack stack, int x, int y, int size) {
 
 void ItemManager::playSound(int item) {
 	if (items[item].sfx != SFX_NONE)
-		if (sfx[items[item].sfx])
-			Mix_PlayChannel(-1, sfx[items[item].sfx], 0);
+		sfx[items[item].sfx].play_channel(-1, 0);
 }
 
 void ItemManager::playCoinsSound() {
-	Mix_PlayChannel(-1, sfx[SFX_COINS], 0);
+	sfx[SFX_COINS].play_channel(-1, 0);
 }
 
 TooltipData ItemManager::getShortTooltip(ItemStack stack) {
@@ -402,20 +369,19 @@ TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view
 	}
 
 	// bonuses
-	int bonus_counter = 0;
 	string modifier;
-	while (items[item].bonus_stat[bonus_counter] != "") {
-		if (items[item].bonus_val[bonus_counter] > 0) {
-			modifier = msg->get("Increases %s by %d", items[item].bonus_val[bonus_counter], msg->get(items[item].bonus_stat[bonus_counter]));
+	Item::BonusVector::iterator end = items[item].bonus_stat.end();
+	for (Item::BonusVector::iterator it = items[item].bonus_stat.begin();
+			it != end; ++it) {
+		if (it->second > 0) {
+			modifier = msg->get("Increases %s by %d", it->second, msg->get(it->first.c_str()));
 			tip.colors[tip.num_lines] = FONT_GREEN;
 		}
 		else {
-			modifier = msg->get("Decreases %s by %d", items[item].bonus_val[bonus_counter], msg->get(items[item].bonus_stat[bonus_counter]));
+			modifier = msg->get("Decreases %s by %d", it->second, msg->get(it->first.c_str()));
 			tip.colors[tip.num_lines] = FONT_RED;
 		}
 		tip.lines[tip.num_lines++] = modifier;
-		bonus_counter++;
-		if (bonus_counter == ITEM_MAX_BONUSES) break;
 	}
 	
 	// power
@@ -465,25 +431,6 @@ TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view
 
 	}
 	return tip;
-}
-
-ItemManager::~ItemManager() {
-
-	SDL_FreeSurface(icons32);
-	SDL_FreeSurface(icons64);
-
-	for (int i=0; i<12; i++) {
-		if (sfx[i])
-			Mix_FreeChunk(sfx[i]);
-	}
-	
-	for (int i=0; i<MAX_ITEM_ID; i++) {
-		delete[] items[i].bonus_stat;
-		delete[] items[i].bonus_val;		
-	}
-	
-	delete[] items;
-
 }
 
 /**
