@@ -247,7 +247,7 @@ void LootManager::renderTooltips(Point cam) {
 			dest.y -= tooltip_margin;
 
 			// create tooltip data if needed
-			if (loot[i].tip.tip_buffer) {
+			if (!loot[i].tip.tip_buffer) {
 
 				if (loot[i].stack.item > 0) {
 					items->getShortTooltip(loot[i].stack, loot[i].tip);
