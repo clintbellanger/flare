@@ -41,7 +41,7 @@ MapIso::MapIso(CampaignManager *_camp) {
 
 	camp = _camp;
 	
-	tip = new WidgetTooltip();
+	tip.reset(new WidgetTooltip());
 
 	// cam(x,y) is where on the map the camera is pointing
 	// units found in Settings.h (UNITS_PER_TILE)
@@ -57,10 +57,6 @@ MapIso::MapIso(CampaignManager *_camp) {
 	clearEnemy(new_enemy);
 	clearNPC(new_npc);
 	
-	sfx = NULL;
-	sfx_filename = "";
-	music = NULL;
-	log_msg = "";
 	shaky_cam_ticks = 0;
 }
 
@@ -131,11 +127,10 @@ void MapIso::clearGroup(Map_Group &g) {
 void MapIso::playSFX(string filename) {
 	// only load from file if the requested soundfx isn't already loaded
 	if (filename != sfx_filename) {
-		if (sfx) Mix_FreeChunk(sfx);
-		sfx = Mix_LoadWAV((mods->locate(filename)).c_str());
+		sfx.reset_and_load(filename);
 		sfx_filename = filename;
 	}
-	if (sfx) Mix_PlayChannel(-1, sfx, 0);	
+	sfx.play_channel(-1, 0);	
 }
 
 void MapIso::push_enemy_group(Map_Group g) {
@@ -480,21 +475,10 @@ int MapIso::load(string filename) {
 }
 
 void MapIso::loadMusic() {
-
-	if (music != NULL) {
-		Mix_HaltMusic();
-		Mix_FreeMusic(music);
-		music = NULL;
-	}
-	music = Mix_LoadMUS((mods->locate("music/" + this->music_filename)).c_str());
-	if (!music) {
-	  printf("Mix_LoadMUS: %s\n", Mix_GetError());
-	  SDL_Quit();
-	}
+	music.reset_and_load("music/" + this->music_filename);
 
 	Mix_VolumeMusic(MUSIC_VOLUME);
-	Mix_PlayMusic(music, -1);
-	
+	music.play(-1);
 }
 
 void MapIso::logic() {
@@ -837,13 +821,6 @@ void MapIso::executeEvent(int eid) {
 }
 
 MapIso::~MapIso() {
-	if (music != NULL) {
-		Mix_HaltMusic();
-		Mix_FreeMusic(music);
-	}
-	if (sfx) Mix_FreeChunk(sfx);
-	
 	tip->clear(tip_buf);
-	delete tip;
 }
 

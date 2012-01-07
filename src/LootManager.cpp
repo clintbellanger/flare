@@ -247,10 +247,10 @@ void LootManager::renderTooltips(Point cam) {
 			dest.y -= tooltip_margin;
 
 			// create tooltip data if needed
-			if (loot[i].tip.tip_buffer == NULL) {
+			if (loot[i].tip.tip_buffer) {
 
 				if (loot[i].stack.item > 0) {
-					loot[i].tip = items->getShortTooltip(loot[i].stack);
+					items->getShortTooltip(loot[i].stack, loot[i].tip);
 				}
 				else {
 					loot[i].tip.num_lines = 1;
@@ -276,20 +276,21 @@ void LootManager::checkEnemiesForLoot() {
 	ItemStack istack;
 	istack.quantity = 1;
 	
-	for (int i=0; i<enemies->enemy_count; i++) {
-		if (enemies->enemies[i]->loot_drop) {
+	PtrVector<Enemy>::iterator end = enemies->enemies.end();
+	for(PtrVector<Enemy>::iterator it = enemies->enemies.begin(); it != end; ++it) {
+		if (it->loot_drop) {
 			
-			if (enemies->enemies[i]->stats.quest_loot_id != 0) {				
+			if (it->stats.quest_loot_id != 0) {				
 				// quest loot
-				istack.item = enemies->enemies[i]->stats.quest_loot_id;
-				addLoot(istack, enemies->enemies[i]->stats.pos);
+				istack.item = it->stats.quest_loot_id;
+				addLoot(istack, it->stats.pos);
 			}
 			else {
 				// random loot
-				determineLoot(enemies->enemies[i]->stats.level, enemies->enemies[i]->stats.pos);
+				determineLoot(it->stats.level, it->stats.pos);
 			}
 			
-			enemies->enemies[i]->loot_drop = false;
+			it->loot_drop = false;
 		}
 	}
 }
@@ -429,7 +430,7 @@ void LootManager::removeLoot(int index) {
 	// the last tooltip buffer pointer has been copied up one index.
 	// NULL the last pointer without deallocating. Otherwise the same
 	// address might be deallocated twice, causing a memory access error
-	loot[loot_count-1].tip.tip_buffer = NULL;
+	loot[loot_count-1].tip.tip_buffer.release();
 	
 	// TODO: This requires too much knowledge of the underworkings of
 	// TooltipData. Is there a way to hide this complexity, be memory safe,

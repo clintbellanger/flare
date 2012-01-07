@@ -51,14 +51,13 @@ int MenuItemStorage::slotOver(Point mouse) {
 	}
 }
 
-TooltipData MenuItemStorage::checkTooltip(Point mouse, StatBlock *stats, bool vendor_view) {
-	TooltipData tip;
+void MenuItemStorage::checkTooltip(Point mouse, StatBlock *stats, bool vendor_view, TooltipData& tip) {
+	tip.clear();
 	int slot = slotOver( mouse);
 
 	if (slot > -1 && storage[slot].item > 0) {
-		return items->getTooltip( storage[slot].item, stats, vendor_view);
+		items->getTooltip( storage[slot].item, stats, vendor_view, tip);
 	}
-	return tip;
 }
 
 ItemStack MenuItemStorage::click(InputState * input) {

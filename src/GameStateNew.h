@@ -26,14 +26,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define GAMESTATENEW_H
 
 #include "GameState.h"
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "StatBlock.h"
 
 #include <SDL.h>
 
 #include <string>
 #include <sstream>
-
-class SDL_Surface;
 
 class ItemManager;
 class MenuConfirm;
@@ -57,19 +57,18 @@ private:
 	int option_count;
 	int current_option;
 
-	SDL_Surface *portrait_image;
-	SDL_Surface *portrait_border;
-	WidgetButton *button_exit;
-	WidgetButton *button_create;
-	WidgetButton *button_next;
-	WidgetButton *button_prev;
-	WidgetLabel *label_portrait;
-	WidgetLabel *label_name;
-	WidgetInput *input_name;
+	SmartSurface portrait_image;
+	SmartSurface portrait_border;
+	ScopedPtr<WidgetButton> button_exit;
+	ScopedPtr<WidgetButton> button_create;
+	ScopedPtr<WidgetButton> button_next;
+	ScopedPtr<WidgetButton> button_prev;
+	ScopedPtr<WidgetLabel> label_portrait;
+	ScopedPtr<WidgetLabel> label_name;
+	ScopedPtr<WidgetInput> input_name;
 
 public:
 	GameStateNew();
-	~GameStateNew();
 	void logic();
 	void render();
 	int game_slot;

@@ -22,38 +22,53 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef WIDGET_TOOLTIP_H
 #define WIDGET_TOOLTIP_H
 
+#include "Array.h"
 #include "FontEngine.h"
-#include "Utils.h"
 #include "Settings.h"
+#include "SmartSurface.h"
+#include "Utils.h"
 
 #include <SDL.h>
-
-class SDL_Surface;
 
 const int STYLE_FLOAT = 0;
 const int STYLE_TOPLABEL = 1;
 
 const int TOOLTIP_MAX_LINES = 16;
 
+// Warning!  This class steals ownership on copy!
+// There's no safe way to copy things over from a const reference without a
+// const_cast, so I'm going to leave it impossible to return instances of this
+// by value.
 struct TooltipData {
-	std::string lines[TOOLTIP_MAX_LINES];
-	int colors[TOOLTIP_MAX_LINES];
 	int num_lines;
-	SDL_Surface *tip_buffer;
+	Array<std::string, TOOLTIP_MAX_LINES> lines;
+	Array<int, TOOLTIP_MAX_LINES> colors;
+	SmartSurface tip_buffer;
 	
-	TooltipData() {
+	TooltipData() : num_lines(0), colors(0) {
+	}
+
+	void clear() {
 		num_lines = 0;
-		tip_buffer = NULL;
-		for (int i=0; i<TOOLTIP_MAX_LINES; i++) {
-			lines[i] = "";
-			colors[i] = FONT_WHITE;
-		}
+		lines.reset();
+		colors.reset();
+		tip_buffer.reset();
 	}
-	
-	~TooltipData() {
-		SDL_FreeSurface(tip_buffer);
+
+	TooltipData(TooltipData& tip) : num_lines(tip.num_lines),
+		lines(tip.lines), colors(tip.colors) {
+		tip_buffer.steal(tip.tip_buffer);
 	}
-	
+
+	TooltipData& operator=(TooltipData& tip) {
+		if (this == &tip)
+			return *this;
+		num_lines = tip.num_lines;
+		lines = tip.lines;
+		colors = tip.colors;
+		tip_buffer.steal(tip.tip_buffer);
+		return *this;
+	}
 };
 
 class WidgetTooltip {

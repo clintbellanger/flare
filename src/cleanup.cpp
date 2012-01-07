@@ -15,34 +15,30 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
-/**
- * MenuHPMP
- *
- * Handles the display of the HP and MP bars at the top/left of the screen
- */
+#include "cleanup.h"
+#include "FontEngine.h"
+#include "GameSwitcher.h"
+#include "InputState.h"
+#include "MessageEngine.h"
+#include "ModManager.h"
+#include "SharedResources.h"
 
-#ifndef MENU_HP_MP_H
-#define MENU_HP_MP_H
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
 
-#include "ScopedPtr.h"
-#include "SmartSurface.h"
+using namespace std;
 
-class StatBlock;
-class WidgetLabel;
-class Point;
-
-class MenuHPMP {
-private:
-	SmartSurface background;
-	SmartSurface bar_hp;
-	SmartSurface bar_mp;
-	ScopedPtr<WidgetLabel> hphover;
-	ScopedPtr<WidgetLabel> mphover;
+void cleanup() {
+	delete gswitch;
 	
-public:
-	MenuHPMP();
-	void loadGraphics();
-	void render(StatBlock *stats, Point mouse);
-};
+	delete font;
+	delete inp;
+	delete msg;
+	delete mods;
+	SDL_FreeSurface(screen);
+	
+	Mix_CloseAudio();
+	SDL_Quit();
+}
 
-#endif

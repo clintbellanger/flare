@@ -23,6 +23,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_EXIT_H
 
 #include "Menu.h"
+#include "ScopedPtr.h"
 #include "WidgetLabel.h"
 
 class WidgetButton;
@@ -31,15 +32,14 @@ class MenuExit : public Menu {
 protected:
 	void loadGraphics();
 
-	WidgetButton *buttonExit;
-	WidgetButton *buttonClose;
+	ScopedPtr<WidgetButton> buttonExit;
+	ScopedPtr<WidgetButton> buttonClose;
 	WidgetLabel label;
 
 	bool exitClicked;
 
 public:
 	MenuExit();
-	~MenuExit();
 
 	void logic();
 	virtual void render();

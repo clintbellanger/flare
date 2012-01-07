@@ -152,8 +152,11 @@ public:
 	void renderIcon(ItemStack stack, int x, int y, int size);
 	void playSound(int item);
 	void playCoinsSound();	
-	TooltipData getTooltip(int item, StatBlock *stats, bool vendor_view);
-	TooltipData getShortTooltip(ItemStack item);
+
+	// As TooltipData is impossible to return by value, these two return
+	// through a reference parameter.
+	void getTooltip(int item, StatBlock *stats, bool vendor_view, TooltipData& tip);
+	void getShortTooltip(ItemStack item, TooltipData& tip);
 
 	Item *items;
 	int vendor_ratio;

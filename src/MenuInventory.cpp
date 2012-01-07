@@ -71,7 +71,7 @@ MenuInventory::MenuInventory(ItemManager *_items, StatBlock *_stats, PowerManage
 	changed_artifact = true;
 	log_msg = "";
 	
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton = new WidgetButton("images/menus/buttons/button_x.png");
 	closeButton->pos.x = VIEW_W - 26;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 }
@@ -158,21 +158,19 @@ int MenuInventory::areaOver(Point mouse) {
  *
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
-TooltipData MenuInventory::checkTooltip(Point mouse) {
+void MenuInventory::checkTooltip(Point mouse, TooltipData& tip) {
 	int area;
-	TooltipData tip;
+	tip.clear();
 	
 	area = areaOver( mouse);
 	if( area > -1) {
-		tip = inventory[area].checkTooltip( mouse, stats, false);
+		inventory[area].checkTooltip(mouse, stats, false, tip);
 	}
 	else if (mouse.x >= window_area.x + 224 && mouse.y >= window_area.y+96 && mouse.x < window_area.x+288 && mouse.y < window_area.y+128) {
 		// TODO: I think we should add a little "?" icon in a corner, and show this title on it.
 		tip.lines[tip.num_lines++] = msg->get("Use SHIFT to move only one item.");
 		tip.lines[tip.num_lines++] = msg->get("CTRL-click a carried item to sell it.");
 	}
-	
-	return tip;
 }
 
 /**

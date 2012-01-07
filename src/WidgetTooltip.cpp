@@ -83,7 +83,7 @@ Point WidgetTooltip::calcPosition(int style, Point pos, Point size) {
  */
 void WidgetTooltip::render(TooltipData &tip, Point pos, int style) {
 
-	if (tip.tip_buffer == NULL) {
+	if (tip.tip_buffer) {
 		createBuffer(tip);
 	}
 
@@ -97,7 +97,7 @@ void WidgetTooltip::render(TooltipData &tip, Point pos, int style) {
 	dest.x = tip_pos.x;
 	dest.y = tip_pos.y;
 	
-	SDL_BlitSurface(tip.tip_buffer, NULL, screen, &dest);
+	SDL_BlitSurface(tip.tip_buffer.get(), NULL, screen, &dest);
 }
 
 /**
@@ -106,13 +106,7 @@ void WidgetTooltip::render(TooltipData &tip, Point pos, int style) {
  * Note most tooltip usage will assume WHITE default color, so reset it
  */
 void WidgetTooltip::clear(TooltipData &tip) {
-	tip.num_lines = 0;
-	for (int i=0; i<TOOLTIP_MAX_LINES; i++) {
-		tip.lines[i] = "";
-		tip.colors[i] = FONT_WHITE;
-	}
-	SDL_FreeSurface(tip.tip_buffer);
-	tip.tip_buffer = NULL;
+	tip.clear();
 }
 
 /**
@@ -131,20 +125,19 @@ void WidgetTooltip::createBuffer(TooltipData &tip) {
 	// calculate the full size to display a multi-line tooltip
 	Point size = font->calc_size(fulltext, width);
 	
-	// WARNING: dynamic memory allocation. Be careful of memory leaks.
-	tip.tip_buffer = createSurface(size.x + margin+margin, size.y + margin+margin);
+	tip.tip_buffer.reset(createSurface(size.x + margin+margin, size.y + margin+margin));
 	
 	// Currently tooltips are always opaque
-	SDL_SetAlpha(tip.tip_buffer, 0, 0);
+	tip.tip_buffer.set_alpha(0, 0);
 	
 	// style the tooltip background
 	// currently this is plain black
-	SDL_FillRect(tip.tip_buffer, NULL, 0);
+	tip.tip_buffer.fill_rect(NULL, 0);
 	
 	int cursor_y = margin;
 	
 	for (int i=0; i<tip.num_lines; i++) {
-		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer, size.x, tip.colors[i]);
+		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer.get(), size.x, tip.colors[i]);
 		cursor_y = font->cursor_y;
 	}
 

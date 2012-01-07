@@ -44,7 +44,7 @@ MenuCharacter::MenuCharacter(StatBlock *_stats) {
 	int offset_y = (VIEW_H - 416)/2;
 	
 	// button setup
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton = new WidgetButton("images/menus/buttons/button_x.png");
 	closeButton->pos.x = 294;
 	closeButton->pos.y = offset_y + 2;
 
@@ -535,21 +535,22 @@ void MenuCharacter::displayProficiencies(int value, int y) {
 /**
  * Display various mouseovers tooltips depending on cursor location
  */
-TooltipData MenuCharacter::checkTooltip() {
-
+void MenuCharacter::checkTooltip(TooltipData& tip) {
 	for (int i=0; i<CSTAT_COUNT; i++) {
-		if (isWithin(cstat[i].hover, inp->mouse) && cstat[i].tip.num_lines > 0)
-			return cstat[i].tip;
+		if (isWithin(cstat[i].hover, inp->mouse) && cstat[i].tip.num_lines > 0) {
+			tip = cstat[i].tip; // FIXME:  This kills cstat[i].tip!
+			return;
+		}
 	}
 
 	for (int i=0; i<CPROF_COUNT; i++) {
-		if (isWithin(cprof[i].hover, inp->mouse) && cprof[i].tip.num_lines > 0)
-			return cprof[i].tip;
+		if (isWithin(cprof[i].hover, inp->mouse) && cprof[i].tip.num_lines > 0) {
+			tip = cprof[i].tip; // FIXME:  This kills cprof[i].tip!
+			return;
+		}
 	}
-	
-	TooltipData tip;
-	tip.num_lines = 0;
-	return tip;
+
+	tip.clear();
 }
 
 /**

@@ -27,8 +27,6 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "SharedResources.h"
 #include "UtilsParsing.h"
 
-#include <SDL_image.h>
-
 #include <cstdio>
 
 using namespace std;
@@ -47,14 +45,10 @@ TileSet::TileSet() {
 
 void TileSet::loadGraphics(const std::string& filename) {
 	sprites.reset_and_load("images/tilesets/" + filename);
-	if (!sprites) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
 	
 	// only set a color key if the tile set doesn't have an alpha channel
 	if (!alpha_background) {
-		SDL_SetColorKey( sprites.get(), SDL_SRCCOLORKEY, SDL_MapRGB(sprites->format, 255, 0, 255) ); 
+		sprites.set_color_key(SDL_SRCCOLORKEY, sprites.map_rgb(255, 0, 255)); 
 	}
 	
 	sprites.display_format_alpha();

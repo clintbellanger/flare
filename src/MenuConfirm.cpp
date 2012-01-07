@@ -38,13 +38,13 @@ MenuConfirm::MenuConfirm(const string& _buttonMsg, const string& _boxMsg) : Menu
 	window_area.x = (VIEW_W/2) - (window_area.w/2);
 	window_area.y = (VIEW_H - window_area.h)/2;
 	
-	buttonConfirm = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
+	buttonConfirm.reset(new WidgetButton("images/menus/buttons/button_default.png"));
 	buttonConfirm->label = _buttonMsg;
 	buttonConfirm->pos.x = VIEW_W_HALF - buttonConfirm->pos.w/2;
 	buttonConfirm->pos.y = VIEW_H/2;
 	buttonConfirm->refresh();
 	
-	buttonClose = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	buttonClose.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	buttonClose->pos.x = window_area.x + window_area.w;
 	buttonClose->pos.y = window_area.y;
 
@@ -54,16 +54,8 @@ MenuConfirm::MenuConfirm(const string& _buttonMsg, const string& _boxMsg) : Menu
 }
 
 void MenuConfirm::loadGraphics() {
-	background = IMG_Load(mods->locate("images/menus/confirm_bg.png").c_str());
-	if(!background) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
+	background.reset_and_load("images/menus/confirm_bg.png");
+	background.display_format_alpha();
 }
 
 void MenuConfirm::logic() {
@@ -83,17 +75,11 @@ void MenuConfirm::render() {
 	src.y = 0;
 	src.w = window_area.w;
 	src.h = window_area.h;
-	SDL_BlitSurface(background, &src, screen, &window_area);
+	SDL_BlitSurface(background.get(), &src, screen, &window_area);
 
 	label.render();
 
 	buttonConfirm->render();
 	buttonClose->render();
-}
-
-MenuConfirm::~MenuConfirm() {
-	delete buttonConfirm;
-	delete buttonClose;
-	SDL_FreeSurface(background);
 }
 

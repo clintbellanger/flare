@@ -31,9 +31,6 @@ using namespace std;
 WidgetButton::WidgetButton(const std::string& _fileName)
 	: fileName(_fileName) {
 
-	buttons = NULL;
-	click = NULL;
-	label = "";
 	pos.x = pos.y = pos.w = pos.y = 0;
 	enabled = true;
 	pressed = false;
@@ -46,19 +43,9 @@ WidgetButton::WidgetButton(const std::string& _fileName)
 }
 
 void WidgetButton::loadArt() {
-
 	// load button images
-	buttons = IMG_Load(fileName.c_str());
-
-	if(!buttons) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = buttons;
-	buttons = SDL_DisplayFormatAlpha(buttons);
-	SDL_FreeSurface(cleanup);
+	buttons.reset_and_load(fileName);
+	buttons.display_format_alpha();
 }
 
 /**
@@ -116,7 +103,7 @@ void WidgetButton::render() {
 	else
 		src.y = BUTTON_GFX_NORMAL * pos.h;
 	
-	SDL_BlitSurface(buttons, &src, screen, &pos);
+	SDL_BlitSurface(buttons.get(), &src, screen, &pos);
 
 	wlabel.render();
 }
@@ -136,9 +123,5 @@ void WidgetButton::refresh() {
 
 		wlabel.set(font_x, font_y, JUSTIFY_CENTER, VALIGN_CENTER, label, font_color);
 	}
-}
-
-WidgetButton::~WidgetButton() {
-	SDL_FreeSurface(buttons);
 }
 

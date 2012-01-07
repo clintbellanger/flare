@@ -51,7 +51,7 @@ MenuPowers::MenuPowers(StatBlock *_stats, PowerManager *_powers) {
 		slots[i].y = offset_y + 80 + (i / 4) * 64;
 	}
 
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = VIEW_W - 26;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 
@@ -74,26 +74,13 @@ MenuPowers::MenuPowers(StatBlock *_stats, PowerManager *_powers) {
 
 void MenuPowers::loadGraphics() {
 
-	background = IMG_Load(mods->locate("images/menus/powers.png").c_str());
-	powers_step = IMG_Load(mods->locate("images/menus/powers_step.png").c_str());
-	powers_unlock = IMG_Load(mods->locate("images/menus/powers_unlock.png").c_str());
-	if(!background || !powers_step || !powers_unlock) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
+	background.reset_and_load("images/menus/powers.png");
+	powers_step.reset_and_load("images/menus/powers_step.png");
+	powers_unlock.reset_and_load("images/menus/powers_unlock.png");
 	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
-	cleanup = powers_step;
-	powers_step = SDL_DisplayFormatAlpha(powers_step);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = powers_unlock;
-	powers_unlock = SDL_DisplayFormatAlpha(powers_unlock);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha();
+	powers_step.display_format_alpha();
+	powers_unlock.display_format_alpha(); 
 }
 
 /**
@@ -158,7 +145,7 @@ void MenuPowers::render() {
 	dest.y = offset_y;
 	src.w = dest.w = 320;
 	src.h = dest.h = 416;
-	SDL_BlitSurface(background, &src, screen, &dest);
+	SDL_BlitSurface(background.get(), &src, screen, &dest);
 	
 	// close button
 	closeButton->render();
@@ -229,11 +216,11 @@ void MenuPowers::displayBuild(int value, int x) {
 	for (int i=3; i<= display_value; i++) {
 		if (i%2 == 0) { // even stat
 			dest.y = i * 32 + offset_y + 48;
-			SDL_BlitSurface(powers_step, &src_step, screen, &dest);
+			SDL_BlitSurface(powers_step.get(), &src_step, screen, &dest);
 		}
 		else { // odd stat
 			dest.y = i * 32 + offset_y + 35;
-			SDL_BlitSurface(powers_unlock, &src_unlock, screen, &dest);
+			SDL_BlitSurface(powers_unlock.get(), &src_unlock, screen, &dest);
 		
 		}
 	}
@@ -242,9 +229,8 @@ void MenuPowers::displayBuild(int value, int x) {
 /**
  * Show mouseover descriptions of disciplines and powers
  */
-TooltipData MenuPowers::checkTooltip(Point mouse) {
-
-	TooltipData tip;
+void MenuPowers::checkTooltip(Point mouse, TooltipData& tip) {
+	tip.clear();
 
 	int offset_x = (VIEW_W - 320);
 	int offset_y = (VIEW_H - 416)/2;
@@ -252,19 +238,19 @@ TooltipData MenuPowers::checkTooltip(Point mouse) {
 	if (mouse.y >= offset_y+32 && mouse.y <= offset_y+80) {
 		if (mouse.x >= offset_x+48 && mouse.x <= offset_x+80) {
 			tip.lines[tip.num_lines++] = msg->get("Physical + Offense grants melee and ranged attacks");
-			return tip;
+			return;
 		}
 		if (mouse.x >= offset_x+112 && mouse.x <= offset_x+144) {
 			tip.lines[tip.num_lines++] = msg->get("Physical + Defense grants melee protection");
-			return tip;
+			return;
 		}
 		if (mouse.x >= offset_x+176 && mouse.x <= offset_x+208) {
 			tip.lines[tip.num_lines++] = msg->get("Mental + Offense grants elemental spell attacks");
-			return tip;
+			return;
 		}
 		if (mouse.x >= offset_x+240 && mouse.x <= offset_x+272) {
 			tip.lines[tip.num_lines++] = msg->get("Mental + Defense grants healing and magical protection");
-			return tip;
+			return;
 		}
 	}
 	else {
@@ -305,17 +291,9 @@ TooltipData MenuPowers::checkTooltip(Point mouse) {
 					tip.lines[tip.num_lines++] = msg->get("Cooldown: %d seconds", powers->powers[i].cooldown / 1000.0);
 				}
 
-				return tip;
+				return;
 			}
 		}
 	}
-	
-	return tip;
 }
 
-MenuPowers::~MenuPowers() {
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(powers_step);
-	SDL_FreeSurface(powers_unlock);
-	delete closeButton;
-}

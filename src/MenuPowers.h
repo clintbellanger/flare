@@ -22,13 +22,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_POWERS_H
 #define MENU_POWERS_H
 
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "WidgetLabel.h"
-#include "SharedResources.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
 
-class SDL_Surface;
 class Point;
 class PowerManager;
 class StatBlock;
@@ -40,10 +40,10 @@ private:
 	StatBlock *stats;
 	PowerManager *powers;
 
-	SDL_Surface *background;
-	SDL_Surface *powers_step;
-	SDL_Surface *powers_unlock;
-	WidgetButton *closeButton;
+	SmartSurface background;
+	SmartSurface powers_step;
+	SmartSurface powers_unlock;
+	ScopedPtr<WidgetButton> closeButton;
 	
 	WidgetLabel label_powers;
 	WidgetLabel label_p1;
@@ -64,10 +64,9 @@ private:
 
 public:
 	MenuPowers(StatBlock *_stats, PowerManager *_powers);
-	~MenuPowers();
 	void logic();
 	void render();
-	TooltipData checkTooltip(Point mouse);
+	void checkTooltip(Point mouse, TooltipData& tip);
 	bool requirementsMet(int power_index);
 	int click(Point mouse);
 	

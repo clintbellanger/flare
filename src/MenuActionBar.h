@@ -24,11 +24,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_ACTION_BAR_H
 #define MENU_ACTION_BAR_H
 
+#include "SmartSurface.h"
 #include "InputState.h"
 
 #include <SDL.h>
-
-class SDL_Surface;
 
 class PowerManager;
 class StatBlock;
@@ -44,11 +43,11 @@ private:
 	void renderCooldowns();
 	void renderItemCounts();
 
-	SDL_Surface *background;
-	SDL_Surface *emptyslot;
+	SmartSurface background;
+	SmartSurface emptyslot;
 	SDL_Surface *icons;
-	SDL_Surface *disabled;
-    SDL_Surface *attention;
+	SmartSurface disabled;
+    SmartSurface attention;
 	
 	StatBlock *hero;
 	PowerManager *powers;
@@ -56,12 +55,11 @@ private:
 	SDL_Rect label_src;
 	
 	// for now the key mappings are static.  Just use an image for the labels
-	SDL_Surface *labels;
+	SmartSurface labels;
 	
 public:
 
 	MenuActionBar(PowerManager *_powers, StatBlock *hero, SDL_Surface *icons);
-	~MenuActionBar();
 	void loadGraphics();
 	void renderIcon(int icon_id, int x, int y);
 	void renderAttention(int menu_id);
@@ -75,7 +73,7 @@ public:
 	void set(int power_id[12]);
 	void clear();
 
-	TooltipData checkTooltip(Point mouse);
+	void checkTooltip(Point mouse, TooltipData& tip);
 	
 	int hotkeys[12]; // refer to power_index in PowerManager
 	SDL_Rect slots[12]; // the location of hotkey slots

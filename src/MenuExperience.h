@@ -24,21 +24,19 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_EXPERIENCE_H
 #define MENU_EXPERIENCE_H
 
+#include "SmartSurface.h"
 #include "Utils.h"
 
 #include <SDL.h>
-
-class SDL_Surface;
 
 class StatBlock;
 
 class MenuExperience {
 private:
-	SDL_Surface *background;
-	SDL_Surface *bar;
+	SmartSurface background;
+	SmartSurface bar;
 public:
 	MenuExperience();
-	~MenuExperience();
 	void loadGraphics();
 	void render(StatBlock *stats, Point mouse);
 	

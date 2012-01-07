@@ -15,4 +15,8 @@ You should have received a copy of the GNU General Public License along with
 FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
+class GameSwitcher;
+extern GameSwitcher* gswitch;
+
 void cleanup();
+

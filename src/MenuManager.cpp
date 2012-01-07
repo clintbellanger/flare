@@ -36,6 +36,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "ModManager.h"
 #include "PowerManager.h"
 #include "SharedResources.h"
+#include "WidgetButton.h"
 
 MenuManager::MenuManager(PowerManager *_powers, StatBlock *_stats, CampaignManager *_camp) {
 	powers = _powers;
@@ -516,22 +517,22 @@ void MenuManager::render() {
 	// Find tooltips depending on mouse position
 	if (inp->mouse.x < 320 && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (chr->visible) {
-			tip_new = chr->checkTooltip();
+			chr->checkTooltip(tip_new);
 		}
 		else if (vendor->visible) {
-			tip_new = vendor->checkTooltip(inp->mouse);
+			vendor->checkTooltip(inp->mouse, tip_new);
 		}
 	}
 	else if (inp->mouse.x >= offset_x && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (pow->visible) {
-			tip_new = pow->checkTooltip(inp->mouse);
+			pow->checkTooltip(inp->mouse, tip_new);
 		}
 		else if (inv->visible && !dragging) {
-			tip_new = inv->checkTooltip(inp->mouse);
+			inv->checkTooltip(inp->mouse, tip_new);
 		}
 	}
 	else if (inp->mouse.y >= VIEW_H-32) {
-		tip_new = act->checkTooltip(inp->mouse);
+		 act->checkTooltip(inp->mouse, tip_new);
 	}
 
 	if (tip_new.num_lines > 0) {

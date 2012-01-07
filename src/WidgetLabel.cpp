@@ -31,8 +31,6 @@ using namespace std;
 
 WidgetLabel::WidgetLabel() {
 	
-	text_buffer = NULL;
-	text = "";
 	color = FONT_WHITE;
 	justify = JUSTIFY_LEFT;
 	valign = VALIGN_TOP;
@@ -53,8 +51,8 @@ void WidgetLabel::render() {
 	dest.w = bounds.w;
 	dest.h = bounds.h;
 
-	if (text_buffer != NULL) {
-		SDL_BlitSurface(text_buffer, NULL, screen, &dest);		
+	if (text_buffer) {
+		SDL_BlitSurface(text_buffer.get(), NULL, screen, &dest);		
 	}
 }
 
@@ -143,13 +141,8 @@ void WidgetLabel::set(const string& _text) {
  */
 void WidgetLabel::refresh() {
 
-	SDL_FreeSurface(text_buffer);
-	text_buffer = createSurface(bounds.w, bounds.h);
-	font->renderShadowed(text, 0, 0, JUSTIFY_LEFT, text_buffer, color);
+	text_buffer.reset(createSurface(bounds.w, bounds.h));
+	font->renderShadowed(text, 0, 0, JUSTIFY_LEFT, text_buffer.get(), color);
 	
 }
 
-
-WidgetLabel::~WidgetLabel() {
-	SDL_FreeSurface(text_buffer);
-}

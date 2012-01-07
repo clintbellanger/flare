@@ -34,8 +34,8 @@ GameStateTitle::GameStateTitle() : GameState() {
 	loadGraphics();
 	
 	// set up buttons
-	button_play = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
-	button_exit = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
+	button_play = new WidgetButton("images/menus/buttons/button_default.png");
+	button_exit = new WidgetButton("images/menus/buttons/button_default.png");
 	
 	button_play->label = msg->get("Play Game");
 	button_play->pos.x = VIEW_W_HALF - button_play->pos.w/2;

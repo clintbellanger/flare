@@ -24,14 +24,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_H
 #define MENU_H
 
-#include <SDL.h>
+#include "SmartSurface.h"
 
-class SDL_Surface;
+#include <SDL.h>
 
 class Menu {
 protected:
 
-	SDL_Surface *background;
+	SmartSurface background;
 
 public:
 	Menu();

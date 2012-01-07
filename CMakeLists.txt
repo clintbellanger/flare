@@ -62,14 +62,15 @@ EndIf (NOT SDLTTF_FOUND)
 Set (FLARE_SOURCES_EXCEPT_MAIN
 
 	./src/Assert.cpp
-	./src/Entity.cpp
 	./src/Animation.cpp
 	./src/AStarNode.cpp
 	./src/Avatar.cpp
 	./src/CampaignManager.cpp
+	./src/cleanup.cpp
 	./src/Enemy.cpp
 	./src/EnemyGroupManager.cpp
 	./src/EnemyManager.cpp
+	./src/Entity.cpp
 	./src/FileParser.cpp
 	./src/FontEngine.cpp
 	./src/GameState.cpp
@@ -114,6 +115,7 @@ Set (FLARE_SOURCES_EXCEPT_MAIN
 	./src/Settings.cpp
 	./src/SharedResources.cpp
 	./src/SmartChunk.cpp
+	./src/SmartMusic.cpp
 	./src/SmartSurface.cpp
 	./src/StatBlock.cpp
 	./src/TileSet.cpp
@@ -133,9 +135,10 @@ Set (FLARE_SOURCES
 
 Set (FLARE_TEST_SOURCES
 	${FLARE_SOURCES_EXCEPT_MAIN}
-	./src/tests/UtilsParsingTests.cpp
-	./src/tests/ScopedPtrTests.cpp
+	./src/tests/PtrVectorTests.cpp
 	./src/tests/RunAll.cpp
+	./src/tests/ScopedPtrTests.cpp
+	./src/tests/UtilsParsingTests.cpp
 )
 
 # Add icon and file info to executable for Windows systems

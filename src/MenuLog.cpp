@@ -38,9 +38,6 @@ MenuLog::MenuLog() {
 	
 	for (int i=0; i<LOG_TYPE_COUNT; i++) {
 		log_count[i] = 0;
-		for (int j=0; j<MAX_LOG_MESSAGES; j++) {
-			msg_buffer[i][j] = NULL;
-		}
 	}
 	active_log = 0;
 
@@ -81,7 +78,7 @@ MenuLog::MenuLog() {
 	
 	loadGraphics();
 
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = 294;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 	
@@ -89,28 +86,13 @@ MenuLog::MenuLog() {
 
 void MenuLog::loadGraphics() {
 
-	background = IMG_Load(mods->locate("images/menus/log.png").c_str());
-	tab_active = IMG_Load(mods->locate("images/menus/tab_active.png").c_str());
-	tab_inactive = IMG_Load(mods->locate("images/menus/tab_inactive.png").c_str());
+	background.reset_and_load("images/menus/log.png");
+	tab_active.reset_and_load("images/menus/tab_active.png");
+	tab_inactive.reset_and_load("images/menus/tab_inactive.png");
 	
-	
-	if(!background || !tab_active || !tab_inactive) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-
-	cleanup = tab_active;
-	tab_active = SDL_DisplayFormatAlpha(tab_active);
-	SDL_FreeSurface(cleanup);	
-
-	cleanup = tab_inactive;
-	tab_inactive = SDL_DisplayFormatAlpha(tab_inactive);
-	SDL_FreeSurface(cleanup);	
+	background.display_format_alpha();
+	tab_active.display_format_alpha(); 
+	tab_inactive.display_format_alpha(); 
 }
 
 /**
@@ -138,7 +120,7 @@ void MenuLog::render() {
 	src.y = 0;
 	src.w = menu_area.w;
 	src.h = menu_area.h;
-	SDL_BlitSurface(background, &src, screen, &menu_area);
+	SDL_BlitSurface(background.get(), &src, screen, &menu_area);
 	
 	// close button
 	closeButton->render();
@@ -172,7 +154,7 @@ void MenuLog::render() {
 	
 	for (int i=log_count[active_log]-display_number; i<log_count[active_log]; i++) {
 
-		SDL_BlitSurface(msg_buffer[active_log][i], NULL, screen, &dest);
+		SDL_BlitSurface(msg_buffer[active_log][i].get(), NULL, screen, &dest);
 		dest.y += msg_buffer[active_log][i]->h + paragraph_spacing;
 	}
 }
@@ -195,9 +177,9 @@ void MenuLog::renderTab(int log_type) {
 	src.h = tab_rect[i].h;
 	
 	if (i == active_log)
-		SDL_BlitSurface(tab_active, &src, screen, &dest);	
+		SDL_BlitSurface(tab_active.get(), &src, screen, &dest);	
 	else
-		SDL_BlitSurface(tab_inactive, &src, screen, &dest);	
+		SDL_BlitSurface(tab_inactive.get(), &src, screen, &dest);	
 
 	// draw tab right edge
 	src.x = 128 - tab_padding.x;
@@ -205,9 +187,9 @@ void MenuLog::renderTab(int log_type) {
 	dest.x = tab_rect[i].x + tab_rect[i].w - tab_padding.x;
 	
 	if (i == active_log)
-		SDL_BlitSurface(tab_active, &src, screen, &dest);	
+		SDL_BlitSurface(tab_active.get(), &src, screen, &dest);	
 	else
-		SDL_BlitSurface(tab_inactive, &src, screen, &dest);	
+		SDL_BlitSurface(tab_inactive.get(), &src, screen, &dest);	
 	
 	
 	// set tab label text color
@@ -234,8 +216,8 @@ void MenuLog::add(const string& s, int log_type) {
 	
 	// render the log entry and store it in a buffer
 	Point size = font->calc_size(s, list_area.w);
-	msg_buffer[log_type][log_count[log_type]] = createSurface(size.x, size.y);
-	font->renderShadowed(s, 0, 0, JUSTIFY_LEFT, msg_buffer[log_type][log_count[log_type]], list_area.w, FONT_WHITE);
+	msg_buffer[log_type][log_count[log_type]].reset(createSurface(size.x, size.y));
+	font->renderShadowed(s, 0, 0, JUSTIFY_LEFT, msg_buffer[log_type][log_count[log_type]].get(), list_area.w, FONT_WHITE);
 
 	log_count[log_type]++;
 }
@@ -245,12 +227,11 @@ void MenuLog::add(const string& s, int log_type) {
  */
 void MenuLog::remove(int msg_index, int log_type) {
 
-	SDL_FreeSurface(msg_buffer[log_type][msg_index]);
-	msg_buffer[log_type][msg_index] = NULL;
+	msg_buffer[log_type][msg_index].reset();
 		
 	for (int i=msg_index; i<MAX_LOG_MESSAGES-1; i++) {
 		log_msg[log_type][i] = log_msg[log_type][i+1];
-		msg_buffer[log_type][i] = msg_buffer[log_type][i+1];
+		msg_buffer[log_type][i].reset(msg_buffer[log_type][i+1].release());
 	}
 
 	log_count[log_type]--;
@@ -272,8 +253,7 @@ void MenuLog::clickTab(Point mouse) {
 void MenuLog::clear(int log_type) {
 	log_count[log_type] = 0;
 	for (int i=0; i<MAX_LOG_MESSAGES; i++) {
-		SDL_FreeSurface(msg_buffer[log_type][i]);
-		msg_buffer[log_type][i] = NULL;
+		msg_buffer[log_type][i].reset();
 	}
 }
 
@@ -283,17 +263,3 @@ void MenuLog::clear() {
 	}
 }
 
-MenuLog::~MenuLog() {
-
-	for (int i=0; i<LOG_TYPE_COUNT; i++) {
-		log_count[i] = 0;
-		for (int j=0; j<MAX_LOG_MESSAGES; j++) {
-			SDL_FreeSurface(msg_buffer[i][j]);
-		}
-	}
-
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(tab_active);
-	SDL_FreeSurface(tab_inactive);
-	delete closeButton;
-}

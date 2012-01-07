@@ -47,9 +47,13 @@ public:
 	bool is_null() const;
 	void reset(SDL_Surface* surface = NULL);
 	void reset_and_load(std::string const& name);
+	void steal(SmartSurface& surface);
 	void display_format_alpha();
 	void set_color_key(Uint32 flag, Uint32 key);
 	Uint32 map_rgb(Uint8 r, Uint8 g, Uint8 b);
+	void set_alpha(Uint32 flags, Uint8 alpha);
+	void fill_rect(SDL_Rect* dstrect, Uint32 color);
+	
 
 	operator bool() const;
 	bool operator!() const;

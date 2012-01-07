@@ -25,11 +25,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef WIDGET_LABEL_H
 #define WIDGET_LABEL_H
 
+#include "SmartSurface.h"
+
 #include <SDL.h>
 
 #include <string>
-
-class SDL_Surface;
 
 const int VALIGN_CENTER = 0;
 const int VALIGN_TOP = 1;
@@ -47,11 +47,10 @@ private:
 	int y_origin;
 	int justify;
 	int valign;
-	SDL_Surface *text_buffer;
+	SmartSurface text_buffer;
 
 public:
 	WidgetLabel();
-	~WidgetLabel();
 	void render();
 	void set(int _x, int _y, int _justify, int _valign, const std::string& _text, int _color);
 	

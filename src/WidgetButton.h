@@ -22,14 +22,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef WIDGET_BUTTON_H
 #define WIDGET_BUTTON_H
 
+#include "SmartSurface.h"
+#include "SmartChunk.h"
 #include "WidgetLabel.h"
 
 #include <SDL.h>
 
 #include <string>
-
-class SDL_Surface;
-class Mix_Chunk;
 
 const int BUTTON_GFX_NORMAL = 0;
 const int BUTTON_GFX_PRESSED = 1;
@@ -38,17 +37,15 @@ const int BUTTON_GFX_DISABLED = 3;
 
 class WidgetButton {
 private:
-
 	std::string fileName; // the path to the buttons background image
 
-	SDL_Surface *buttons;
-	Mix_Chunk *click;
+	SmartSurface buttons;
+	SmartChunk click;
 	
 	WidgetLabel wlabel;
 	
 public:
 	WidgetButton(const std::string& _fileName);
-	~WidgetButton();
 
 	void loadArt();
 	bool checkClick();

@@ -40,11 +40,11 @@ MenuTalker::MenuTalker(CampaignManager *_camp) {
 	portrait = NULL;
 	msg_buffer = NULL;
 
-	advanceButton = new WidgetButton(mods->locate("images/menus/buttons/right.png"));
+	advanceButton = new WidgetButton("images/menus/buttons/right.png");
 	advanceButton->pos.x = VIEW_W_HALF + 288;
 	advanceButton->pos.y = VIEW_H_HALF + 112;
 
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton = new WidgetButton("images/menus/buttons/button_x.png");
 	closeButton->pos.x = VIEW_W_HALF + 288;
 	closeButton->pos.y = VIEW_H_HALF + 112;
 	

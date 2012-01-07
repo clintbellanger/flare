@@ -61,23 +61,11 @@ MenuExperience::MenuExperience() {
 
 void MenuExperience::loadGraphics() {
 
-	background = IMG_Load(mods->locate("images/menus/menu_xp.png").c_str());
-	bar = IMG_Load(mods->locate("images/menus/bar_xp.png").c_str());
+	background.reset_and_load("images/menus/menu_xp.png");
+	bar.reset_and_load("images/menus/bar_xp.png");
 	
-	if(!background || !bar) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		Mix_CloseAudio();
-		SDL_Quit();
-	}
-
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
-	cleanup = bar;
-	bar = SDL_DisplayFormatAlpha(bar);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha();
+	bar.display_format_alpha();
 }
 
 /**
@@ -100,7 +88,7 @@ void MenuExperience::render(StatBlock *stats, Point mouse) {
 	src.h = background_size.y;
 	dest.x = hud_position.x + background_offset.x;
 	dest.y = hud_position.y + background_offset.y;
-	SDL_BlitSurface(background, &src, screen, &dest);
+	SDL_BlitSurface(background.get(), &src, screen, &dest);
 	
 	// calculate the length of the xp bar
 	// when at a new level, 0% progress
@@ -115,7 +103,7 @@ void MenuExperience::render(StatBlock *stats, Point mouse) {
 	dest.y = hud_position.y + bar_offset.y;
 		
 	// draw xp bar
-	SDL_BlitSurface(bar, &src, screen, &dest);
+	SDL_BlitSurface(bar.get(), &src, screen, &dest);
 
 
 	string text_label;
@@ -134,10 +122,5 @@ void MenuExperience::render(StatBlock *stats, Point mouse) {
 		label.set(hud_position.x + text_offset.x, hud_position.y + text_offset.y, text_justify, VALIGN_TOP, text_label, FONT_WHITE);
 		label.render();
 	}
-}
-
-MenuExperience::~MenuExperience() {
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(bar);
 }
 

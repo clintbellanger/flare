@@ -454,10 +454,11 @@ void GameStatePlay::render() {
 
 	r[renderableCount++] = pc->getRender(); // Avatar
 	
-	for (int i=0; i<enemies->enemy_count; i++) { // Enemies
+	std::size_t end = enemies->enemies.size();
+	for (std::size_t i=0; i < end; i++) { // Enemies
 		r[renderableCount++] = enemies->getRender(i);
-		if (enemies->enemies[i]->stats.shield_hp > 0) {
-			r[renderableCount] = enemies->enemies[i]->stats.getEffectRender(STAT_EFFECT_SHIELD);
+		if (enemies->enemies[i].stats.shield_hp > 0) {
+			r[renderableCount] = enemies->enemies[i].stats.getEffectRender(STAT_EFFECT_SHIELD);
 			r[renderableCount++].sprite = powers->gfx[powers->powers[POWER_SHIELD].gfx_index]; // TODO: parameter
 		}
 	}

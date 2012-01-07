@@ -16,9 +16,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "Assert.h"
+#include "cleanup.h"
 #include "FontEngine.h"
 #include "InputState.h"
-#include "main.h"
 #include "MessageEngine.h"
 #include "ModManager.h"
 #include "SharedResources.h"

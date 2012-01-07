@@ -38,13 +38,13 @@ MenuExit::MenuExit() : Menu() {
 	window_area.x = (VIEW_W/2) - (window_area.w/2);
 	window_area.y = (VIEW_H - window_area.h)/2;
 	
-	buttonExit = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
+	buttonExit.reset(new WidgetButton("images/menus/buttons/button_default.png"));
 	buttonExit->label = msg->get("Exit");
 	buttonExit->pos.x = VIEW_W_HALF - buttonExit->pos.w/2;
 	buttonExit->pos.y = VIEW_H/2;
 	buttonExit->refresh();
 
-	buttonClose = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	buttonClose.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	buttonClose->pos.x = window_area.x + window_area.w;
 	buttonClose->pos.y = window_area.y;
 	
@@ -54,16 +54,8 @@ MenuExit::MenuExit() : Menu() {
 }
 
 void MenuExit::loadGraphics() {
-	background = IMG_Load(mods->locate("images/menus/confirm_bg.png").c_str());
-	if(!background) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
+	background.reset_and_load("images/menus/confirm_bg.png");
+	background.display_format_alpha(); 
 }
 
 void MenuExit::logic() {
@@ -85,17 +77,11 @@ void MenuExit::render() {
 	src.y = 0;
 	src.w = window_area.w;
 	src.h = window_area.h;
-	SDL_BlitSurface(background, &src, screen, &window_area);
+	SDL_BlitSurface(background.get(), &src, screen, &window_area);
 
 	label.render();
 
 	buttonExit->render();
 	buttonClose->render();
-}
-
-MenuExit::~MenuExit() {
-	delete buttonExit;
-	delete buttonClose;
-	SDL_FreeSurface(background);
 }
 

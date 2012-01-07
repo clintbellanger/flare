@@ -19,6 +19,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_CONFIRM_H
 
 #include "Menu.h"
+#include "ScopedPtr.h"
 #include "WidgetLabel.h"
 
 class WidgetButton;
@@ -27,14 +28,13 @@ class MenuConfirm : public Menu {
 protected:
 	void loadGraphics();
 
-	WidgetButton *buttonConfirm;
-	WidgetButton *buttonClose;
+	ScopedPtr<WidgetButton> buttonConfirm;
+	ScopedPtr<WidgetButton> buttonClose;
 	WidgetLabel label;
 
 	std::string boxMsg;
 public:
 	MenuConfirm(const std::string&, const std::string&);
-	~MenuConfirm();
 
 	void logic();
 	virtual void render();

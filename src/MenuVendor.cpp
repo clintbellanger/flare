@@ -50,7 +50,7 @@ MenuVendor::MenuVendor(ItemManager *_items, StatBlock *_stats) {
 	visible = false;
 	loadGraphics();
 
-	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
+	closeButton.reset(new WidgetButton("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = 294;
 	closeButton->pos.y = (VIEW_H - 480)/2 + 34;
 
@@ -58,16 +58,9 @@ MenuVendor::MenuVendor(ItemManager *_items, StatBlock *_stats) {
 }
 
 void MenuVendor::loadGraphics() {
-	background = IMG_Load(mods->locate("images/menus/vendor.png").c_str());
-	if(!background) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
+	background.reset_and_load("images/menus/vendor.png");
 
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha(); 
 }
 
 void MenuVendor::loadMerchant(const std::string& filename) {
@@ -95,7 +88,7 @@ void MenuVendor::render() {
 	dest.y = offset_y;
 	src.w = dest.w = 320;
 	src.h = dest.h = 416;
-	SDL_BlitSurface(background, &src, screen, &dest);
+	SDL_BlitSurface(background.get(), &src, screen, &dest);
 
 	// close button
 	closeButton->render();
@@ -134,8 +127,8 @@ void MenuVendor::add(ItemStack stack) {
 	saveInventory();
 }
 
-TooltipData MenuVendor::checkTooltip(Point mouse) {
-	return stock.checkTooltip( mouse, stats, true);
+void MenuVendor::checkTooltip(Point mouse, TooltipData& tip) {
+	return stock.checkTooltip( mouse, stats, true, tip);
 }
 
 bool MenuVendor::full() {
@@ -162,10 +155,5 @@ void MenuVendor::saveInventory() {
 		npc->stock[i] = stock[i];
 	}
 
-}
-
-MenuVendor::~MenuVendor() {
-	SDL_FreeSurface(background);
-	delete closeButton;
 }
 

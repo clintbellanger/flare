@@ -39,8 +39,8 @@ using namespace std;
 
 MenuHPMP::MenuHPMP() {
 	
-	hphover = new WidgetLabel();
-	mphover = new WidgetLabel();
+	hphover.reset(new WidgetLabel());
+	mphover.reset(new WidgetLabel());
 	hphover->set(53, 9, JUSTIFY_CENTER, VALIGN_CENTER, "", FONT_WHITE);
 	mphover->set(53, 24, JUSTIFY_CENTER, VALIGN_CENTER, "", FONT_WHITE);
 
@@ -49,27 +49,13 @@ MenuHPMP::MenuHPMP() {
 
 void MenuHPMP::loadGraphics() {
 
-	background = IMG_Load(mods->locate("images/menus/bar_hp_mp.png").c_str());
-	bar_hp = IMG_Load(mods->locate("images/menus/bar_hp.png").c_str());
-	bar_mp = IMG_Load(mods->locate("images/menus/bar_mp.png").c_str());
+	background.reset_and_load("images/menus/bar_hp_mp.png");
+	bar_hp.reset_and_load("images/menus/bar_hp.png");
+	bar_mp.reset_and_load("images/menus/bar_mp.png");
 	
-	if(!background || !bar_hp || !bar_mp) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
-	cleanup = bar_hp;
-	bar_hp = SDL_DisplayFormatAlpha(bar_hp);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = bar_mp;
-	bar_mp = SDL_DisplayFormatAlpha(bar_mp);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha();
+	bar_hp.display_format_alpha();
+	bar_mp.display_format_alpha();
 }
 
 void MenuHPMP::render(StatBlock *stats, Point mouse) {
@@ -84,7 +70,7 @@ void MenuHPMP::render(StatBlock *stats, Point mouse) {
 	src.w = dest.w = 106;
 	src.h = dest.h = 33;
 	
-	SDL_BlitSurface(background, &src, screen, &dest);
+	SDL_BlitSurface(background.get(), &src, screen, &dest);
 	
 	if (stats->maxhp == 0)
 		hp_bar_length = 0;
@@ -103,12 +89,12 @@ void MenuHPMP::render(StatBlock *stats, Point mouse) {
 	dest.x = 3;
 	dest.y = 3;
 	src.w = hp_bar_length;	
-	SDL_BlitSurface(bar_hp, &src, screen, &dest);
+	SDL_BlitSurface(bar_hp.get(), &src, screen, &dest);
 	
 	// draw mp bar
 	dest.y = 18;
 	src.w = mp_bar_length;
-	SDL_BlitSurface(bar_mp, &src, screen, &dest);		
+	SDL_BlitSurface(bar_mp.get(), &src, screen, &dest);		
 	
 	// if mouseover, draw text
 	if (mouse.x <= 106 && mouse.y <= 33) {
@@ -125,10 +111,3 @@ void MenuHPMP::render(StatBlock *stats, Point mouse) {
 	}
 }
 
-MenuHPMP::~MenuHPMP() {
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(bar_hp);
-	SDL_FreeSurface(bar_mp);
-	delete hphover;
-	delete mphover;
-}

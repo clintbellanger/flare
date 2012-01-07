@@ -26,6 +26,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "Utils.h"
 #include "MapCollision.h"
+#include "ScopedPtr.h"
+#include "SmartChunk.h"
+#include "SmartMusic.h"
 #include "TileSet.h"
 #include "WidgetTooltip.h"
 
@@ -34,9 +37,6 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <string>
 #include <queue>
-
-class SDL_Surface;
-class Mix_Chunk;
 
 class CampaignManager;
 class EnemyGroupManager;
@@ -86,13 +86,13 @@ const int CLICK_RANGE = 3 * UNITS_PER_TILE; //for activating events
 
 class MapIso {
 private:
-	Mix_Music *music;
+	SmartMusic music;
 
-	WidgetTooltip *tip;
+	ScopedPtr<WidgetTooltip> tip;
 	TooltipData tip_buf;
 
 	// map events can play random soundfx
-	Mix_Chunk *sfx;
+	SmartChunk sfx;
 	std::string sfx_filename;
 	
 	void executeEvent(int eid);

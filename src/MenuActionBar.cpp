@@ -107,36 +107,17 @@ void MenuActionBar::clear() {
 
 void MenuActionBar::loadGraphics() {
 
-	emptyslot = IMG_Load(mods->locate("images/menus/slot_empty.png").c_str());
-	background = IMG_Load(mods->locate("images/menus/actionbar_trim.png").c_str());
-	labels = IMG_Load(mods->locate("images/menus/actionbar_labels.png").c_str());
-	disabled = IMG_Load(mods->locate("images/menus/disabled.png").c_str());
-	attention = IMG_Load(mods->locate("images/menus/attention_glow.png").c_str());
-	if(!emptyslot || !background || !labels || !disabled) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
+	emptyslot.reset_and_load("images/menus/slot_empty.png");
+	background.reset_and_load("images/menus/actionbar_trim.png");
+	labels.reset_and_load("images/menus/actionbar_labels.png");
+	disabled.reset_and_load("images/menus/disabled.png");
+	attention.reset_and_load("images/menus/attention_glow.png");
 	
-	// optimize
-	SDL_Surface *cleanup = background;
-	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
-	cleanup = emptyslot;
-	emptyslot = SDL_DisplayFormatAlpha(emptyslot);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = labels;
-	labels = SDL_DisplayFormatAlpha(labels);
-	SDL_FreeSurface(cleanup);
-	
-	cleanup = disabled;
-	disabled = SDL_DisplayFormatAlpha(disabled);
-	SDL_FreeSurface(cleanup);
-
-	cleanup = attention;
-	attention = SDL_DisplayFormatAlpha(attention);
-	SDL_FreeSurface(cleanup);
+	background.display_format_alpha(); 
+	emptyslot.display_format_alpha(); 
+	labels.display_format_alpha(); 
+	disabled.display_format_alpha(); 
+	attention.display_format_alpha(); 
 }
 
 /**
@@ -162,7 +143,7 @@ void MenuActionBar::renderAttention(int menu_id) {
 	dest.x = (VIEW_W - 640)/2 + (menu_id * 32) + 32*15;
 	dest.y = VIEW_H-32;
     dest.w = dest.h = 32;
-	SDL_BlitSurface(attention, NULL, screen, &dest);		
+	SDL_BlitSurface(attention.get(), NULL, screen, &dest);		
 }
 
 void MenuActionBar::logic() {
@@ -186,7 +167,7 @@ void MenuActionBar::render() {
 	trimsrc.w = 640;
 	trimsrc.h = 35;
 	
-	SDL_BlitSurface(background, &trimsrc, screen, &dest);	
+	SDL_BlitSurface(background.get(), &trimsrc, screen, &dest);	
 	
 	// draw hotkeyed icons
 	src.x = src.y = 0;
@@ -204,7 +185,7 @@ void MenuActionBar::render() {
 			renderIcon(powers->powers[hotkeys[i]].icon, dest.x, dest.y);
 		}
 		else {
-			SDL_BlitSurface(emptyslot, &src, screen, &dest);
+			SDL_BlitSurface(emptyslot.get(), &src, screen, &dest);
 		}
 	}
 	
@@ -222,7 +203,7 @@ void MenuActionBar::render() {
 	dest.y = VIEW_H-10;
 	dest.w = 640;
 	dest.h = 10;
-	SDL_BlitSurface(labels, &label_src, screen, &dest);
+	SDL_BlitSurface(labels.get(), &label_src, screen, &dest);
 	
 }
 
@@ -254,7 +235,7 @@ void MenuActionBar::renderCooldowns() {
 			item_dest.w = slots[i].w;
 			item_dest.h = slots[i].h;
 			
-			SDL_BlitSurface(disabled, &item_src, screen, &item_dest);
+			SDL_BlitSurface(disabled.get(), &item_src, screen, &item_dest);
 		}
 	}
 }
@@ -281,25 +262,25 @@ void MenuActionBar::renderItemCounts() {
 /**
  * On mouseover, show tooltip for buttons
  */
-TooltipData MenuActionBar::checkTooltip(Point mouse) {
-	TooltipData tip;
-	
+void MenuActionBar::checkTooltip(Point mouse, TooltipData& tip) {
+	tip.clear();
+
 	//int offset_x = (VIEW_W - 640)/2;
 	if (isWithin(menus[0], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Character Menu (C)");
-		return tip;
+		return;
 	}
 	if (isWithin(menus[1], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Inventory Menu (I)");
-		return tip;
+		return;
 	}
 	if (isWithin(menus[2], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Power Menu (P)");
-		return tip;
+		return;
 	}
 	if (isWithin(menus[3], mouse)) {
 		tip.lines[tip.num_lines++] = msg->get("Log Menu (L)");
-		return tip;
+		return;
 	}
 	for (int i=0; i<12; i++) {
 		if (hotkeys[i] != -1) {
@@ -308,8 +289,6 @@ TooltipData MenuActionBar::checkTooltip(Point mouse) {
 			}
 		}
 	}
-
-	return tip;
 }
 
 /**
@@ -431,9 +410,3 @@ void MenuActionBar::set(int power_id[12]) {
 		hotkeys[i] = power_id[i];
 }
 
-MenuActionBar::~MenuActionBar() {
-	SDL_FreeSurface(emptyslot);
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(labels);
-	SDL_FreeSurface(disabled);
-}

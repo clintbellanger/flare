@@ -23,12 +23,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_VENDOR_H
 
 #include "MenuItemStorage.h"
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 
 #include <SDL.h>
 
 #include <string>
-
-class SDL_Surface;
 
 class ItemManager;
 class NPC;
@@ -42,15 +42,14 @@ class MenuVendor {
 private:
 	ItemManager *items;
 	StatBlock *stats;
-	WidgetButton *closeButton;
+	ScopedPtr<WidgetButton> closeButton;
 
 	void loadGraphics();
-	SDL_Surface *background;
+	SmartSurface background;
 	MenuItemStorage stock; // items the vendor currently has in stock
 
 public:
 	MenuVendor(ItemManager *items, StatBlock *stats);
-	~MenuVendor();
 
 	NPC *npc;
 
@@ -60,7 +59,7 @@ public:
 	ItemStack click(InputState * input);
 	void itemReturn(ItemStack stack);
 	void add(ItemStack stack);
-	TooltipData checkTooltip(Point mouse);
+	void checkTooltip(Point mouse, TooltipData& tip);
 	bool full();
 	void setInventory();
 	void saveInventory();

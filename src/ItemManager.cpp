@@ -47,7 +47,6 @@ ItemManager::ItemManager() {
 		items[i].bonus_stat = new string[ITEM_MAX_BONUSES];
 		items[i].bonus_val = new int[ITEM_MAX_BONUSES];
 		for (int j=0; j<ITEM_MAX_BONUSES; j++) {
-			items[i].bonus_stat[j] = "";
 			items[i].bonus_val[j] = 0;
 		}
 	}
@@ -300,12 +299,13 @@ void ItemManager::playCoinsSound() {
 	Mix_PlayChannel(-1, sfx[SFX_COINS], 0);
 }
 
-TooltipData ItemManager::getShortTooltip(ItemStack stack) {
+void ItemManager::getShortTooltip(ItemStack stack, TooltipData& tip) {
 	stringstream ss;
-	TooltipData tip;
 	
-	if (stack.item == 0) return tip;
+	tip.clear();
 	
+	if (stack.item == 0) return;
+
 	// name
 	if( stack.quantity > 1) {
 		ss << stack.quantity << " " << items[stack.item].name;
@@ -324,17 +324,15 @@ TooltipData ItemManager::getShortTooltip(ItemStack stack) {
 	else if (items[stack.item].quality == ITEM_QUALITY_EPIC) {
 		tip.colors[0] = FONT_BLUE;
 	}
-	
-	return tip;
 }
 
 /**
  * Create detailed tooltip showing all relevant item info
  */
-TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view) {
-	TooltipData tip;
+void ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view, TooltipData& tip) {
+	tip.clear();
 	
-	if (item == 0) return tip;
+	if (item == 0) return;
 	
 	// name
 	tip.lines[tip.num_lines++] = items[item].name;
@@ -466,8 +464,6 @@ TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view
 		}
 
 	}
-
-	return tip;
 }
 
 ItemManager::~ItemManager() {

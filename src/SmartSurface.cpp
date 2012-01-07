@@ -60,6 +60,10 @@ void SmartSurface::reset_and_load(std::string const& name) {
 	}
 }
 
+void SmartSurface::steal(SmartSurface& surface) {
+	reset(surface.release());
+}
+
 void SmartSurface::display_format_alpha() {
 	FlareAssert(surface_ && "Operation performed on invalid surface.");
 	// Optimize?
@@ -74,6 +78,16 @@ void SmartSurface::set_color_key(Uint32 flag, Uint32 key) {
 Uint32 SmartSurface::map_rgb(Uint8 r, Uint8 g, Uint8 b) {
 	FlareAssert(surface_ && "Operation performed on invalid surface.");
 	return SDL_MapRGB(surface_->format, r, g, b);
+}
+
+void SmartSurface::set_alpha(Uint32 flags, Uint8 alpha) {
+	FlareAssert(surface_ && "Operation performed on invalid surface.");
+	SDL_SetAlpha(surface_, flags, alpha);
+}
+
+void SmartSurface::fill_rect(SDL_Rect* dstrect, Uint32 color) {
+	FlareAssert(surface_ && "Operation performed on invalid surface.");
+	SDL_FillRect(surface_, dstrect, color);
 }
 
 SmartSurface::operator bool() const {

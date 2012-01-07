@@ -16,46 +16,48 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 /**
- * class SmartChunk
+ * class SmartMusic
  *
- * Wraps a Mix_Chunk, calling Mix_FreeChunk on it when it goes out of scope.
+ * Wraps a Mix_Music, calling Mix_FreeMusic on it when it goes out of scope.
  */
  
-#ifndef SMART_CHUNK_H
-#define SMART_CHUNK_H
+#ifndef SMART_MUSIC_H
+#define SMART_MUSIC_H
+
+#include <SDL_mixer.h>
 
 #include <string>
 
-class Mix_Chunk;
-
-class SmartChunk {
+class SmartMusic {
 private:
-	Mix_Chunk* chunk_;
-	SmartChunk(SmartChunk const& chunk);
-	SmartChunk& operator=(SmartChunk const& chunk);
+	Mix_Music* music_;
+	SmartMusic(SmartMusic const& music);
+	SmartMusic& operator=(SmartMusic const& music);
 
 public:
-	SmartChunk();
-	explicit SmartChunk(Mix_Chunk* chunk);
-	~SmartChunk();
+	SmartMusic();
+	explicit SmartMusic(Mix_Music* music);
+	~SmartMusic();
 
-	Mix_Chunk* release();
-	// fails if Mix_Chunk is invalid.
-	Mix_Chunk* get() const;
+	Mix_Music* release();
+	// fails if Mix_Music is invalid.
+	Mix_Music* get() const;
 	bool is_null() const;
-	void reset(Mix_Chunk* chunk = NULL);
+	void reset(Mix_Music* music = NULL);
 	void reset_and_load(std::string const& name);
 
-	// noop if chunk is null
-	void play_channel(int channel, int loops);
+	// noop if music is null
+	void play(int loops);
+	void halt();
 
 	operator bool() const;
 	bool operator!() const;
 
-	Mix_Chunk& operator*();
-	Mix_Chunk const& operator*() const;
-	Mix_Chunk* operator->();
-	Mix_Chunk const* operator->() const;
+	Mix_Music& operator*();
+	Mix_Music const& operator*() const;
+	Mix_Music* operator->();
+	Mix_Music const* operator->() const;
 };
 
 #endif
+

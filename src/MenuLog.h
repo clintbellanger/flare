@@ -22,13 +22,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_LOG_H
 #define MENU_LOG_H
 
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "Utils.h"
 
 #include <SDL.h>
 
 #include <string>
 
-class SDL_Surface;
 
 class WidgetButton;
 
@@ -42,16 +43,16 @@ const int LOG_TYPE_STATISTICS = 2;
 class MenuLog {
 private:
 
-	SDL_Surface *background;
-	SDL_Surface *tab_active;
-	SDL_Surface *tab_inactive;
-	WidgetButton *closeButton;
+	SmartSurface background;
+	SmartSurface tab_active;
+	SmartSurface tab_inactive;
+	ScopedPtr<WidgetButton> closeButton;
 	
 	void loadGraphics();
 	void renderTab();
 	
 	std::string log_msg[LOG_TYPE_COUNT][MAX_LOG_MESSAGES];
-	SDL_Surface *msg_buffer[LOG_TYPE_COUNT][MAX_LOG_MESSAGES];
+	SmartSurface msg_buffer[LOG_TYPE_COUNT][MAX_LOG_MESSAGES];
 	int log_count[LOG_TYPE_COUNT];
 	std::string tab_labels[LOG_TYPE_COUNT];
 	SDL_Rect tab_rect[LOG_TYPE_COUNT];
@@ -61,7 +62,6 @@ private:
 	
 public:
 	MenuLog();
-	~MenuLog();
 
 	void logic();
 	void render();

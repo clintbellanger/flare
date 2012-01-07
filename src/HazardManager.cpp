@@ -75,15 +75,15 @@ void HazardManager::logic() {
 	
 			// process hazards that can hurt enemies
 			if (h[i]->source_type != SOURCE_TYPE_ENEMY) { //hero or neutral sources
-				for (int eindex = 0; eindex < enemies->enemy_count; eindex++) {
+				for (std::size_t eindex = 0; eindex < enemies->enemies.size(); eindex++) {
 			
 					// only check living enemies
-					if (enemies->enemies[eindex]->stats.hp > 0 && h[i]->active) {
-						if (isWithin(round(h[i]->pos), h[i]->radius, enemies->enemies[eindex]->stats.pos)) {
-							if (!h[i]->hasEntity(enemies->enemies[eindex])) {
-								h[i]->addEntity(enemies->enemies[eindex]);
+					if (enemies->enemies[eindex].stats.hp > 0 && h[i]->active) {
+						if (isWithin(round(h[i]->pos), h[i]->radius, enemies->enemies[eindex].stats.pos)) {
+							if (!h[i]->hasEntity(&enemies->enemies[eindex])) {
+								h[i]->addEntity(&enemies->enemies[eindex]);
 								// hit!
-								hit = enemies->enemies[eindex]->takeHit(*h[i]);
+								hit = enemies->enemies[eindex].takeHit(*h[i]);
 								if (!h[i]->multitarget && hit) {
 									h[i]->active = false;
 									if (!h[i]->complete_animation) h[i]->lifespan = 0;
@@ -142,11 +142,12 @@ void HazardManager::checkNewHazards() {
 	}
 	
 	// check monster hazards
-	for (int eindex = 0; eindex < enemies->enemy_count; eindex++) {
-		if (enemies->enemies[eindex]->haz != NULL) {
-			h[hazard_count] = enemies->enemies[eindex]->haz;
+	PtrVector<Enemy>::iterator end = enemies->enemies.end();
+	for (PtrVector<Enemy>::iterator it = enemies->enemies.end(); it != end; ++it) {
+		if (it->haz != NULL) {
+			h[hazard_count] = it->haz;
 			hazard_count++;
-			enemies->enemies[eindex]->haz = NULL;
+			it->haz = NULL;
 		}
 	}
 }

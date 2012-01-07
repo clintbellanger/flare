@@ -22,12 +22,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENEMY_MANAGER_H
 #define ENEMY_MANAGER_H
 
+#include "PtrVector.h"
+#include "ScopedPtr.h"
+#include "SmartChunk.h"
+#include "SmartSurface.h"
 #include "Utils.h"
 
-class Mix_Chunk;
-class SDL_Surface;
-
 class Enemy;
+class Map_Enemy;
 class MapIso;
 class PowerManager;
 class Renderable;
@@ -44,22 +46,24 @@ private:
 	PowerManager *powers;
 	void loadGraphics(const std::string& type_id);
 	void loadSounds(const std::string& type_id);
+	template<typename T>
+	void handleSingleSpawn(T const& me);
 
 	std::string gfx_prefixes[max_gfx];
 	int gfx_count;
 	std::string sfx_prefixes[max_sfx];
 	int sfx_count;
 	
-	SDL_Surface *sprites[max_gfx];	
-	Mix_Chunk *sound_phys[max_sfx];
-	Mix_Chunk *sound_ment[max_sfx];
-	Mix_Chunk *sound_hit[max_sfx];
-	Mix_Chunk *sound_die[max_sfx];
-	Mix_Chunk *sound_critdie[max_sfx];
+	SmartSurface sprites[max_gfx];	
+	SmartChunk sound_phys[max_sfx];
+	SmartChunk sound_ment[max_sfx];
+	SmartChunk sound_hit[max_sfx];
+	SmartChunk sound_die[max_sfx];
+	SmartChunk sound_critdie[max_sfx];
 	
 public:
 	EnemyManager(PowerManager *_powers, MapIso *_map);
-	~EnemyManager();
+
 	void handleNewMap();
 	void handleSpawn();
 	void logic();
@@ -68,10 +72,9 @@ public:
 	Enemy *enemyFocus(Point mouse, Point cam, bool alive_only);
 
 	// vars
-	Enemy *enemies[256]; // TODO: change to dynamic list without limits
+	PtrVector<Enemy> enemies;
 	Point hero_pos;
 	bool hero_alive;
-	int enemy_count;
 };
 
 
