@@ -83,7 +83,7 @@ Point WidgetTooltip::calcPosition(int style, Point pos, Point size) {
  */
 void WidgetTooltip::render(TooltipData &tip, Point pos, int style) {
 
-	if (tip.tip_buffer) {
+	if (!tip.tip_buffer) {
 		createBuffer(tip);
 	}
 

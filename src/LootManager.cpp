@@ -414,6 +414,7 @@ void LootManager::addGold(int count, Point pos) {
  * Remove one loot from the array, preserving sort order
  */
 void LootManager::removeLoot(int index) {
+	FlareAssert(index < loot_count);
 
 	// deallocate the tooltip of the loot being removed
 	tip->clear(loot[index].tip);
@@ -424,14 +425,10 @@ void LootManager::removeLoot(int index) {
 		loot[i].pos.y = loot[i+1].pos.y;
 		loot[i].frame = loot[i+1].frame;
 		loot[i].gold = loot[i+1].gold;
+		// This clears loot[i+1].tip
 		loot[i].tip = loot[i+1].tip;
 	}
 		
-	// the last tooltip buffer pointer has been copied up one index.
-	// NULL the last pointer without deallocating. Otherwise the same
-	// address might be deallocated twice, causing a memory access error
-	loot[loot_count-1].tip.tip_buffer.release();
-	
 	// TODO: This requires too much knowledge of the underworkings of
 	// TooltipData. Is there a way to hide this complexity, be memory safe,
 	// and be efficient with the drawing buffer?
