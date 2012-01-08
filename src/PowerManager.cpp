@@ -45,12 +45,6 @@ PowerManager::PowerManager() {
 
 	gfx_count = 0;
 	sfx_count = 0;
-	for (int i=0; i<POWER_MAX_GFX; i++) {
-		gfx[i] = NULL;
-	}
-	for (int i=0; i<POWER_MAX_SFX; i++) {
-		sfx[i] = NULL;
-	}
 
 	// TODO: generalize Vengeance
 	powers[POWER_VENGEANCE].type = POWTYPE_SINGLE;
@@ -383,16 +377,8 @@ int PowerManager::loadGFX(const string& filename) {
 	}
 
 	// we don't already have this sprite loaded, so load it
-	gfx[gfx_count] = IMG_Load(mods->locate("images/powers/" + filename).c_str());
-	if(!gfx[gfx_count]) {
-		fprintf(stderr, "Couldn't load power sprites: %s\n", IMG_GetError());
-		return -1;
-	}
-	
-	// optimize
-	SDL_Surface *cleanup = gfx[gfx_count];
-	gfx[gfx_count] = SDL_DisplayFormatAlpha(gfx[gfx_count]);
-	SDL_FreeSurface(cleanup);	
+	gfx[gfx_count].reset_and_load("images/powers/" + filename);
+	gfx[gfx_count].display_format_alpha(); 
 
 	// success; perform record-keeping
 	gfx_filenames[gfx_count] = filename;
@@ -419,11 +405,7 @@ int PowerManager::loadSFX(const string& filename) {
 	}
 
 	// we don't already have this sound loaded, so load it
-	sfx[sfx_count] = Mix_LoadWAV(mods->locate("soundfx/powers/" + filename).c_str());
-	if(!sfx[sfx_count]) {
-		fprintf(stderr, "Couldn't load power soundfx: %s\n", filename.c_str());
-		return -1;
-	}
+	sfx[sfx_count].reset_and_load("soundfx/powers/" + filename);
 	
 	// success; perform record-keeping
 	sfx_filenames[sfx_count] = filename;
@@ -433,13 +415,7 @@ int PowerManager::loadSFX(const string& filename) {
 
 
 void PowerManager::loadGraphics() {
-
-	runes = IMG_Load(mods->locate("images/powers/runes.png").c_str());
-	
-	if(!runes) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		SDL_Quit();
-	}
+	runes.reset_and_load("images/powers/runes.png");
 }
 
 /**
@@ -564,7 +540,7 @@ void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point targe
 	// (e.g. base spell plus weapon type)
 	
 	if (powers[power_index].gfx_index != -1) {
-		haz->sprites = gfx[powers[power_index].gfx_index];
+		haz->sprites = gfx[powers[power_index].gfx_index].get();
 	}
 	if (powers[power_index].rendered) {
 		haz->rendered = powers[power_index].rendered;
@@ -757,22 +733,22 @@ void PowerManager::playSound(int power_index, StatBlock *src_stats) {
 	if (powers[power_index].allow_power_mod) {
 		if (powers[power_index].base_damage == BASE_DAMAGE_MELEE && src_stats->melee_weapon_power != -1 
 				&& powers[src_stats->melee_weapon_power].sfx_index != -1) {
-			Mix_PlayChannel(-1,sfx[powers[src_stats->melee_weapon_power].sfx_index],0);
+			sfx[powers[src_stats->melee_weapon_power].sfx_index].play_channel(-1, 0);
 		}
 		else if (powers[power_index].base_damage == BASE_DAMAGE_MENT && src_stats->mental_weapon_power != -1 
 				&& powers[src_stats->mental_weapon_power].sfx_index != -1) {
-			Mix_PlayChannel(-1,sfx[powers[src_stats->mental_weapon_power].sfx_index],0);
+			sfx[powers[src_stats->mental_weapon_power].sfx_index].play_channel(-1, 0);
 		}
 		else if (powers[power_index].base_damage == BASE_DAMAGE_RANGED && src_stats->ranged_weapon_power != -1 
 				&& powers[src_stats->ranged_weapon_power].sfx_index != -1) {
-			Mix_PlayChannel(-1,sfx[powers[src_stats->ranged_weapon_power].sfx_index],0);
+			sfx[powers[src_stats->ranged_weapon_power].sfx_index].play_channel(-1, 0);
 		}
 		else play_base_sound = true;
 	}
 	else play_base_sound = true;
 
 	if (play_base_sound && powers[power_index].sfx_index != -1) {
-		Mix_PlayChannel(-1,sfx[powers[power_index].sfx_index],0);
+		sfx[powers[power_index].sfx_index].play_channel(-1, 0);
 	}
 		
 }
@@ -1019,23 +995,5 @@ bool PowerManager::activate(int power_index, StatBlock *src_stats, Point target)
 		return spawn(power_index, src_stats, target);
 	
 	return false;
-}
-
-PowerManager::~PowerManager() {
-
-	for (int i=0; i<gfx_count; i++) {
-		if (gfx[i] != NULL)
-			SDL_FreeSurface(gfx[i]);
-	}
-	for (int i=0; i<sfx_count; i++) {
-		if (sfx[i] != NULL)
-			Mix_FreeChunk(sfx[i]);
-	}
-
-	SDL_FreeSurface(runes);	
-	// These line of code was present, but freeze and sfx_freeze are never assigned to!
-	// SDL_FreeSurface(freeze);
-	// Mix_FreeChunk(sfx_freeze);
-	
 }
 

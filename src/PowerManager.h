@@ -24,13 +24,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef POWER_MANAGER_H
 #define POWER_MANAGER_H
 
+#include "ScopedPtr.h"
+#include "SmartChunk.h"
+#include "SmartSurface.h"
 #include "Utils.h"
 
 #include <string>
 #include <queue>
-
-class Mix_Chunk;
-class SDL_Surface;
 
 class Hazard;
 class MapCollision;
@@ -178,8 +178,6 @@ struct Power {
 	
 	Power() {
 		type = -1;
-		name = "";
-		description = "";
 		icon = -1;
 		new_state = -1;
 		face=false;
@@ -260,7 +258,6 @@ struct Power {
 		wall_power = -1;
 		
 		allow_power_mod = false;
-		spawn_type = "";
 	}	
 	
 };
@@ -300,7 +297,6 @@ private:
 
 public:
 	PowerManager();
-	~PowerManager();
 
 	void handleNewMap(MapCollision *_collider);
 	bool activate(int power_index, StatBlock *src_stats, Point target);
@@ -311,15 +307,15 @@ public:
 	std::queue<EnemySpawn> enemies; // output; read by PowerManager
 
 	// shared images/sounds for power special effects
-	SDL_Surface *gfx[POWER_MAX_GFX];
-	Mix_Chunk *sfx[POWER_MAX_SFX];
+	SmartSurface gfx[POWER_MAX_GFX];
+	SmartChunk sfx[POWER_MAX_SFX];
 	
-	SDL_Surface *freeze;
-	SDL_Surface *runes;
+	SmartSurface freeze;
+	SmartSurface runes;
 	
 	int used_item;
 	
-	Mix_Chunk *sfx_freeze;
+	SmartChunk sfx_freeze;
 };
 
 #endif

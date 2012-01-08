@@ -190,7 +190,7 @@ void NPC::loadGraphics(const string& filename_sprites, const string& filename_po
 	}
 
 	if (!filename_portrait.empty()) {
-		portrait.reset_and_load("images/npcs/" + filename_sprites + ".png");
+		portrait.reset_and_load("images/npcs/" + filename_portrait + ".png");
 		// TODO:  This should check for portrait being set (add when
 		// SmartSurface has been changed to not kill everyone on failure).
 		

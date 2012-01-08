@@ -54,10 +54,7 @@ void SmartSurface::reset(SDL_Surface* surface) {
 
 void SmartSurface::reset_and_load(std::string const& name) {
 	reset(IMG_Load(mods->locate(name).c_str()));
-	if(is_null()) {
-		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
-		FlareAssert(false);
-	}
+	FlareSoftAssert(!is_null(), ("Couldn't load image: " + name).c_str());
 }
 
 void SmartSurface::steal(SmartSurface& surface) {
@@ -65,29 +62,36 @@ void SmartSurface::steal(SmartSurface& surface) {
 }
 
 void SmartSurface::display_format_alpha() {
-	FlareAssert(surface_ && "Operation performed on invalid surface.");
+	FlareSoftAssert(surface_, "Operation performed on invalid surface.");
 	// Optimize?
-	reset(SDL_DisplayFormatAlpha(surface_));
+	if (surface_)
+		reset(SDL_DisplayFormatAlpha(surface_));
 }
 
 void SmartSurface::set_color_key(Uint32 flag, Uint32 key) {
-	FlareAssert(surface_ && "Operation performed on invalid surface.");
-	SDL_SetColorKey(surface_, flag, key); 
+	FlareSoftAssert(surface_, "Operation performed on invalid surface.");
+	if (surface_)
+		SDL_SetColorKey(surface_, flag, key); 
 }
 
 Uint32 SmartSurface::map_rgb(Uint8 r, Uint8 g, Uint8 b) {
-	FlareAssert(surface_ && "Operation performed on invalid surface.");
-	return SDL_MapRGB(surface_->format, r, g, b);
+	FlareSoftAssert(surface_, "Operation performed on invalid surface.");
+	if (surface_)
+		return SDL_MapRGB(surface_->format, r, g, b);
+	else
+		return 0; // Currently acts as error code.
 }
 
 void SmartSurface::set_alpha(Uint32 flags, Uint8 alpha) {
-	FlareAssert(surface_ && "Operation performed on invalid surface.");
-	SDL_SetAlpha(surface_, flags, alpha);
+	FlareSoftAssert(surface_, "Operation performed on invalid surface.");
+	if (surface_)
+		SDL_SetAlpha(surface_, flags, alpha);
 }
 
 void SmartSurface::fill_rect(SDL_Rect* dstrect, Uint32 color) {
-	FlareAssert(surface_ && "Operation performed on invalid surface.");
-	SDL_FillRect(surface_, dstrect, color);
+	FlareSoftAssert(surface_, "Operation performed on invalid surface.");
+	if (surface_)
+		SDL_FillRect(surface_, dstrect, color);
 }
 
 SmartSurface::operator bool() const {
