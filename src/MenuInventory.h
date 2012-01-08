@@ -22,22 +22,27 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_INVENTORY_H
 #define MENU_INVENTORY_H
 
-#include "Utils.h"
 #include "MenuItemStorage.h"
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
+#include "Utils.h"
 
 #include <SDL.h>
 
 #include <string>
-
-class SDL_Surface;
 
 class ItemManager;
 class StatBlock;
 class PowerManager;
 class WidgetButton;
 
-const int EQUIPMENT = 0;
-const int CARRIED = 1;
+namespace Area {
+	enum Area {
+		NONE = -1,
+		EQUIPMENT = 0,
+		CARRIED = 1
+	};
+}
 
 const int MAX_EQUIPPED = 4;
 const int MAX_CARRIED = 64;
@@ -57,15 +62,14 @@ private:
 	PowerManager *powers;
 
 	void loadGraphics();
-	int areaOver(Point mouse);
+	Area::Area areaOver(Point mouse);
 	void updateEquipment(int slot);
 
-	SDL_Surface *background;
-	WidgetButton *closeButton;
+	SmartSurface background;
+	ScopedPtr<WidgetButton> closeButton;
 	
 public:
 	MenuInventory(ItemManager *items, StatBlock *stats, PowerManager *powers);
-	~MenuInventory();
 	void logic();
 	void render();
 	TooltipData checkTooltip(Point mouse);
@@ -75,7 +79,7 @@ public:
 	void drop(Point mouse, ItemStack stack);
 	void activate(InputState * input);
 
-	void add( ItemStack stack, int area = CARRIED, int slot = -1);
+	void add( ItemStack stack, Area::Area area = Area::CARRIED, int slot = -1);
 	void remove(int item);
 	void addGold(int count);
 	bool buy(ItemStack stack, Point mouse = Point());

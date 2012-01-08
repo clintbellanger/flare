@@ -76,7 +76,7 @@ GameStatePlay::GameStatePlay() : GameState() {
 
 	// assign some object pointers after object creation, based on dependency order
 	camp->items = menu->items;
-	camp->carried_items = &menu->inv->inventory[CARRIED];
+	camp->carried_items = &menu->inv->inventory[Area::CARRIED];
 	camp->currency = &menu->inv->gold;
 	camp->xp = &pc->stats.xp;
 	map->powers = powers;
@@ -275,11 +275,11 @@ void GameStatePlay::checkLog() {
 void GameStatePlay::checkEquipmentChange() {
 	if (menu->inv->changed_equipment) {
 	
-		pc->loadGraphics(menu->items->items[menu->inv->inventory[EQUIPMENT][0].item].gfx, 
-		                 menu->items->items[menu->inv->inventory[EQUIPMENT][1].item].gfx, 
-		                 menu->items->items[menu->inv->inventory[EQUIPMENT][2].item].gfx);
+		pc->loadGraphics(menu->items->items[menu->inv->inventory[Area::EQUIPMENT][0].item].gfx, 
+		                 menu->items->items[menu->inv->inventory[Area::EQUIPMENT][1].item].gfx, 
+		                 menu->items->items[menu->inv->inventory[Area::EQUIPMENT][2].item].gfx);
 						 
-		pc->loadStepFX(menu->items->items[menu->inv->inventory[EQUIPMENT][1].item].stepfx);
+		pc->loadStepFX(menu->items->items[menu->inv->inventory[Area::EQUIPMENT][1].item].stepfx);
 		
 		menu->inv->changed_equipment = false;
 	}

@@ -78,12 +78,12 @@ void GameStatePlay::saveGame() {
 		outfile << "gold=" << menu->inv->gold << "\n";
 
 		// equipped gear
-		outfile << "equipped=" << menu->inv->inventory[EQUIPMENT].getItems() << "\n";
-		outfile << "equipped_quantity=" << menu->inv->inventory[EQUIPMENT].getQuantities() << "\n";
+		outfile << "equipped=" << menu->inv->inventory[Area::EQUIPMENT].getItems() << "\n";
+		outfile << "equipped_quantity=" << menu->inv->inventory[Area::EQUIPMENT].getQuantities() << "\n";
 
 		// carried items
-		outfile << "carried=" << menu->inv->inventory[CARRIED].getItems() << "\n";
-		outfile << "carried_quantity=" << menu->inv->inventory[CARRIED].getQuantities() << "\n";
+		outfile << "carried=" << menu->inv->inventory[Area::CARRIED].getItems() << "\n";
+		outfile << "carried_quantity=" << menu->inv->inventory[Area::CARRIED].getQuantities() << "\n";
 
 		// spawn point
 		outfile << "spawn=" << map->respawn_map << "," << map->respawn_point.x/UNITS_PER_TILE << "," << map->respawn_point.y/UNITS_PER_TILE << "\n";
@@ -144,16 +144,16 @@ void GameStatePlay::loadGame() {
 				menu->inv->gold = atoi(infile.val.c_str());
 			}
 			else if (infile.key == "equipped") {
-				menu->inv->inventory[EQUIPMENT].setItems(infile.val);
+				menu->inv->inventory[Area::EQUIPMENT].setItems(infile.val);
 			}
 			else if (infile.key == "equipped_quantity") {
-				menu->inv->inventory[EQUIPMENT].setQuantities(infile.val);
+				menu->inv->inventory[Area::EQUIPMENT].setQuantities(infile.val);
 			}
 			else if (infile.key == "carried") {
-				menu->inv->inventory[CARRIED].setItems(infile.val);
+				menu->inv->inventory[Area::CARRIED].setItems(infile.val);
 			}
 			else if (infile.key == "carried_quantity") {
-				menu->inv->inventory[CARRIED].setQuantities(infile.val);
+				menu->inv->inventory[Area::CARRIED].setQuantities(infile.val);
 			}
 			else if (infile.key == "spawn") {
 				map->teleport_mapname = infile.nextValue();
@@ -187,7 +187,7 @@ void GameStatePlay::loadGame() {
 
 	// initialize vars
 	pc->stats.recalc();
-	menu->inv->applyEquipment(menu->inv->inventory[EQUIPMENT].storage);
+	menu->inv->applyEquipment(menu->inv->inventory[Area::EQUIPMENT].storage);
 	pc->stats.hp = pc->stats.maxhp;
 	pc->stats.mp = pc->stats.maxmp;
 	
