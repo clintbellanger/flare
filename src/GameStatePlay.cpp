@@ -467,7 +467,8 @@ void GameStatePlay::render() {
 		r[renderableCount++] = npcs->npcs[i]->getRender();
 	}
 	
-	for (int i=0; i<loot->loot_count; i++) { // Loot
+	std::size_t loot_count = loot->getLootCount();
+	for (std::size_t i = 0; i < loot_count; i++) { // Loot
 		r[renderableCount++] = loot->getRender(i);
 	}
 	

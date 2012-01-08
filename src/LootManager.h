@@ -24,15 +24,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef LOOT_MANAGER_H
 #define LOOT_MANAGER_H
 
-#include "Utils.h"
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
 #include "ItemManager.h"
+#include "Utils.h"
 #include "WidgetTooltip.h"
 
 #include <SDL.h>
 
+#include <map>
 #include <string>
-
-class Mix_Chunk;
+#include <vector>
 
 class EnemyManager;
 class ItemManager;
@@ -40,14 +42,20 @@ class MapIso;
 class Renderable;
 class WidgetTooltip;
 
-class SDL_Surface;
-
 struct LootDef {
 	ItemStack stack;
 	int frame;
 	Point pos;
 	int gold;
 	TooltipData tip;
+
+	void steal(LootDef& ld) {
+		stack = ld.stack;
+		frame = ld.frame;
+		pos = ld.pos;
+		gold = ld.gold;
+		tip.steal(ld.tip);
+	}
 };
 
 
@@ -65,7 +73,7 @@ class LootManager {
 private:
 
 	ItemManager *items;
-	WidgetTooltip *tip;
+	ScopedPtr<WidgetTooltip> tip;
 	EnemyManager *enemies;
 	MapIso *map;
 
@@ -74,24 +82,22 @@ private:
 	void calcTables();
 	int lootLevel(int base_level);
 	
-	SDL_Surface *flying_loot[64];
-	SDL_Surface *flying_gold[3];
+	SmartSurface flying_loot[64];
+	SmartSurface flying_gold[3];
 	
 	std::string animation_id[64];
 	int animation_count;
 	
-	Mix_Chunk *loot_flip;
+	SmartChunk loot_flip;
 	
 	Point frame_size;
 	int frame_count; // the last frame is the "at-rest" floor loot graphic
 	
 	// loot refers to ItemManager indices
-	LootDef loot[256]; // TODO: change to dynamic list without limits
+	std::vector<LootDef> loot; // TODO: change to dynamic list without limits
 	
-	// loot tables multiplied out
-	// currently loot can range from levels 0-20
-	int loot_table[21][1024]; // level, number.  the int is an item id
-	int loot_table_count[21]; // total number per level
+	// Loot table, mapping level and number to item ID.
+	std::map<int, std::vector<int> > loot_table;
 	
 	// animation vars
 	int anim_loot_frames;
@@ -99,7 +105,6 @@ private:
 	
 public:
 	LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_map);
-	~LootManager();
 
 	void handleNewMap();
 	void logic();
@@ -107,19 +112,18 @@ public:
 	void checkEnemiesForLoot();
 	void checkMapForLoot();
 	bool isFlying(int loot_index);
-	void determineLoot(int base_level, Point pos);
+	void determineLoot(int base_level, Point const& pos);
 	int randomItem(int base_level);
-	void addLoot(ItemStack stack, Point pos);
-	void addGold(int count, Point pos);
+	void addLoot(ItemStack stack, Point const& pos);
+	void addGold(int count, Point const& pos);
 	void removeLoot(int index);
-	ItemStack checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full);
+	std::size_t getLootCount() const;
+	ItemStack checkPickup(Point const& mouse, Point const& cam, Point const& hero_pos, int &gold, bool inv_full);
 	
 	Renderable getRender(int index);
 	
 	int tooltip_margin;
-	int loot_count;
 	bool full_msg;
-	
 };
 
 #endif

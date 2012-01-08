@@ -41,41 +41,22 @@ LootManager::LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_m
 	enemies = _enemies; // we need to be able to read loot state when creatures die
 	map = _map; // we need to be able to read loot that drops from map containers
 
-	tip = new WidgetTooltip();
+	tip.reset(new WidgetTooltip());
+
+	// HACK: This makes sure that the vector is fairly big, so that we never
+	// reallocate and move LootDefs.  Until we come up with reasonable move
+	// semantics for TooltipData, it's unclear what else we can do to mitigate
+	// this (apart from making it constant-size, but that would hardly be much
+	// better).
+	loot.reserve(256);
 	
 	tooltip_margin = 32; // pixels between loot drop center and label
 	
-	loot_count = 0;
 	animation_count = 0;
-	
-	for (int i=0; i<64; i++) {
-		flying_loot[i] = NULL;
-		animation_id[i] = "";
-	}
-	
-	loot_flip = NULL;
-	
-	// reset current map loot
-	for (int i=0; i<256; i++) {
-		loot[i].pos.x = 0;
-		loot[i].pos.y = 0;
-		loot[i].frame = 0;
-		loot[i].stack.item = 0;
-		loot[i].stack.quantity = 0;
-		loot[i].gold = 0;
-	}
-
-	// reset loot table
-	for (int lvl=0; lvl<15; lvl++) {
-		loot_table_count[lvl] = 0;
-		for (int num=0; num<256; num++) {
-			loot_table[lvl][num] = 0;
-		}
-	}
 	
 	loadGraphics();
 	calcTables();
-	loot_flip = Mix_LoadWAV(mods->locate("soundfx/flying_loot.ogg").c_str());
+	loot_flip.reset_and_load("soundfx/flying_loot.ogg");
 	full_msg = false;
 	
 	anim_loot_frames = 6;
@@ -106,7 +87,7 @@ void LootManager::loadGraphics() {
 			}
 			
 			if (new_anim) {
-				flying_loot[animation_count] = IMG_Load(mods->locate("images/loot/" + anim_id + ".png").c_str());
+				flying_loot[animation_count].reset_and_load("images/loot/" + anim_id + ".png");
 				
 				if (flying_loot[animation_count]) {
 					animation_id[animation_count] = anim_id;
@@ -117,27 +98,33 @@ void LootManager::loadGraphics() {
 	}
 	
 	// gold
-	flying_gold[0] = IMG_Load(mods->locate("images/loot/coins5.png").c_str());
-	flying_gold[1] = IMG_Load(mods->locate("images/loot/coins25.png").c_str());
-	flying_gold[2] = IMG_Load(mods->locate("images/loot/coins100.png").c_str());
+	flying_gold[0].reset_and_load("images/loot/coins5.png");
+	flying_gold[1].reset_and_load("images/loot/coins25.png");
+	flying_gold[2].reset_and_load("images/loot/coins100.png");
 	
 	// set magic pink transparency
 	for (int i=0; i<animation_count; i++) {
-		SDL_SetColorKey( flying_loot[i], SDL_SRCCOLORKEY, SDL_MapRGB(flying_loot[i]->format, 255, 0, 255) ); 
-		
-		// optimize
-		SDL_Surface *cleanup = flying_loot[i];
-		flying_loot[i] = SDL_DisplayFormatAlpha(flying_loot[i]);
-		SDL_FreeSurface(cleanup);
+		flying_loot[i].set_color_key(SDL_SRCCOLORKEY, flying_loot[i].map_rgb(255, 0, 255)); 
+		flying_loot[i].display_format_alpha();
 	}
 	for (int i=0; i<3; i++) {
-		SDL_SetColorKey( flying_gold[i], SDL_SRCCOLORKEY, SDL_MapRGB(flying_gold[i]->format, 255, 0, 255) ); 
-		
-		// optimize
-		SDL_Surface *cleanup = flying_gold[i];
-		flying_gold[i] = SDL_DisplayFormatAlpha(flying_gold[i]);
-		SDL_FreeSurface(cleanup);
+		flying_gold[i].set_color_key(SDL_SRCCOLORKEY, flying_gold[i].map_rgb(255, 0, 255)); 
+		flying_gold[i].display_format_alpha();
 	}
+}
+
+static int convertQualityToRarity(int quality) {
+	switch (quality) {
+		case ITEM_QUALITY_LOW:
+			return RARITY_LOW;
+		case ITEM_QUALITY_NORMAL:
+			return RARITY_NORMAL;
+		case ITEM_QUALITY_HIGH:
+			return RARITY_HIGH;
+		case ITEM_QUALITY_EPIC:
+			return RARITY_EPIC;
+	}
+	return 0;
 }
 
 /**
@@ -147,59 +134,32 @@ void LootManager::loadGraphics() {
  * can quickly choose what loot should drop.
  */
 void LootManager::calcTables() {
-
-	int level;
-	
-	for (int i=0; i<1024; i++) {
-		level = items->items[i].level;
-		if (level > 0) {
-			if (items->items[i].quality == ITEM_QUALITY_LOW) {
-				for (int j=0; j<RARITY_LOW; j++) {
-					loot_table[level][loot_table_count[level]] = i;
-					loot_table_count[level]++;
-				}
-			}
-			if (items->items[i].quality == ITEM_QUALITY_NORMAL) {
-				for (int j=0; j<RARITY_NORMAL; j++) {
-					loot_table[level][loot_table_count[level]] = i;
-					loot_table_count[level]++;
-				}
-			}
-			if (items->items[i].quality == ITEM_QUALITY_HIGH) {
-				for (int j=0; j<RARITY_HIGH; j++) {
-					loot_table[level][loot_table_count[level]] = i;
-					loot_table_count[level]++;
-				}
-			}
-			if (items->items[i].quality == ITEM_QUALITY_EPIC) {
-				for (int j=0; j<RARITY_EPIC; j++) {
-					loot_table[level][loot_table_count[level]] = i;
-					loot_table_count[level]++;
-				}
-			}
-		}
+	for (std::size_t i=0; i<items->items.size(); i++) {
+		int level = items->items[i].level;
+		if (level <= 0)
+			continue;
+		int repeats = convertQualityToRarity(items->items[i].quality);
+		for (int j=0; j<repeats; j++)
+			loot_table[level].push_back(i);
 	}
 }
 
 void LootManager::handleNewMap() {
-	for (int i=0; i<loot_count; i++) {
-		tip->clear(loot[i].tip);
-	}
-	loot_count = 0;
+	loot.clear();
 }
 
 void LootManager::logic() {
 	int max_frame = anim_loot_frames * anim_loot_duration - 1;
 	
-	for (int i=0; i<loot_count; i++) {
-	
+	std::vector<LootDef>::iterator end = loot.end();
+	for (std::vector<LootDef>::iterator it = loot.begin(); it != end; ++it) {
 		// animate flying loot
-		if (loot[i].frame < max_frame)
-			loot[i].frame++;
+		if (it->frame < max_frame)
+			it->frame++;
 
-		if (loot[i].frame == max_frame-1) {
-			if (loot[i].stack.item > 0)
-				items->playSound(loot[i].stack.item);
+		if (it->frame == max_frame-1) {
+			if (it->stack.item > 0)
+				items->playSound(it->stack.item);
 			else
 				items->playCoinsSound();
 		}
@@ -236,36 +196,33 @@ void LootManager::renderTooltips(Point cam) {
 	
 	int max_frame = anim_loot_frames * anim_loot_duration - 1;
 	
-	for (int i = 0; i < loot_count; i++) {			
-		if (loot[i].frame == max_frame) {
-		
-		
-			dest.x = VIEW_W_HALF + (loot[i].pos.x/UNITS_PER_PIXEL_X - xcam.x) - (loot[i].pos.y/UNITS_PER_PIXEL_X - xcam.y);
-			dest.y = VIEW_H_HALF + (loot[i].pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (loot[i].pos.y/UNITS_PER_PIXEL_Y - ycam.y) + (TILE_H/2);
-		
-			// adjust dest.y so that the tooltip floats above the item
-			dest.y -= tooltip_margin;
-
-			// create tooltip data if needed
-			if (!loot[i].tip.tip_buffer) {
-
-				if (loot[i].stack.item > 0) {
-					loot[i].tip = items->getShortTooltip(loot[i].stack);
-				}
-				else {
-					loot[i].tip.num_lines = 1;
-					loot[i].tip.colors[0] = FONT_WHITE;
-					ss << msg->get("%d Gold", loot[i].gold);
-					loot[i].tip.lines[0] = ss.str();
-					ss.str("");
-				}
-			}
-			
-			tip->render(loot[i].tip, dest, STYLE_TOPLABEL);
-		}
-	}
+	std::vector<LootDef>::iterator end = loot.end();
+	for (std::vector<LootDef>::iterator it = loot.begin(); it != end; ++it) {
+		if (it->frame != max_frame)
+			continue;
+		dest.x = VIEW_W_HALF + (it->pos.x/UNITS_PER_PIXEL_X - xcam.x) - (it->pos.y/UNITS_PER_PIXEL_X - xcam.y);
+		dest.y = VIEW_H_HALF + (it->pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (it->pos.y/UNITS_PER_PIXEL_Y - ycam.y) + (TILE_H/2);
 	
+		// adjust dest.y so that the tooltip floats above the item
+		dest.y -= tooltip_margin;
 
+		// create tooltip data if needed
+		if (!it->tip.tip_buffer) {
+
+			if (it->stack.item > 0) {
+				it->tip = items->getShortTooltip(it->stack);
+			}
+			else {
+				it->tip.num_lines = 1;
+				it->tip.colors[0] = FONT_WHITE;
+				ss << msg->get("%d Gold", it->gold);
+				it->tip.lines[0] = ss.str();
+				ss.str("");
+			}
+		}
+		
+		tip->render(it->tip, dest, STYLE_TOPLABEL);
+	}
 }
 
 /**
@@ -278,20 +235,20 @@ void LootManager::checkEnemiesForLoot() {
 	
 	PtrVector<Enemy>::iterator end = enemies->enemies.end();
 	for(PtrVector<Enemy>::iterator it = enemies->enemies.begin(); it != end; ++it) {
-		if (it->loot_drop) {
-			
-			if (it->stats.quest_loot_id != 0) {				
-				// quest loot
-				istack.item = it->stats.quest_loot_id;
-				addLoot(istack, it->stats.pos);
-			}
-			else {
-				// random loot
-				determineLoot(it->stats.level, it->stats.pos);
-			}
-			
-			it->loot_drop = false;
+		if (!it->loot_drop)
+			continue;
+		
+		if (it->stats.quest_loot_id != 0) {				
+			// quest loot
+			istack.item = it->stats.quest_loot_id;
+			addLoot(istack, it->stats.pos);
 		}
+		else {
+			// random loot
+			determineLoot(it->stats.level, it->stats.pos);
+		}
+		
+		it->loot_drop = false;
 	}
 }
 
@@ -335,12 +292,12 @@ int LootManager::lootLevel(int base_level) {
 	
 	// this loot bell curve is +/- 3 levels
 	// percents: 5,10,20,30,20,10,5
-	if (x <= 4) actual = base_level-3;
-	else if (x <= 14) actual = base_level-2;
-	else if (x <= 34) actual = base_level-1;
-	else if (x <= 64) actual = base_level;
-	else if (x <= 84) actual = base_level+1;
-	else if (x <= 94) actual = base_level+2;
+	if (x < 5) actual = base_level-3;
+	else if (x < 15) actual = base_level-2;
+	else if (x < 35) actual = base_level-1;
+	else if (x < 65) actual = base_level;
+	else if (x < 85) actual = base_level+1;
+	else if (x < 95) actual = base_level+2;
 	else actual = base_level+3;
 	
 	if (actual < 1) actual = 0;
@@ -354,23 +311,23 @@ int LootManager::lootLevel(int base_level) {
  * base_level represents the average quality of this loot
  * calls addLoot()
  */
-void LootManager::determineLoot(int base_level, Point pos) {
+void LootManager::determineLoot(int base_level, Point const& pos) {
 	int level = lootLevel(base_level);
 	ItemStack new_loot;
 
-	if (level > 0 && loot_table_count[level] > 0) {
+	if (level == 0 || loot_table[level].size() == 0)
+		return;
 	
-		// coin flip whether the treasure is cash or items
-		if (rand() % 2 == 0) {
-			int roll = rand() % loot_table_count[level];
-			new_loot.item = loot_table[level][roll];
-			new_loot.quantity = rand() % items->items[new_loot.item].rand_loot + 1;
-			addLoot(new_loot, pos);
-		}
-		else {
-			// gold range is level to 3x level
-			addGold(rand() % (level * 2) + level, pos);
-		}
+	// coin flip whether the treasure is cash or items
+	if (rand() % 2 == 0) {
+		int roll = rand() % loot_table[level].size();
+		new_loot.item = loot_table[level][roll];
+		new_loot.quantity = rand() % items->items[new_loot.item].rand_loot + 1;
+		addLoot(new_loot, pos);
+	}
+	else {
+		// gold range is level to 3x level
+		addGold(rand() % (level * 2) + level, pos);
 	}
 }
 
@@ -380,33 +337,40 @@ void LootManager::determineLoot(int base_level, Point pos) {
  */
 int LootManager::randomItem(int base_level) {
 	int level = lootLevel(base_level);
-	if (level > 0 && loot_table_count[level] > 0) {
-		int roll = rand() % loot_table_count[level];
-		return loot_table[level][roll];
-	}
-	return 0;
+	if (level == 0 || loot_table[level].size() == 0)
+		return 0;
+	int roll = rand() % loot_table[level].size();
+	return loot_table[level][roll];
 }
 
-void LootManager::addLoot(ItemStack stack, Point pos) {
+void LootManager::addLoot(ItemStack stack, Point const& pos) {
 	// TODO: z-sort insert?
-	loot[loot_count].stack = stack;
-	loot[loot_count].pos.x = pos.x;
-	loot[loot_count].pos.y = pos.y;
-	loot[loot_count].frame = 0;
-	loot[loot_count].gold = 0;
-	loot_count++;
-	if (loot_flip) Mix_PlayChannel(-1, loot_flip, 0);
+	LootDef ld;
+	ld.stack = stack;
+	ld.pos.x = pos.x;
+	ld.pos.y = pos.y;
+	ld.frame = 0;
+	ld.gold = 0;
+	FlareAssert(!ld.tip.tip_buffer && "Buffer unexpectedly non-empty.");
+	FlareSoftAssert(0, "Loot entry");
+	loot.push_back(ld);
+	FlareSoftAssert(0, "Loot exit");
+	loot_flip.play_channel(-1, 0);
 }
 
-void LootManager::addGold(int count, Point pos) {
-	loot[loot_count].stack.item = 0;
-	loot[loot_count].stack.quantity = 0;
-	loot[loot_count].pos.x = pos.x;
-	loot[loot_count].pos.y = pos.y;
-	loot[loot_count].frame = 0;
-	loot[loot_count].gold = count;
-	loot_count++;
-	if (loot_flip) Mix_PlayChannel(-1, loot_flip, 0);	
+void LootManager::addGold(int count, Point const& pos) {
+	LootDef ld;
+	ld.stack.item = 0;
+	ld.stack.quantity = 0;
+	ld.pos.x = pos.x;
+	ld.pos.y = pos.y;
+	ld.frame = 0;
+	ld.gold = count;
+	FlareAssert(!ld.tip.tip_buffer && "Buffer unexpectedly non-empty.");
+	FlareSoftAssert(0, "Gold entry");
+	loot.push_back(ld);
+	FlareSoftAssert(0, "Gold exit");
+	loot_flip.play_channel(-1, 0);
 }
 
 
@@ -414,25 +378,14 @@ void LootManager::addGold(int count, Point pos) {
  * Remove one loot from the array, preserving sort order
  */
 void LootManager::removeLoot(int index) {
-	FlareAssert(index < loot_count);
+	FlareAssert(index >= 0);
+	FlareAssert(static_cast<std::size_t>(index) < loot.size());
+	loot[index].steal(loot.back());
+	loot.pop_back();
+}
 
-	// deallocate the tooltip of the loot being removed
-	tip->clear(loot[index].tip);
-
-	for (int i=index; i<loot_count-1; i++) {
-		loot[i].stack = loot[i+1].stack;
-		loot[i].pos.x = loot[i+1].pos.x;
-		loot[i].pos.y = loot[i+1].pos.y;
-		loot[i].frame = loot[i+1].frame;
-		loot[i].gold = loot[i+1].gold;
-		loot[i].tip.steal(loot[i+1].tip);
-	}
-		
-	// TODO: This requires too much knowledge of the underworkings of
-	// TooltipData. Is there a way to hide this complexity, be memory safe,
-	// and be efficient with the drawing buffer?
-
-	loot_count--;
+std::size_t LootManager::getLootCount() const {
+	return loot.size();
 }
 
 /**
@@ -440,7 +393,7 @@ void LootManager::removeLoot(int index) {
  * screen coordinates to map locations.  We need the hero position because
  * the hero has to be within range to pick up an item.
  */
-ItemStack LootManager::checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full) {
+ItemStack LootManager::checkPickup(Point const& mouse, Point const& cam, Point const& hero_pos, int &gold, bool inv_full) {
 	Point p;
 	SDL_Rect r;
 	ItemStack loot_stack;
@@ -451,7 +404,7 @@ ItemStack LootManager::checkPickup(Point mouse, Point cam, Point hero_pos, int &
 	// I'm starting at the end of the loot list so that more recently-dropped
 	// loot is picked up first.  If a player drops several loot in the same
 	// location, picking it back up will work like a stack.
-	for (int i=loot_count-1; i>=0; i--) {
+	for (int i=loot.size()-1; i>=0; i--) {
 
 		// loot close enough to pickup?
 		if (abs(hero_pos.x - loot[i].pos.x) < LOOT_RANGE && abs(hero_pos.y - loot[i].pos.y) < LOOT_RANGE && !isFlying(i)) {
@@ -508,36 +461,19 @@ Renderable LootManager::getRender(int index) {
 		// item
 		for (int i=0; i<animation_count; i++) {
 			if (items->items[loot[index].stack.item].loot == animation_id[i])
-				r.sprite = flying_loot[i];
+				r.sprite = flying_loot[i].get();
 		}
 	}
 	else if (loot[index].gold > 0) {
 		// gold
 		if (loot[index].gold <= 9)
-			r.sprite = flying_gold[0];
+			r.sprite = flying_gold[0].get();
 		else if (loot[index].gold <= 25)
-			r.sprite = flying_gold[1];
-		else 
-			r.sprite = flying_gold[2];
+			r.sprite = flying_gold[1].get();
+		else
+			r.sprite = flying_gold[2].get();
 	}
 
 	return r;	
 }
 
-LootManager::~LootManager() {
-
-	for (int i=0; i<64; i++)
-		if (flying_loot[i])
-			SDL_FreeSurface(flying_loot[i]);
-	for (int i=0; i<3; i++)
-		if (flying_gold[i])
-			SDL_FreeSurface(flying_gold[i]);
-	if (loot_flip) Mix_FreeChunk(loot_flip);
-
-	// clear loot tooltips to free buffer memory
-	for (int i=0; i<loot_count; i++) {
-		tip->clear(loot[i].tip);
-	}
-	
-	delete tip;
-}
