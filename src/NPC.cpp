@@ -38,11 +38,9 @@ NPC::NPC(MapIso *_map, ItemManager *_items) : Entity(_map) {
 	items = _items;
 
 	// init general vars
-	name = "";
 	pos.x = pos.y = 0;
 	
 	// init animation info
-	sprites = NULL;
 	render_size.x = render_size.y = 0;
 	render_offset.x = render_offset.y = 0;
 	anim_frames = 0;
@@ -56,18 +54,11 @@ NPC::NPC(MapIso *_map, ItemManager *_items) : Entity(_map) {
 	random_stock = 0;
 	vox_intro_count = 0;
 	
-	for (int i=0; i<NPC_MAX_VOX; i++) {
-		vox_intro[i] = NULL;
-	}
-
 	// init talker info
-	portrait = NULL;
 	talker = false;
 
 	for (int i=0; i<NPC_MAX_DIALOG; i++) {
 		for (int j=0; j<NPC_MAX_EVENTS; j++) {
-			dialog[i][j].type = "";
-			dialog[i][j].s = "";
 			dialog[i][j].x = 0;
 			dialog[i][j].y = 0;
 			dialog[i][j].z = 0;
@@ -86,10 +77,10 @@ void NPC::load(const string& npc_id) {
 	FileParser infile;
 	ItemStack stack;
 	int event_count = 0;
-	
-	string filename_sprites = "";
-	string filename_portrait = "";
 
+	std::string filename_sprites;
+	std::string filename_portrait;
+	
 	if (infile.open(mods->locate("npcs/" + npc_id + ".txt"))) {
 		while (infile.next()) {
 			if (infile.section == "dialog") {
@@ -189,35 +180,23 @@ void NPC::load(const string& npc_id) {
 }
 
 void NPC::loadGraphics(const string& filename_sprites, const string& filename_portrait) {
+	if (!filename_sprites.empty()) {
+		sprites.reset_and_load("images/npcs/" + filename_sprites + ".png");
+		// TODO:  This should check for sprites being set (add when
+		// SmartSurface has been changed to not kill everyone on failure).
+		
+		sprites.set_color_key(SDL_SRCCOLORKEY, sprites.map_rgb(255, 0, 255));
+		sprites.display_format_alpha(); 
+	}
 
-	if (filename_sprites != "") {
-		sprites = IMG_Load(mods->locate("images/npcs/" + filename_sprites + ".png").c_str());
-		if(!sprites) {
-			fprintf(stderr, "Couldn't load NPC sprites: %s\n", IMG_GetError());
-		}
-		else {
-			SDL_SetColorKey( sprites, SDL_SRCCOLORKEY, SDL_MapRGB(sprites->format, 255, 0, 255) );
-	
-			// optimize
-			SDL_Surface *cleanup = sprites;
-			sprites = SDL_DisplayFormatAlpha(sprites);
-			SDL_FreeSurface(cleanup);
-		}
+	if (!filename_portrait.empty()) {
+		portrait.reset_and_load("images/npcs/" + filename_sprites + ".png");
+		// TODO:  This should check for portrait being set (add when
+		// SmartSurface has been changed to not kill everyone on failure).
+		
+		portrait.set_color_key(SDL_SRCCOLORKEY, portrait.map_rgb(255, 0, 255));
+		portrait.display_format_alpha(); 
 	}
-	if (filename_portrait != "") {
-		portrait = IMG_Load(mods->locate("images/portraits/" + filename_portrait + ".png").c_str());
-		if(!portrait) {
-			fprintf(stderr, "Couldn't load NPC portrait: %s\n", IMG_GetError());
-		}
-	
-		SDL_SetColorKey( portrait, SDL_SRCCOLORKEY, SDL_MapRGB(portrait->format, 255, 0, 255) );
-	
-		// optimize
-		SDL_Surface *cleanup = portrait;
-		portrait = SDL_DisplayFormatAlpha(portrait);
-		SDL_FreeSurface(cleanup);
-	}
-	
 }
 
 /**
@@ -230,7 +209,7 @@ void NPC::loadSound(const string& filename, int type) {
 	
 		// if too many already loaded, skip this one
 		if (vox_intro_count == NPC_MAX_VOX) return;
-		vox_intro[vox_intro_count] = Mix_LoadWAV(mods->locate("soundfx/npcs/" + filename).c_str());
+		vox_intro[vox_intro_count].reset_and_load("soundfx/npcs/" + filename);
 		
 		if (vox_intro[vox_intro_count])
 			vox_intro_count++;
@@ -256,7 +235,7 @@ bool NPC::playSound(int type) {
 	if (type == NPC_VOX_INTRO) {
 		if (vox_intro_count == 0) return false;
 		roll = rand() % vox_intro_count;
-		Mix_PlayChannel(-1, vox_intro[roll], 0);
+		vox_intro[roll].play_channel(-1, 0);
 		return true;
 	}
 	return false;
@@ -306,7 +285,6 @@ int NPC::chooseDialogNode() {
 bool NPC::processDialog(int dialog_node, int &event_cursor) {
 
 	stringstream ss;
-	ss.str("");
 	
 	while (event_cursor < NPC_MAX_EVENTS) {
 	
@@ -350,7 +328,7 @@ bool NPC::processDialog(int dialog_node, int &event_cursor) {
 		else if (dialog[dialog_node][event_cursor].type == "remove_item") {
 			map->camp->removeItem(dialog[dialog_node][event_cursor].x);
 		}
-		else if (dialog[dialog_node][event_cursor].type == "") {
+		else if (dialog[dialog_node][event_cursor].type.empty()) {
 			// conversation ends
 			return false;
 		}
@@ -367,7 +345,7 @@ bool NPC::processDialog(int dialog_node, int &event_cursor) {
  */
 Renderable NPC::getRender() {
 	Renderable r;
-	r.sprite = sprites;
+	r.sprite = sprites.get();
 	r.map_pos.x = pos.x;
 	r.map_pos.y = pos.y;
 	r.src.x = render_size.x * (current_frame / anim_duration);
@@ -381,11 +359,3 @@ Renderable NPC::getRender() {
 	return r;
 }
 
-
-NPC::~NPC() {
-	if (sprites != NULL) SDL_FreeSurface(sprites);
-	if (portrait != NULL) SDL_FreeSurface(portrait);
-	for (int i=0; i<NPC_MAX_VOX; i++) {
-		Mix_FreeChunk(vox_intro[i]);
-	}
-}

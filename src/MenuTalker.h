@@ -22,6 +22,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MENU_TALKER_H
 #define MENU_TALKER_H
 
+#include "ScopedPtr.h"
+#include "SmartSurface.h"
+
 #include <string>
 
 class SDL_Surface;
@@ -35,16 +38,15 @@ private:
 	CampaignManager *camp;
 
 	void loadGraphics();
-	SDL_Surface *background;
-	SDL_Surface *portrait;
-	SDL_Surface *msg_buffer;
+	SmartSurface background;
+	SmartSurface portrait;
+	SmartSurface msg_buffer;
 	std::string hero_name;
 
 	int dialog_node;
 
 public:
 	MenuTalker(CampaignManager *camp);
-	~MenuTalker();
 
 	NPC *npc;
 	
@@ -58,8 +60,8 @@ public:
 	int event_cursor;
 	bool accept_lock;
 
-	WidgetButton *advanceButton;
-	WidgetButton *closeButton;
+	ScopedPtr<WidgetButton> advanceButton;
+	ScopedPtr<WidgetButton> closeButton;
 	
 };
 

@@ -23,13 +23,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define NPC_H
 
 #include "Entity.h"
-#include "Utils.h"
 #include "ItemStorage.h"
+#include "ScopedPtr.h"
+#include "SmartChunk.h"
+#include "SmartSurface.h"
+#include "Utils.h"
 
 #include <string>
 
-class SDL_Surface;
-class Mix_Chunk;
 
 class ItemManager;
 class MapIso;
@@ -46,14 +47,13 @@ protected:
 	ItemManager *items;
 
 	// animation info
-	SDL_Surface *sprites;
+	SmartSurface sprites;
 	int anim_frames;
 	int anim_duration;
 	int current_frame;
 	
 public:
 	NPC(MapIso *_map, ItemManager *_items);
-	~NPC();
 	void load(const std::string& npc_id);
 	void loadGraphics(const std::string& filename_sprites, const std::string& filename_portrait);
 	void loadSound(const std::string& filename, int type);
@@ -73,7 +73,7 @@ public:
 	Point render_offset;
 
 	// talker info
-	SDL_Surface *portrait;
+	SmartSurface portrait;
 	bool talker;
 
 	// vendor info
@@ -83,7 +83,7 @@ public:
 	int random_stock;
 	
 	// vocals
-	Mix_Chunk *vox_intro[NPC_MAX_VOX];
+	SmartChunk vox_intro[NPC_MAX_VOX];
 	int vox_intro_count;
 	
 	// story and dialog options

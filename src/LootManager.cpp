@@ -352,9 +352,7 @@ void LootManager::addLoot(ItemStack stack, Point const& pos) {
 	ld.frame = 0;
 	ld.gold = 0;
 	FlareAssert(!ld.tip.tip_buffer && "Buffer unexpectedly non-empty.");
-	FlareSoftAssert(0, "Loot entry");
 	loot.push_back(ld);
-	FlareSoftAssert(0, "Loot exit");
 	loot_flip.play_channel(-1, 0);
 }
 
@@ -367,9 +365,7 @@ void LootManager::addGold(int count, Point const& pos) {
 	ld.frame = 0;
 	ld.gold = count;
 	FlareAssert(!ld.tip.tip_buffer && "Buffer unexpectedly non-empty.");
-	FlareSoftAssert(0, "Gold entry");
 	loot.push_back(ld);
-	FlareSoftAssert(0, "Gold exit");
 	loot_flip.play_channel(-1, 0);
 }
 
