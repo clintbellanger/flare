@@ -66,7 +66,7 @@ void MenuHPMP::loadGraphics() {
 	SDL_FreeSurface(cleanup);
 }
 
-void MenuHPMP::render(StatBlock *stats, Point mouse) {
+void MenuHPMP::render(StatBlock *stats, Point const& mouse) {
 	SDL_Rect src;
 	SDL_Rect dest;
 	int hp_bar_length;

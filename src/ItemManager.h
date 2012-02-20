@@ -133,8 +133,9 @@ struct Item {
 struct ItemStack {
 	int item;
 	int quantity;
-	bool operator > (ItemStack param);
 };
+
+bool operator> (ItemStack const& lhs, ItemStack const& rhs);
 
 class ItemManager {
 private:

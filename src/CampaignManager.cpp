@@ -48,9 +48,6 @@ CampaignManager::CampaignManager() {
 
 void CampaignManager::clearAll() {
 	// clear campaign data
-	for (int i=0; i<MAX_STATUS; i++) {
-		status[i] = "";
-	}
 	status_count = 0;
 }
 

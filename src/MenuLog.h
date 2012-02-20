@@ -72,7 +72,7 @@ public:
 	void remove(int msg_index, int log_type);
 	void clear(int log_type);
 	void clear();
-	void clickTab(Point mouse);
+	void clickTab(Point const& mouse);
 	
 	bool visible;
 	SDL_Rect menu_area;

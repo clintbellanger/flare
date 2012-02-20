@@ -289,22 +289,22 @@ private:
 	int sfx_count;
 
 	int calcDirection(int origin_x, int origin_y, int target_x, int target_y);
-	void initHazard(int powernum, StatBlock *src_stats, Point target, Hazard *haz);
-	void buff(int power_index, StatBlock *src_stats, Point target);
+	void initHazard(int powernum, StatBlock *src_stats, Point const& target, Hazard *haz);
+	void buff(int power_index, StatBlock *src_stats, Point const& target);
 	void playSound(int power_index, StatBlock *src_stats);
 
-	bool effect(int powernum, StatBlock *src_stats, Point target);
-	bool missile(int powernum, StatBlock *src_stats, Point target);
-	bool repeater(int powernum, StatBlock *src_stats, Point target);
-	bool single(int powernum, StatBlock *src_stats, Point target);
-	bool spawn(int powernum, StatBlock *src_stats, Point target);
+	bool effect(int powernum, StatBlock *src_stats, Point const& target);
+	bool missile(int powernum, StatBlock *src_stats, Point const& target);
+	bool repeater(int powernum, StatBlock *src_stats, Point const& target);
+	bool single(int powernum, StatBlock *src_stats, Point const& target);
+	bool spawn(int powernum, StatBlock *src_stats, Point const& target);
 
 public:
 	PowerManager();
 	~PowerManager();
 
 	void handleNewMap(MapCollision *_collider);
-	bool activate(int power_index, StatBlock *src_stats, Point target);
+	bool activate(int power_index, StatBlock *src_stats, Point const& target);
 	float calcTheta(int x1, int y1, int x2, int y2);
 
 	Power powers[POWER_COUNT];

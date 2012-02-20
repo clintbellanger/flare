@@ -36,9 +36,6 @@ private:
 	std::string sanitize(std::string input);
 
 public:
-	GetText();
-	~GetText();
-
 	bool open(const std::string& filename);
 	void close();
 	bool next();

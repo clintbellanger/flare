@@ -33,7 +33,6 @@ MenuHUDLog::MenuHUDLog() {
 	
 	for (int i=0; i<MAX_HUD_MESSAGES; i++) {
 		msg_buffer[i] = NULL;
-		log_msg[i] = "";
 		msg_age[i] = 0;
 	}
 }

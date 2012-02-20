@@ -57,8 +57,7 @@ MapIso::MapIso(CampaignManager *_camp) {
 
 
 void MapIso::clearEvents() {
-	for (int i=0; i<256; i++) {
-		events[i].type = "";
+	for (int i=0; i<max_events; i++) {
 		events[i].location.x = 0;
 		events[i].location.y = 0;
 		events[i].location.w = 0;
@@ -85,7 +84,7 @@ void MapIso::clearEvents() {
 
 void MapIso::removeEvent(int eid) {
 	for (int i=eid; i<event_count; i++) {
-		if (i<256) {
+		if (i<max_events) {
 			events[i] = events[i+1];
 		}
 	}
@@ -118,7 +117,7 @@ void MapIso::clearGroup(Map_Group &g) {
 	g.chance = 1.0f;
 }
 
-void MapIso::playSFX(string filename) {
+void MapIso::playSFX(string const& filename) {
 	// only load from file if the requested soundfx isn't already loaded
 	if (filename != sfx_filename) {
 		if (sfx) Mix_FreeChunk(sfx);
@@ -128,7 +127,7 @@ void MapIso::playSFX(string filename) {
 	if (sfx) Mix_PlayChannel(-1, sfx, 0);	
 }
 
-void MapIso::push_enemy_group(Map_Group g) {
+void MapIso::push_enemy_group(Map_Group const& g) {
 	// activate at all?
 	float activate_chance = (rand() % 100) / 100.0f;
 	if (activate_chance > g.chance) {
@@ -180,7 +179,7 @@ void MapIso::push_enemy_group(Map_Group g) {
 /**
  * load
  */
-int MapIso::load(string filename) {
+int MapIso::load(string const& filename) {
 	FileParser infile;
 	string val;
 	string cur_layer;
@@ -608,7 +607,7 @@ void MapIso::render(Renderable r[], int rnum) {
 }
 
 
-void MapIso::checkEvents(Point loc) {
+void MapIso::checkEvents(Point const& loc) {
 	Point maploc;
 	maploc.x = loc.x >> TILE_SHIFT;
 	maploc.y = loc.y >> TILE_SHIFT;

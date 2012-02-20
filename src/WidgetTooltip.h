@@ -63,8 +63,8 @@ private:
 	int margin;
 public:
 	WidgetTooltip();
-	Point calcPosition(int style, Point pos, Point size);
-	void render(TooltipData &tip, Point pos, int style);
+	Point calcPosition(int style, Point const& pos, Point const& size);
+	void render(TooltipData &tip, Point const& pos, int style);
 	void clear(TooltipData &tip);
 	void createBuffer(TooltipData &tip);
 };

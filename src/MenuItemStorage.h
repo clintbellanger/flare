@@ -36,8 +36,8 @@ public:
 
 	// rendering
 	void render();
-	int slotOver(Point mouse);
-	TooltipData checkTooltip(Point mouse, StatBlock *stats, bool vendor_view);
+	int slotOver(Point const& mouse);
+	TooltipData checkTooltip(Point const& mouse, StatBlock *stats, bool vendor_view);
 	ItemStack click(InputState * input);
 	void itemReturn(ItemStack stack);
 

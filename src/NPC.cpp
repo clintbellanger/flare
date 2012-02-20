@@ -61,8 +61,6 @@ NPC::NPC(MapIso *_map, ItemManager *_items) : Entity(_map) {
 
 	for (int i=0; i<NPC_MAX_DIALOG; i++) {
 		for (int j=0; j<NPC_MAX_EVENTS; j++) {
-			dialog[i][j].type = "";
-			dialog[i][j].s = "";
 			dialog[i][j].x = 0;
 			dialog[i][j].y = 0;
 			dialog[i][j].z = 0;
