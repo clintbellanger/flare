@@ -79,7 +79,7 @@ FontEngine::FontEngine() {
 /**
  * For single-line text, just calculate the width
  */
-int FontEngine::calc_width(string text) {
+int FontEngine::calc_width(string const& text) {
 	int w, h;
 	TTF_SizeUTF8(ttfont, text.c_str(), &w, &h);
 	return w;
@@ -88,7 +88,7 @@ int FontEngine::calc_width(string text) {
 /**
  * Using the given wrap width, calculate the width and height necessary to display this text
  */
-Point FontEngine::calc_size(string text_with_newlines, int width) {
+Point FontEngine::calc_size(string const& text_with_newlines, int width) {
 	char newline = 10;
 	
 	string text = text_with_newlines;
@@ -161,7 +161,7 @@ Point FontEngine::calc_size(string text_with_newlines, int width) {
  * Render the given text at (x,y) on the target image.
  * Justify is left, right, or center
  */
-void FontEngine::render(string text, int x, int y, int justify, SDL_Surface *target, int color) {
+void FontEngine::render(string const& text, int x, int y, int justify, SDL_Surface *target, int color) {
 	int dest_x = -1;
 	int dest_y = -1;
 
@@ -204,7 +204,7 @@ void FontEngine::render(string text, int x, int y, int justify, SDL_Surface *tar
 /**
  * Word wrap to width
  */
-void FontEngine::render(string text, int x, int y, int justify, SDL_Surface *target, int width, int color) {
+void FontEngine::render(string const& text, int x, int y, int justify, SDL_Surface *target, int width, int color) {
 
 	string fulltext = text + " ";
 	cursor_y = y;
@@ -245,12 +245,12 @@ void FontEngine::render(string text, int x, int y, int justify, SDL_Surface *tar
 
 }
 
-void FontEngine::renderShadowed(string text, int x, int y, int justify, SDL_Surface *target, int color) {
+void FontEngine::renderShadowed(string const& text, int x, int y, int justify, SDL_Surface *target, int color) {
 	render(text, x+1, y+1, justify, target, FONT_BLACK);
 	render(text, x, y, justify, target, color);
 }
 
-void FontEngine::renderShadowed(string text, int x, int y, int justify, SDL_Surface *target, int width, int color) {
+void FontEngine::renderShadowed(string const& text, int x, int y, int justify, SDL_Surface *target, int width, int color) {
 	render(text, x+1, y+1, justify, target, width, FONT_BLACK);
 	render(text, x, y, justify, target, width, color);
 }
