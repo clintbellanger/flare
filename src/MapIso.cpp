@@ -57,18 +57,18 @@ MapIso::MapIso(CampaignManager *_camp) {
 
 
 void MapIso::clearEvents() {
-	for (int i=0; i<256; i++) {
-		events[i].type = "";
+	for (int i=0; i<max_events; i++) {
+		events[i].type.clear();
 		events[i].location.x = 0;
 		events[i].location.y = 0;
 		events[i].location.w = 0;
 		events[i].location.h = 0;
 		events[i].comp_num = 0;
-		events[i].tooltip = "";
+		events[i].tooltip.clear();
 		events[i].hotspot.x = events[i].hotspot.y = events[i].hotspot.h = events[i].hotspot.w = 0;
 		for (int j=0; j<256; j++) {
-			events[i].components[j].type = "";
-			events[i].components[j].s = "";
+			events[i].components[j].type.clear();
+			events[i].components[j].s.clear();
 			events[i].components[j].x = 0;
 			events[i].components[j].y = 0;
 			events[i].components[j].z = 0;
@@ -85,7 +85,7 @@ void MapIso::clearEvents() {
 
 void MapIso::removeEvent(int eid) {
 	for (int i=eid; i<event_count; i++) {
-		if (i<256) {
+		if (i<max_events) {
 			events[i] = events[i+1];
 		}
 	}
@@ -96,17 +96,17 @@ void MapIso::clearEnemy(Map_Enemy &e) {
 	e.pos.x = 0;
 	e.pos.y = 0;
 	e.direction = rand() % 8; // enemies face a random direction unless otherwise specified
-	e.type = "";
+	e.type.clear();
 }
 
 void MapIso::clearNPC(Map_NPC &n) {
-	n.id = "";
+	n.id.clear();
 	n.pos.x = 0;
 	n.pos.y = 0;
 }
 
 void MapIso::clearGroup(Map_Group &g) {
-	g.category = "";
+	g.category.clear(); 
 	g.pos.x = 0;
 	g.pos.y = 0;
 	g.area.x = 0;
@@ -118,7 +118,7 @@ void MapIso::clearGroup(Map_Group &g) {
 	g.chance = 1.0f;
 }
 
-void MapIso::playSFX(string filename) {
+void MapIso::playSFX(string const& filename) {
 	// only load from file if the requested soundfx isn't already loaded
 	if (filename != sfx_filename) {
 		if (sfx) Mix_FreeChunk(sfx);
@@ -128,7 +128,7 @@ void MapIso::playSFX(string filename) {
 	if (sfx) Mix_PlayChannel(-1, sfx, 0);	
 }
 
-void MapIso::push_enemy_group(Map_Group g) {
+void MapIso::push_enemy_group(Map_Group const& g) {
 	// activate at all?
 	float activate_chance = (rand() % 100) / 100.0f;
 	if (activate_chance > g.chance) {
@@ -180,7 +180,7 @@ void MapIso::push_enemy_group(Map_Group g) {
 /**
  * load
  */
-int MapIso::load(string filename) {
+int MapIso::load(string const& filename) {
 	FileParser infile;
 	string val;
 	string cur_layer;
@@ -608,7 +608,7 @@ void MapIso::render(Renderable r[], int rnum) {
 }
 
 
-void MapIso::checkEvents(Point loc) {
+void MapIso::checkEvents(Point const& loc) {
 	Point maploc;
 	maploc.x = loc.x >> TILE_SHIFT;
 	maploc.y = loc.y >> TILE_SHIFT;

@@ -45,7 +45,7 @@ public:
 	MenuHPMP();
 	~MenuHPMP();
 	void loadGraphics();
-	void render(StatBlock *stats, Point mouse);
+	void render(StatBlock *stats, Point const& mouse);
 };
 
 #endif

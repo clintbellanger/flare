@@ -38,8 +38,8 @@ public:
 	MenuMiniMap();
 	~MenuMiniMap();
 
-	void render(MapCollision *collider, Point hero_pos, int map_w, int map_h);
-	void renderIso(MapCollision *collider, Point hero_pos, int map_w, int map_h);
+	void render(MapCollision *collider, Point const& hero_pos, int map_w, int map_h);
+	void renderIso(MapCollision *collider, Point const& hero_pos, int map_w, int map_h);
 
 };
 

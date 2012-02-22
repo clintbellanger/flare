@@ -26,7 +26,7 @@ int round(float f) {
 	return (int)(f + 0.5);
 }
 
-Point round(FPoint fp) {
+Point round(FPoint const& fp) {
 	Point result;
 	result.x = round(fp.x);
 	result.y = round(fp.y);
@@ -65,7 +65,7 @@ Point map_to_collision(Point p) {
 /**
  * Apply parameter distance to position and direction
  */
-FPoint calcVector(Point pos, int direction, int dist) {
+FPoint calcVector(Point const& pos, int direction, int dist) {
 	FPoint p;
 	p.x = (float)(pos.x);
 	p.y = (float)(pos.y);
@@ -106,7 +106,7 @@ FPoint calcVector(Point pos, int direction, int dist) {
 	return p;
 }
 
-double calcDist(Point p1, Point p2) {
+double calcDist(Point const& p1, Point const& p2) {
 	int x = p2.x - p1.x;
 	int y = p2.y - p1.y;
 	double step1 = x*x + y*y;
@@ -116,14 +116,14 @@ double calcDist(Point p1, Point p2) {
 /**
  * is target within the area defined by center and radius?
  */
-bool isWithin(Point center, int radius, Point target) {
+bool isWithin(Point const& center, int radius, Point const& target) {
 	return (calcDist(center, target) < radius);
 }
 
 /**
  * is target within the area defined by rectangle r?
  */
-bool isWithin(SDL_Rect r, Point target) {
+bool isWithin(SDL_Rect const& r, Point const& target) {
 	return target.x >= r.x && target.y >= r.y && target.x < r.x+r.w && target.y < r.y+r.h;
 }
 
@@ -259,7 +259,7 @@ void drawLine(SDL_Surface *screen, int x0, int y0, int x1, int y1, Uint32 color)
 	} while(x0 != x1 || y0 != y1);
 }
 
-void drawLine(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color) {
+void drawLine(SDL_Surface *screen, Point const& pos0, Point const& pos1, Uint32 color) {
 	drawLine(screen, pos0.x, pos0.y, pos1.x, pos1.y, color);
 }
 

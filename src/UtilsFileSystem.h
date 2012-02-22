@@ -27,10 +27,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <string>
 #include <vector>
 
-bool dirExists(std::string path);
-void createDir(std::string path);
-bool fileExists(std::string filename);
-int getFileList(std::string dir, std::string ext, std::vector<std::string> &files);
+bool dirExists(std::string const& path);
+void createDir(std::string const& path);
+bool fileExists(std::string const& filename);
+int getFileList(std::string const& dir, std::string const& ext, std::vector<std::string> &files);
 
 
 

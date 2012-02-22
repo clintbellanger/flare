@@ -46,6 +46,7 @@ ItemStack & ItemStorage::operator [] (int slot) {
  * Take the savefile CSV list of items id and convert to storage array
  */
 void ItemStorage::setItems(string s) {
+	// Could this be done without copying the string?
 	s = s + ',';
 	for (int i=0; i<slot_number; i++) {
 		storage[i].item = eatFirstInt(s, ',');
@@ -58,6 +59,7 @@ void ItemStorage::setItems(string s) {
  * Take the savefile CSV list of items quantities and convert to storage array
  */
 void ItemStorage::setQuantities(string s) {
+	// Could this be done without copying the string?
 	s = s + ',';
 	for (int i=0; i<slot_number; i++) {
 		storage[i].quantity = eatFirstInt(s, ',');
@@ -67,9 +69,8 @@ void ItemStorage::setQuantities(string s) {
 /**
  * Convert storage array to a CSV list of items id for savefile
  */
-string ItemStorage::getItems() {
+string ItemStorage::getItems() const {
 	stringstream ss;
-	ss.str("");
 	for (int i=0; i<slot_number; i++) {
 		ss << storage[i].item;
 		if (i < slot_number-1) ss << ',';
@@ -80,9 +81,8 @@ string ItemStorage::getItems() {
 /**
  * Convert storage array to a CSV list of items quantities for savefile
  */
-string ItemStorage::getQuantities() {
+string ItemStorage::getQuantities() const {
 	stringstream ss;
-	ss.str("");
 	for (int i=0; i<slot_number; i++) {
 		ss << storage[i].quantity;
 		if (i < slot_number-1) ss << ',';
@@ -103,7 +103,7 @@ void ItemStorage::clear() {
  * @param ItemStack Stack of items
  * @param slot Slot number where it will try to store the item
  */
-void ItemStorage::add( ItemStack stack, int slot) {
+void ItemStorage::add(ItemStack stack, int slot) {
 	int max_quantity;
 	int quantity_added;
 	int i;
@@ -182,7 +182,7 @@ void ItemStorage::sort() {
 }
 
 //TODO: handle stackable items
-bool ItemStorage::full() {
+bool ItemStorage::full() const {
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item == 0) {
 			return false;
@@ -194,7 +194,7 @@ bool ItemStorage::full() {
 /**
  * Get the number of the specified item carried (not equipped)
  */
-int ItemStorage::count(int item) {
+int ItemStorage::count(int item) const {
 	int item_count=0;
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item == item) {
@@ -207,7 +207,7 @@ int ItemStorage::count(int item) {
 /**
  * Check to see if the given item is equipped
  */
-bool ItemStorage::contain(int item) {
+bool ItemStorage::contain(int item) const {
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item == item)
 			return true;

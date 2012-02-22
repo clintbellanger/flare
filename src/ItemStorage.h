@@ -39,17 +39,17 @@ public:
 
 	void setItems(std::string s);
 	void setQuantities(std::string s);
-	std::string getItems();
-	std::string getQuantities();
+	std::string getItems() const;
+	std::string getQuantities() const;
 	void add(ItemStack stack, int slot = -1);
 	void substract(int slot, int quantity = 1);
 	bool remove(int item);
 	void sort();
 	void clear();
 
-	bool full();
-	int count(int item);
-	bool contain(int item);
+	bool full() const;
+	int count(int item) const;
+	bool contain(int item) const;
 
 	ItemStack * storage;
 };

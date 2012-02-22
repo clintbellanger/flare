@@ -38,7 +38,7 @@ void MenuItemStorage::render() {
 	}
 }
 
-int MenuItemStorage::slotOver(Point mouse) {
+int MenuItemStorage::slotOver(Point const& mouse) {
 	if( isWithin( area, mouse)) {
 		return (mouse.x - area.x) / icon_size + (mouse.y - area.y) / icon_size * nb_cols;
 	}
@@ -47,7 +47,7 @@ int MenuItemStorage::slotOver(Point mouse) {
 	}
 }
 
-TooltipData MenuItemStorage::checkTooltip(Point mouse, StatBlock *stats, bool vendor_view) {
+TooltipData MenuItemStorage::checkTooltip(Point const& mouse, StatBlock *stats, bool vendor_view) {
 	TooltipData tip;
 	int slot = slotOver( mouse);
 

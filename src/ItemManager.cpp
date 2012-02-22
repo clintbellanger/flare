@@ -39,7 +39,6 @@ ItemManager::ItemManager() {
 		items[i].bonus_stat = new string[ITEM_MAX_BONUSES];
 		items[i].bonus_val = new int[ITEM_MAX_BONUSES];
 		for (int j=0; j<ITEM_MAX_BONUSES; j++) {
-			items[i].bonus_stat[j] = "";
 			items[i].bonus_val[j] = 0;
 		}
 	}
@@ -484,15 +483,15 @@ ItemManager::~ItemManager() {
 /**
  * Compare two item stack to be able to sorting them on their item_id in the vendors' stock
  */
-bool ItemStack::operator > (ItemStack param) {
-	if (item == 0 && param.item > 0) {
+bool operator> (ItemStack const& lhs, ItemStack const& rhs) {
+	if (lhs.item == 0 && rhs.item > 0) {
 		// Make the empty slots the last while sorting
 		return true;
-	} else if (item > 0 && param.item == 0) {
+	} else if (lhs.item > 0 && rhs.item == 0) {
 		// Make the empty slots the last while sorting
 		return false;
 	} else {
-		return item > param.item;
+		return lhs.item > rhs.item;
 	}
 }
 

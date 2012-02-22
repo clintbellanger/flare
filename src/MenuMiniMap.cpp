@@ -40,7 +40,7 @@ MenuMiniMap::MenuMiniMap() {
 /**
  * Render a top-down version of the map (90 deg angle)
  */
-void MenuMiniMap::render(MapCollision *collider, Point hero_pos, int map_w, int map_h) {
+void MenuMiniMap::render(MapCollision *collider, Point const& hero_pos, int map_w, int map_h) {
 	Point hero_tile;
 	Point map_tile;
 	hero_tile.x = hero_pos.x / UNITS_PER_TILE;
@@ -70,7 +70,7 @@ void MenuMiniMap::render(MapCollision *collider, Point hero_pos, int map_w, int 
 /**
  * Render an "isometric" version of the map (45 deg angle)
  */
-void MenuMiniMap::renderIso(MapCollision *collider, Point hero_pos, int map_w, int map_h) {
+void MenuMiniMap::renderIso(MapCollision *collider, Point const& hero_pos, int map_w, int map_h) {
 	int tile_type;
 	Point screen_pos;
 	Uint32 draw_color;

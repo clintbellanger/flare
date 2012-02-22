@@ -133,7 +133,7 @@ void MenuInventory::render() {
 	inventory[CARRIED].render();
 }
 
-int MenuInventory::areaOver(Point mouse) {
+int MenuInventory::areaOver(Point const& mouse) {
 	if (isWithin(equipped_area, mouse)) {
 		return EQUIPMENT;
 	}
@@ -148,7 +148,7 @@ int MenuInventory::areaOver(Point mouse) {
  *
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
-TooltipData MenuInventory::checkTooltip(Point mouse) {
+TooltipData MenuInventory::checkTooltip(Point const& mouse) {
 	int area;
 	TooltipData tip;
 	
@@ -188,7 +188,7 @@ ItemStack MenuInventory::click(InputState * input) {
 /**
  * Return dragged item to previous slot
  */
-void MenuInventory::itemReturn( ItemStack stack) {
+void MenuInventory::itemReturn( ItemStack const& stack) {
 	inventory[drag_prev_src].itemReturn( stack);
 	// if returning equipment, prepare to change stats/sprites
 	if (drag_prev_src == EQUIPMENT) {
@@ -201,7 +201,7 @@ void MenuInventory::itemReturn( ItemStack stack) {
  * Dragging and dropping an item can be used to rearrange the inventory
  * and equip items
  */
-void MenuInventory::drop(Point mouse, ItemStack stack) {
+void MenuInventory::drop(Point const& mouse, ItemStack const& stack) {
 	int area;
 	int slot;
 	int drag_prev_slot;
@@ -445,7 +445,7 @@ void MenuInventory::addGold(int count) {
  * Check if there is enough gold to buy the given stack, and if so remove it from the current total and add the stack.
  * (Handle the drop into the equipment area, but add() don't handle it well in all circonstances. MenuManager::logic() allow only into the carried area.)
  */
-bool MenuInventory::buy(ItemStack stack, Point mouse) {
+bool MenuInventory::buy(ItemStack const& stack, Point const& mouse) {
 	int area;
 	int slot = -1;
 	int count = items->items[stack.item].price * stack.quantity;

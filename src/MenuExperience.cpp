@@ -79,7 +79,7 @@ void MenuExperience::loadGraphics() {
  * Display the XP bar background and current progress.
  * On mouseover, display progress in text form.
  */
-void MenuExperience::render(StatBlock *stats, Point mouse) {
+void MenuExperience::render(StatBlock *stats, Point const& mouse) {
 
 	SDL_Rect src;
 	SDL_Rect dest;

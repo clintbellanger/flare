@@ -67,13 +67,13 @@ public:
 	int getLineHeight() { return line_height; }
 	int getFontHeight() { return font_height; }
 	
-	int calc_width(std::string text);
-	Point calc_size(std::string text_with_newlines, int width);
+	int calc_width(std::string const& text);
+	Point calc_size(std::string const& text_with_newlines, int width);
 
-	void render(std::string text, int x, int y, int justify, SDL_Surface *target, int color);
-	void render(std::string text, int x, int y, int justify, SDL_Surface *target, int width, int color);
-	void renderShadowed(std::string text, int x, int y, int justify, SDL_Surface *target, int color);
-	void renderShadowed(std::string text, int x, int y, int justify, SDL_Surface *target, int width, int color);
+	void render(std::string const& text, int x, int y, int justify, SDL_Surface *target, int color);
+	void render(std::string const& text, int x, int y, int justify, SDL_Surface *target, int width, int color);
+	void renderShadowed(std::string const& text, int x, int y, int justify, SDL_Surface *target, int color);
+	void renderShadowed(std::string const& text, int x, int y, int justify, SDL_Surface *target, int width, int color);
 
 	int cursor_y;
 };

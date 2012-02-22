@@ -254,7 +254,7 @@ void MenuLog::remove(int msg_index, int log_type) {
  * Called by MenuManager
  * The tab area was clicked. Change the active tab
  */
-void MenuLog::clickTab(Point mouse) {
+void MenuLog::clickTab(Point const& mouse) {
 	for (int i=0; i<LOG_TYPE_COUNT; i++) {
 		if(isWithin(tab_rect[i], mouse)) {
 			active_log = i;

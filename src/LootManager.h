@@ -98,16 +98,16 @@ public:
 
 	void handleNewMap();
 	void logic();
-	void renderTooltips(Point cam);
+	void renderTooltips(Point const& cam);
 	void checkEnemiesForLoot();
 	void checkMapForLoot();
 	bool isFlying(int loot_index);
-	void determineLoot(int base_level, Point pos);
+	void determineLoot(int base_level, Point const& pos);
 	int randomItem(int base_level);
-	void addLoot(ItemStack stack, Point pos);
-	void addGold(int count, Point pos);
+	void addLoot(ItemStack stack, Point const& pos);
+	void addGold(int count, Point const& pos);
 	void removeLoot(int index);
-	ItemStack checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full);
+	ItemStack checkPickup(Point const& mouse, Point const& cam, Point const& hero_pos, int &gold, bool inv_full);
 	
 	Renderable getRender(int index);
 	

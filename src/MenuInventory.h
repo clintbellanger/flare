@@ -59,7 +59,7 @@ private:
 	PowerManager *powers;
 
 	void loadGraphics();
-	int areaOver(Point mouse);
+	int areaOver(Point const& mouse);
 	void updateEquipment(int slot);
 
 	SDL_Surface *background;
@@ -70,17 +70,17 @@ public:
 	~MenuInventory();
 	void logic();
 	void render();
-	TooltipData checkTooltip(Point mouse);
+	TooltipData checkTooltip(Point const& mouse);
 
 	ItemStack click(InputState * input);
-	void itemReturn(ItemStack stack);
-	void drop(Point mouse, ItemStack stack);
+	void itemReturn(ItemStack const& stack);
+	void drop(Point const& mouse, ItemStack const& stack);
 	void activate(InputState * input);
 
-	void add( ItemStack stack, int area = CARRIED, int slot = -1);
+	void add(ItemStack stack, int area = CARRIED, int slot = -1);
 	void remove(int item);
 	void addGold(int count);
-	bool buy(ItemStack stack, Point mouse = Point());
+	bool buy(ItemStack const& stack, Point const& mouse = Point());
 	bool sell(ItemStack stack);
 
 	bool full();

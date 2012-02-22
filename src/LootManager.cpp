@@ -43,7 +43,6 @@ LootManager::LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_m
 	
 	for (int i=0; i<64; i++) {
 		flying_loot[i] = NULL;
-		animation_id[i] = "";
 	}
 	
 	loot_flip = NULL;
@@ -215,7 +214,7 @@ bool LootManager::isFlying(int loot_index) {
 /**
  * Show all tooltips for loot on the floor
  */
-void LootManager::renderTooltips(Point cam) {
+void LootManager::renderTooltips(Point const& cam) {
 
 	Point xcam;
 	Point ycam;
@@ -346,7 +345,7 @@ int LootManager::lootLevel(int base_level) {
  * base_level represents the average quality of this loot
  * calls addLoot()
  */
-void LootManager::determineLoot(int base_level, Point pos) {
+void LootManager::determineLoot(int base_level, Point const& pos) {
 	int level = lootLevel(base_level);
 	ItemStack new_loot;
 
@@ -379,7 +378,7 @@ int LootManager::randomItem(int base_level) {
 	return 0;
 }
 
-void LootManager::addLoot(ItemStack stack, Point pos) {
+void LootManager::addLoot(ItemStack stack, Point const& pos) {
 	// TODO: z-sort insert?
 	loot[loot_count].stack = stack;
 	loot[loot_count].pos.x = pos.x;
@@ -390,7 +389,7 @@ void LootManager::addLoot(ItemStack stack, Point pos) {
 	if (loot_flip) Mix_PlayChannel(-1, loot_flip, 0);
 }
 
-void LootManager::addGold(int count, Point pos) {
+void LootManager::addGold(int count, Point const& pos) {
 	loot[loot_count].stack.item = 0;
 	loot[loot_count].stack.quantity = 0;
 	loot[loot_count].pos.x = pos.x;
@@ -435,7 +434,7 @@ void LootManager::removeLoot(int index) {
  * screen coordinates to map locations.  We need the hero position because
  * the hero has to be within range to pick up an item.
  */
-ItemStack LootManager::checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full) {
+ItemStack LootManager::checkPickup(Point const& mouse, Point const& cam, Point const& hero_pos, int &gold, bool inv_full) {
 	Point p;
 	SDL_Rect r;
 	ItemStack loot_stack;

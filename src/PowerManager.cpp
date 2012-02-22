@@ -512,7 +512,7 @@ int PowerManager::calcDirection(int origin_x, int origin_y, int target_x, int ta
  * @param target Aim position in map coordinates
  * @param haz A newly-initialized hazard
  */
-void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point target, Hazard *haz) {
+void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point const& target, Hazard *haz) {
 
 	//the hazard holds the statblock of its source
 	haz->src_stats = src_stats;
@@ -672,7 +672,7 @@ void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point targe
  * Any attack-based effects are handled by hazards.
  * Self-enhancements (buffs) are handled by this function.
  */
-void PowerManager::buff(int power_index, StatBlock *src_stats, Point target) {
+void PowerManager::buff(int power_index, StatBlock *src_stats, Point const& target) {
 
 	// heal for ment weapon damage * damage multiplier
 	if (powers[power_index].buff_heal) {
@@ -778,7 +778,7 @@ void PowerManager::playSound(int power_index, StatBlock *src_stats) {
  * @param target The mouse cursor position in map coordinates
  * return boolean true if successful
  */
-bool PowerManager::effect(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::effect(int power_index, StatBlock *src_stats, Point const& target) {
 
 	if (powers[power_index].use_hazard) {
 		Hazard *haz = new Hazard();
@@ -810,8 +810,9 @@ bool PowerManager::effect(int power_index, StatBlock *src_stats, Point target) {
  * @param target The mouse cursor position in map coordinates
  * return boolean true if successful
  */
-bool PowerManager::missile(int power_index, StatBlock *src_stats, Point target) {
-	float pi = 3.1415926535898;
+bool PowerManager::missile(int power_index, StatBlock *src_stats, Point const& target) {
+	// Could this be made a double?
+	static float const pi = 3.1415926535898;
 
 	Point src;
 	if (powers[power_index].starting_pos == STARTING_POS_TARGET) {
@@ -868,7 +869,7 @@ bool PowerManager::missile(int power_index, StatBlock *src_stats, Point target) 
 /**
  * Repeaters are multiple hazards that spawn in a straight line
  */
-bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point const& target) {
 
 	
 	// pay costs up front
@@ -925,7 +926,7 @@ bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target)
 /**
  * Basic single-frame area hazard
  */
-bool PowerManager::single(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::single(int power_index, StatBlock *src_stats, Point const& target) {
 	
 	Hazard *haz = new Hazard();
 
@@ -954,7 +955,7 @@ bool PowerManager::single(int power_index, StatBlock *src_stats, Point target) {
 /**
  * Spawn a creature. Does not create a hazard
  */
-bool PowerManager::spawn(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::spawn(int power_index, StatBlock *src_stats, Point const& target) {
 		
 	// apply any buffs
 	buff(power_index, src_stats, target);
@@ -990,7 +991,7 @@ bool PowerManager::spawn(int power_index, StatBlock *src_stats, Point target) {
 /**
  * Activate is basically a switch/redirect to the appropriate function
  */
-bool PowerManager::activate(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::activate(int power_index, StatBlock *src_stats, Point const& target) {
 
 	if (src_stats->hero) {
 		if (powers[power_index].requires_mp > src_stats->mp)

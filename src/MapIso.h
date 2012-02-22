@@ -96,15 +96,17 @@ private:
 	
 	void executeEvent(int eid);
 	void removeEvent(int eid);
-	void playSFX(std::string filename);
-	void push_enemy_group(Map_Group g);
+	void playSFX(std::string const& filename);
+	void push_enemy_group(Map_Group const& g);
 	bool isActive(int eventid);
 		
 	// map events
-	Map_Event events[256];
+	static const int max_events = 256;
+	Map_Event events[max_events];
 	int event_count;
 
 public:
+
 	CampaignManager *camp;
 	PowerManager *powers;
 
@@ -115,11 +117,11 @@ public:
 	void clearNPC(Map_NPC &n);
 	void clearGroup(Map_Group &g);
 
-	int load(std::string filename);
+	int load(std::string const& filename);
 	void loadMusic();
 	void logic();
 	void render(Renderable r[], int rnum);
-	void checkEvents(Point loc);
+	void checkEvents(Point const& loc);
 	void checkEventClick();
 	void clearEvents();
 	void checkTooltip();

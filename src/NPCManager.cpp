@@ -86,7 +86,7 @@ void NPCManager::logic() {
 	}
 }
 
-int NPCManager::checkNPCClick(Point mouse, Point cam) {
+int NPCManager::checkNPCClick(Point const& mouse, Point const& cam) {
 	Point p;
 	SDL_Rect r;
 	for(int i=0; i<npc_count; i++) {
@@ -108,7 +108,7 @@ int NPCManager::checkNPCClick(Point mouse, Point cam) {
 /**
  * On mouseover, display NPC's name
  */
-void NPCManager::renderTooltips(Point cam, Point mouse) {
+void NPCManager::renderTooltips(Point const& cam, Point const& mouse) {
 	Point p;
 	SDL_Rect r;
 	

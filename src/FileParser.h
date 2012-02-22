@@ -35,7 +35,6 @@ private:
 
 public:
 	FileParser();
-	~FileParser();
 
 	bool open(const std::string& filename);
 	void close();

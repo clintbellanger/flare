@@ -43,12 +43,14 @@ private:
 	std::string current_map;
 
 public:
+	static const int num_tiles = 1024;
+
 	// functions
 	TileSet();
 	~TileSet();
 	void load(const std::string& filename);
 	
-	Tile_Def tiles[1024];
+	Tile_Def tiles[num_tiles];
 	SDL_Surface *sprites;
 };
 
