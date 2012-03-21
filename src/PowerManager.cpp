@@ -66,7 +66,7 @@ void PowerManager::loadAll() {
 	string test_path;
 
 	// load each items.txt file. Individual item IDs can be overwritten with mods.
-	for (unsigned int i = 0; i < mods->mod_list.size(); i++) {
+	for (size_t i = 0; i < mods->mod_list.size(); i++) {
 
 		test_path = PATH_DATA + "mods/" + mods->mod_list[i] + "/powers/powers.txt";
 
