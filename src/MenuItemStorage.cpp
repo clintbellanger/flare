@@ -20,6 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuItemStorage.h"
+#include "ItemManager.h"
 
 using namespace std;
 
@@ -75,7 +76,7 @@ ItemStack MenuItemStorage::click(InputState * input) {
 	}
 }
 
-void MenuItemStorage::itemReturn(ItemStack stack) {
+void MenuItemStorage::itemReturn(const ItemStack& stack) {
 	add( stack, drag_prev_slot);
 	drag_prev_slot = -1;
 }

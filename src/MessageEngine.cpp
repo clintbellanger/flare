@@ -25,13 +25,17 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "SharedResources.h"
+#include "GetText.h"
+#include "Settings.h"
+
 #include <sstream>
+
 
 using namespace std;
 
 MessageEngine::MessageEngine() {
 	GetText infile;
-	for (unsigned int i = 0; i < mods->mod_list.size(); i++) {
+	for (size_t i = 0; i < mods->mod_list.size(); ++i) {
 		string path = PATH_DATA + "mods/" + mods->mod_list[i] + "/languages/";
 		if (infile.open(path + "engine." + LANGUAGE + ".po")) {
 			while (infile.next()) {

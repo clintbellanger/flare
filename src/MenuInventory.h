@@ -84,8 +84,8 @@ public:
 	bool sell(ItemStack stack);
 
 	bool full();
-	int getItemCountCarried(int item);
-	bool isItemEquipped(int item);
+	int getItemCountCarried(int item) const;
+	bool isItemEquipped(int item) const;
 	bool requirementsMet(int item);
 	
 	void applyEquipment(ItemStack *equipped);

@@ -22,14 +22,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ITEM_STORAGE_H
 #define ITEM_STORAGE_H
 
-#include "ItemManager.h"
-#include <SDL.h>
+
+#include <string>
+
+class ItemManager;
+class ItemStack;
 
 
 class ItemStorage {
-protected:
-	ItemManager *items;
-	int slot_number;
+	friend class GameStatePlay;
+	friend class MenuManager;
 
 public:
 	void init(int _slot_number, ItemManager *_items);
@@ -39,8 +41,8 @@ public:
 
 	void setItems(std::string s);
 	void setQuantities(std::string s);
-	std::string getItems();
-	std::string getQuantities();
+	std::string getItems() const;
+	std::string getQuantities() const;
 	void add(ItemStack stack, int slot = -1);
 	void substract(int slot, int quantity = 1);
 	bool remove(int item);
@@ -48,9 +50,12 @@ public:
 	void clear();
 
 	bool full();
-	int count(int item);
-	bool contain(int item);
+	int count(int item) const;
+	bool contain(int item) const;
 
+protected:
+	ItemManager *items;
+	int slot_number;
 	ItemStack * storage;
 };
 

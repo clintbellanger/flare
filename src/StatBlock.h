@@ -24,9 +24,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef STAT_BLOCK_H
 #define STAT_BLOCK_H
 
-#include "Settings.h"
 #include "Utils.h"
-#include "SharedResources.h"
 #include <string>
 
 const int STAT_EFFECT_SHIELD = 0;
@@ -47,8 +45,6 @@ const int ON_JOIN_COMBAT = 9;
 const int MAX_CHARACTER_LEVEL = 32;
 
 class StatBlock {
-private:
-
 public:
 	StatBlock();
 	~StatBlock();
@@ -58,7 +54,7 @@ public:
 	void recalc();
 	void logic();
 	void clearEffects();
-	Renderable getEffectRender(int effect_type);
+	Renderable getEffectRender(int effect_type) const;
 
 	bool alive;
 	bool corpse; // creature is dead and done animating
@@ -85,10 +81,10 @@ public:
 	int mental_additional;
 
 	// getters for full base stats (character + additional)
-	inline int get_offense() { return offense_character + offense_additional; }
-	inline int get_defense() { return defense_character + defense_additional; }
-	inline int get_physical() { return physical_character + physical_additional; }
-	inline int get_mental() { return mental_character + mental_additional; }
+	inline int get_offense() const { return offense_character + offense_additional; }
+	inline int get_defense() const { return defense_character + defense_additional; }
+	inline int get_physical() const { return physical_character + physical_additional; }
+	inline int get_mental() const { return mental_character + mental_additional; }
 
 	// derived stats ("disciplines")
 	int physoff;
@@ -184,7 +180,7 @@ public:
 	int dir_ticks;
 	int patrol_ticks;
 	bool in_combat;
-    bool join_combat;
+	bool join_combat;
 	int cooldown_ticks;
 	int cooldown; // min. # of frames between abilities
 	

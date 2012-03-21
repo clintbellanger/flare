@@ -20,6 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "MenuVendor.h"
+#include "ItemManager.h"
 #include "SharedResources.h"
 #include "WidgetLabel.h"
 

@@ -24,13 +24,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "Entity.h"
 #include "Utils.h"
-#include "ItemManager.h"
 #include "ItemStorage.h"
-#include "MapIso.h"
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
 #include <string>
+
+
+class ItemManager;
+class MapIso;
+struct SDL_Surface;
+struct Mix_Chunk;
+
 
 const int NPC_VENDOR_MAX_STOCK = 80;
 const int NPC_MAX_VOX = 8;
@@ -59,7 +61,7 @@ public:
 	bool playSound(int type);
 	int chooseDialogNode();
 	bool processDialog(int dialog_node, int& event_cursor);
-	virtual Renderable getRender();
+	virtual Renderable getRender() const;
 	
 	// general info
 	std::string name;

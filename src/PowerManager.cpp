@@ -23,6 +23,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "FileParser.h"
 #include "SharedResources.h"
 #include "UtilsFileSystem.h"
+#include "CombatText.h"
+#include "Hazard.h"
+#include "StatBlock.h"
+
+#include <SDL_video.h>
+#include <SDL_mixer.h>
 
 #include <cmath>
 

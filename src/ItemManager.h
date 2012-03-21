@@ -27,11 +27,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "WidgetTooltip.h"
 #include "SharedResources.h"
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
+#include <SDL_video.h>
 
 #include <string>
+
+
+struct SDL_Surface;
+struct Mix_Chunk;
 
 
 const int MAX_ITEM_ID = 10000;

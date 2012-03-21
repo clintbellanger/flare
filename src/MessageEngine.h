@@ -28,16 +28,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef MESSAGE_ENGINE_H
 #define MESSAGE_ENGINE_H
 
-#include "GetText.h"
-#include "Settings.h"
 #include <map>
+#include <string>
 
 class MessageEngine {
-
-private:
-	std::map<std::string,std::string> messages;
-	std::string str(int i);
-
 public:
 	MessageEngine();
 	std::string get(const std::string& key);
@@ -45,6 +39,10 @@ public:
 	std::string get(const std::string& key, const std::string& s);
 	std::string get(const std::string& key, int i, const std::string& s);
 	std::string get(const std::string& key, int i, int j);
+
+private:
+	std::map<std::string,std::string> messages;
+	std::string str(int i);
 };
 
 #endif
