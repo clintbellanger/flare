@@ -168,8 +168,8 @@ void GameStatePlay::loadGame() {
 			}
 			else if (infile.key == "campaign") camp->setAll(infile.val);
 		}
-			
-		infile.close();		
+
+		infile.close();
 	}
 
 	// initialize vars

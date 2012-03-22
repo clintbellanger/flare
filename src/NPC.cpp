@@ -22,7 +22,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "NPC.h"
 #include "FileParser.h"
 #include "SharedResources.h"
-
+#include "MapIso.h"
 
 #include <sstream>
 
@@ -363,7 +363,7 @@ bool NPC::processDialog(int dialog_node, int &event_cursor) {
  * Map objects need to be drawn in Z order, so we allow a parent object (GameEngine)
  * to collect all mobile sprites each frame.
  */
-Renderable NPC::getRender() {
+Renderable NPC::getRender() const {
 	Renderable r;
 	r.sprite = sprites;
 	r.map_pos.x = pos.x;

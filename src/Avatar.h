@@ -26,19 +26,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "Entity.h"
 #include "Utils.h"
-#include "InputState.h"
-#include "MapIso.h"
-#include "StatBlock.h"
-#include "Hazard.h"
-#include "PowerManager.h"
-#include "SharedResources.h"
-#include "MenuManager.h"
-#include "CombatText.h"
-
-#include <SDL.h>
-#include <SDL_image.h>
 
 #include <string>
+
+
+class Hazard;
+class PowerManager;
+struct Mix_Chunk;
 
 
 /**
@@ -92,7 +86,7 @@ public:
 	bool takeHit(Hazard h);
 	std::string log_msg;
 
-	virtual Renderable getRender();
+	virtual Renderable getRender() const;
 
 	// vars
 	Hazard *haz;

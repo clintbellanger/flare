@@ -20,6 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "ItemStorage.h"
+#include "ItemManager.h"
 
 #include <sstream>
 
@@ -67,7 +68,7 @@ void ItemStorage::setQuantities(string s) {
 /**
  * Convert storage array to a CSV list of items id for savefile
  */
-string ItemStorage::getItems() {
+string ItemStorage::getItems() const {
 	stringstream ss;
 	ss.str("");
 	for (int i=0; i<slot_number; i++) {
@@ -80,7 +81,7 @@ string ItemStorage::getItems() {
 /**
  * Convert storage array to a CSV list of items quantities for savefile
  */
-string ItemStorage::getQuantities() {
+string ItemStorage::getQuantities() const {
 	stringstream ss;
 	ss.str("");
 	for (int i=0; i<slot_number; i++) {
@@ -103,7 +104,7 @@ void ItemStorage::clear() {
  * @param ItemStack Stack of items
  * @param slot Slot number where it will try to store the item
  */
-void ItemStorage::add( ItemStack stack, int slot) {
+void ItemStorage::add(ItemStack stack, int slot) {
 	int max_quantity;
 	int quantity_added;
 	int i;
@@ -194,7 +195,7 @@ bool ItemStorage::full() {
 /**
  * Get the number of the specified item carried (not equipped)
  */
-int ItemStorage::count(int item) {
+int ItemStorage::count(int item) const {
 	int item_count=0;
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item == item) {
@@ -207,7 +208,7 @@ int ItemStorage::count(int item) {
 /**
  * Check to see if the given item is equipped
  */
-bool ItemStorage::contain(int item) {
+bool ItemStorage::contain(int item) const {
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item == item)
 			return true;

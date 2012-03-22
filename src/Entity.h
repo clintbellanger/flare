@@ -25,18 +25,18 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "MapIso.h"
-#include "Animation.h"
-#include "Utils.h"
+
+#include "StatBlock.h"
+
 #include <vector>
 
-class Entity {
-protected:
-	SDL_Surface *sprites;
-	Animation *activeAnimation;
-	MapIso* map;
-	std::vector<Animation*> animations;
 
+class Animation;
+class MapIso;
+struct SDL_Surface;
+
+
+class Entity {
 public:
 	Entity(MapIso*);
 	virtual ~Entity();
@@ -45,13 +45,19 @@ public:
 	int face(int, int);
 
 	// Each child of Entity defines its own rendering method
-	virtual Renderable getRender() = 0;
+	virtual Renderable getRender() const = 0;
 
 	void loadAnimations(const std::string& filename);
 
 	bool setAnimation(const std::string& animation);
 
 	StatBlock stats;
+
+protected:
+	SDL_Surface *sprites;
+	Animation *activeAnimation;
+	MapIso* map;
+	std::vector<Animation*> animations;
 };
 
 #endif

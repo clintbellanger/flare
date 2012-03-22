@@ -25,8 +25,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define UTILS_H
 
 #include "Settings.h"
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL_video.h>
 #include <string>
 
 struct Point {
@@ -55,7 +54,6 @@ struct Event_Component {
 	int z;
 	
 	Event_Component() {
-		type = s = "";
 		x = y = z = 0;
 	}
 };

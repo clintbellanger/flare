@@ -20,7 +20,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "Enemy.h"
-#include <sstream>
+
+#include "Animation.h"
+#include "CombatText.h"
+#include "MapIso.h"
+#include "PowerManager.h"
+
+#include <cmath>
+
 
 using namespace std;
 
@@ -35,7 +42,7 @@ Enemy::Enemy(PowerManager *_powers, MapIso *_map) : Entity(_map) {
 	stats.last_seen.x = -1;
 	stats.last_seen.y = -1;
 	stats.in_combat = false;
-    stats.join_combat = false;
+	stats.join_combat = false;
 	
 	haz = NULL;
 	
@@ -86,7 +93,7 @@ int Enemy::faceNextBest(int mapx, int mapy) {
 /**
  * Calculate distance between the enemy and the hero
  */
-int Enemy::getDistance(Point dest) {
+int Enemy::getDistance(Point dest) const {
 	int dx = dest.x - stats.pos.x;
 	int dy = dest.y - stats.pos.y;
 	double step1 = (double)dx * (double)dx + (double)dy * (double)dy;
@@ -766,7 +773,7 @@ void Enemy::doRewards() {
  * Map objects need to be drawn in Z order, so we allow a parent object (GameEngine)
  * to collect all mobile sprites each frame.
  */
-Renderable Enemy::getRender() {
+Renderable Enemy::getRender() const {
 	Renderable r = activeAnimation->getCurrentFrame(stats.direction);
 	r.map_pos.x = stats.pos.x;
 	r.map_pos.y = stats.pos.y;

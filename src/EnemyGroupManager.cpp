@@ -42,7 +42,7 @@ EnemyGroupManager& EnemyGroupManager::instance() {
 void EnemyGroupManager::generate() {
 
 	// load each enemies folder. Individual enemies can be overwritten with mods.
-	for (unsigned int i = 0; i < mods->mod_list.size(); i++) {
+	for (size_t i = 0; i < mods->mod_list.size(); i++) {
 
 		string dir = PATH_DATA + "mods/" + mods->mod_list[i] + "/enemies";
 

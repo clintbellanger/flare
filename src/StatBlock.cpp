@@ -22,8 +22,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "StatBlock.h"
-#include "FileParser.h"
 #include "SharedResources.h"
+#include "FileParser.h"
 
 using namespace std;
 
@@ -430,7 +430,7 @@ void StatBlock::clearEffects() {
  *
  * @param effect_type STAT_EFFECT_* consts defined in StatBlock.h
  */
-Renderable StatBlock::getEffectRender(int effect_type) {
+Renderable StatBlock::getEffectRender(int effect_type) const {
 	Renderable r;
 	r.map_pos.x = pos.x;
 	r.map_pos.y = pos.y;

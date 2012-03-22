@@ -28,11 +28,41 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include <SDL_image.h>
+
 #include "Utils.h"
+
 #include <string>
 
+
+struct SDL_Surface;
+
+
 class Animation {
+public:
+	Animation(std::string, Point _render_size, Point _render_offset, int position, int frames, int duration, std::string, int _active_frame);
+
+	// advance the animation one frame
+	void advanceFrame();
+	// return the Renderable of the current frame
+	Renderable getCurrentFrame(int direction) const;
+
+	int getCurFrame() const { return cur_frame; }
+	int getMaxFrame() const { return max_frame; }
+	
+	bool isFirstFrame() const { return cur_frame == 1; }
+	bool isMiddleFrame() const { return cur_frame == mid_frame; }
+	bool isLastFrame() const { return cur_frame == (max_frame -1); }
+	
+	bool isActiveFrame() const { return cur_frame == active_frame; }
+	
+	// in a looped animation returns how many times it's been played
+	// in a play once animation returns 1 when the animation is finished
+	int getTimesPlayed() { return timesPlayed; }
+
+	// resets to beginning of the animation
+	void reset();
+
+	std::string getName() const { return name; }
 
 protected:
 	std::string name;
@@ -53,32 +83,6 @@ protected:
 	int max_frame;
 	int timesPlayed;
 	int active_frame;
-
-public:
-	Animation(std::string, Point _render_size, Point _render_offset, int position, int frames, int duration, std::string, int _active_frame);
-
-	// advance the animation one frame
-	void advanceFrame();
-	// return the Renderable of the current frame
-	Renderable getCurrentFrame(int direction);
-
-	int getCurFrame() { return cur_frame; }
-	int getMaxFrame() { return max_frame; }
-	
-	bool isFirstFrame() { return cur_frame == 1; }
-	bool isMiddleFrame() { return cur_frame == mid_frame; }
-	bool isLastFrame() { return cur_frame == (max_frame -1); }
-	
-	bool isActiveFrame() { return cur_frame == active_frame; }
-	
-	// in a looped animation returns how many times it's been played
-	// in a play once animation returns 1 when the animation is finished
-	int getTimesPlayed() { return timesPlayed; }
-
-	// resets to beginning of the animation
-	void reset();
-
-	std::string getName() { return name; }
 };
 
 #endif

@@ -23,7 +23,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define MENU_ITEM_STORAGE_H
 
 #include "ItemStorage.h"
-#include <SDL.h>
+#include "Utils.h"
+#include "WidgetTooltip.h"
+
+#include <SDL_video.h>
+
+
+class InputState;
+class ItemManager;
+class StatBlock;
+
 
 class MenuItemStorage : public ItemStorage {
 protected:
@@ -39,11 +48,9 @@ public:
 	int slotOver(Point mouse);
 	TooltipData checkTooltip(Point mouse, StatBlock *stats, bool vendor_view);
 	ItemStack click(InputState * input);
-	void itemReturn(ItemStack stack);
+	void itemReturn(const ItemStack& stack);
 
 	int drag_prev_slot;
 };
 
 #endif
-
-

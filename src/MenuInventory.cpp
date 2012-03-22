@@ -32,7 +32,7 @@ MenuInventory::MenuInventory(ItemManager *_items, StatBlock *_stats, PowerManage
 	items = _items;
 	stats = _stats;
 	powers = _powers;
-	
+
 	visible = false;
 	loadGraphics();
 
@@ -59,7 +59,6 @@ MenuInventory::MenuInventory(ItemManager *_items, StatBlock *_stats, PowerManage
 	drag_prev_src = -1;
 	changed_equipment = true;
 	changed_artifact = true;
-	log_msg = "";
 	
 	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = VIEW_W - 26;
@@ -149,10 +148,9 @@ int MenuInventory::areaOver(Point mouse) {
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
 TooltipData MenuInventory::checkTooltip(Point mouse) {
-	int area;
 	TooltipData tip;
 	
-	area = areaOver( mouse);
+	int area = areaOver( mouse);
 	if( area > -1) {
 		tip = inventory[area].checkTooltip( mouse, stats, false);
 	}
@@ -202,15 +200,12 @@ void MenuInventory::itemReturn( ItemStack stack) {
  * and equip items
  */
 void MenuInventory::drop(Point mouse, ItemStack stack) {
-	int area;
-	int slot;
-	int drag_prev_slot;
 
 	items->playSound(stack.item);
 
-	area = areaOver( mouse);
-	slot = inventory[area].slotOver(mouse);
-	drag_prev_slot = inventory[drag_prev_src].drag_prev_slot;
+	int area = areaOver( mouse);
+	int slot = inventory[area].slotOver(mouse);
+	int drag_prev_slot = inventory[drag_prev_src].drag_prev_slot;
 
 	if (area == EQUIPMENT) { // dropped onto equipped item
 
@@ -300,14 +295,11 @@ void MenuInventory::drop(Point mouse, ItemStack stack) {
  * e.g. equip an item
  */
 void MenuInventory::activate(InputState * input) {
-	int slot;
-	int equip_slot;
-	ItemStack stack;
 	Point nullpt;
 	nullpt.x = nullpt.y = 0;
 
 	// clicked a carried item
-	slot = inventory[CARRIED].slotOver(input->mouse);
+	int slot = inventory[CARRIED].slotOver(input->mouse);
 
 	// use a consumable item
 	if (items->items[inventory[CARRIED][slot].item].type == ITEM_TYPE_CONSUMABLE) {
@@ -328,13 +320,13 @@ void MenuInventory::activate(InputState * input) {
 	}
 	// equip an item
 	else {
-		equip_slot = items->items[inventory[CARRIED][slot].item].type;
+		int equip_slot = items->items[inventory[CARRIED][slot].item].type;
 		if (equip_slot == ITEM_TYPE_MAIN ||
 			 equip_slot == ITEM_TYPE_BODY ||
 			 equip_slot == ITEM_TYPE_OFF ||
 			 equip_slot == ITEM_TYPE_ARTIFACT) {
 			if (requirementsMet(inventory[CARRIED][slot].item)) {
-				stack = click( input);
+				ItemStack stack = click( input);
 				if( inventory[EQUIPMENT][equip_slot].item == stack.item) {
 					// Merge the stacks
 					add( stack, EQUIPMENT, equip_slot);
@@ -446,14 +438,13 @@ void MenuInventory::addGold(int count) {
  * (Handle the drop into the equipment area, but add() don't handle it well in all circonstances. MenuManager::logic() allow only into the carried area.)
  */
 bool MenuInventory::buy(ItemStack stack, Point mouse) {
-	int area;
-	int slot = -1;
 	int count = items->items[stack.item].price * stack.quantity;
 	
 	if( gold >= count) {
 		gold -= count;
 
-		area = areaOver( mouse);
+		int slot = -1;
+		int area = areaOver( mouse);
 		if( area > -1) {
 			slot = inventory[area].slotOver( mouse);
 		}
@@ -497,14 +488,14 @@ bool MenuInventory::full() {
 /**
  * Get the number of the specified item carried (not equipped)
  */
-int MenuInventory::getItemCountCarried(int item) {
+int MenuInventory::getItemCountCarried(int item) const {
 	return inventory[CARRIED].count(item);
 }
 
 /**
  * Check to see if the given item is equipped
  */
-bool MenuInventory::isItemEquipped(int item) {
+bool MenuInventory::isItemEquipped(int item) const {
 	return inventory[EQUIPMENT].contain(item);
 }
 

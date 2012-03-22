@@ -1,21 +1,18 @@
 #include "AStarNode.h"
 
-AStarNode::AStarNode()
+AStarNode::AStarNode() :
+	x(0), y(0)
 {
-	this->x = 0;
-	this->y = 0;
 }
 
-AStarNode::AStarNode(const int a, const int b)
+AStarNode::AStarNode(int a, int b) :
+	x(a), y(b)
 {
-	this->x = a;
-	this->y = b;
 }
 
-AStarNode::AStarNode(const Point p)
+AStarNode::AStarNode(const Point& p) :
+	x(p.x), y(p.y)
 {
-	this->x = p.x;
-	this->y = p.y;
 }
 
 AStarNode::AStarNode(const AStarNode& copy)
@@ -115,7 +112,7 @@ float AStarNode::getActualCost() const
 	return g;
 }
 
-void AStarNode::setActualCost(const float G)
+void AStarNode::setActualCost(float G)
 {
 	g = G;
 }
@@ -125,7 +122,7 @@ float AStarNode::getEstimatedCost() const
 	return h;
 }
 
-void AStarNode::setEstimatedCost(const float H)
+void AStarNode::setEstimatedCost(float H)
 {
 	h = H;
 }

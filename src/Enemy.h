@@ -23,21 +23,16 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define ENEMY_H
 
 
-#include <math.h>
-#include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-
 #include "Entity.h"
 #include "Utils.h"
-#include "InputState.h"
-#include "MapIso.h"
-#include "StatBlock.h"
 #include "Hazard.h"
-#include "Settings.h"
-#include "PowerManager.h"
-#include "CombatText.h"
+
+#include <string>
+
+
+class MapIso;
+class PowerManager;
+
 
 // active states
 const int ENEMY_STANCE = 0;
@@ -69,11 +64,11 @@ public:
 	void logic();
 	int faceNextBest(int mapx, int mapy);
 	void newState(int state);
-	int getDistance(Point dest);
+	int getDistance(Point dest) const;
 	bool takeHit(Hazard h);
 	void doRewards();
 
-	virtual Renderable getRender();
+	virtual Renderable getRender() const;
 	
 	Hazard *haz;
 

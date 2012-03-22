@@ -25,6 +25,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "UtilsFileSystem.h"
 #include "WidgetLabel.h"
 
+#include <SDL_mixer.h>
+
 #include <sstream>
 #include <fstream>
 
@@ -58,7 +60,7 @@ void ItemManager::loadAll() {
 	string test_path;
 
 	// load each items.txt file. Individual item IDs can be overwritten with mods.
-	for (unsigned int i = 0; i < mods->mod_list.size(); i++) {
+	for (size_t i = 0; i < mods->mod_list.size(); i++) {
 
 		test_path = PATH_DATA + "mods/" + mods->mod_list[i] + "/items/items.txt";
 

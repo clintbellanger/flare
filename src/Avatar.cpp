@@ -22,8 +22,22 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  */
 
 #include "Avatar.h"
+#include "Animation.h"
 #include "SharedResources.h"
 
+#include "InputState.h"
+#include "MapIso.h"
+#include "StatBlock.h"
+#include "Hazard.h"
+#include "PowerManager.h"
+#include "SharedResources.h"
+#include "MenuManager.h"
+#include "CombatText.h"
+
+#include <SDL.h>
+#include <SDL_image.h>
+
+#include <cmath>
 #include <sstream>
 
 using namespace std;
@@ -710,7 +724,7 @@ bool Avatar::takeHit(Hazard h) {
  * Map objects need to be drawn in Z order, so we allow a parent object (GameEngine)
  * to collect all mobile sprites each frame.
  */
-Renderable Avatar::getRender() {
+Renderable Avatar::getRender() const {
 	Renderable r = activeAnimation->getCurrentFrame(stats.direction);
 	r.sprite = sprites;
 	r.map_pos.x = stats.pos.x;
