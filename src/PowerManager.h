@@ -85,6 +85,7 @@ const int POWER_SPARK_BLOOD = 127;
 struct Power {
 
 	// base info
+	int id;
 	int type; // what kind of activate() this is
 	std::string name;
 	std::string description;
@@ -179,6 +180,7 @@ struct Power {
 	std::string spawn_type;
 
 	Power() {
+		id = -1;
 		type = -1;
 		name = "";
 		description = "";
@@ -290,22 +292,22 @@ private:
 	int sfx_count;
 
 	int calcDirection(int origin_x, int origin_y, int target_x, int target_y);
-	void initHazard(int powernum, StatBlock *src_stats, Point target, Hazard *haz);
-	void buff(int power_index, StatBlock *src_stats, Point target);
-	void playSound(int power_index, StatBlock *src_stats);
+	void initHazard(const Power &power, StatBlock &src_stats, const Point &target, Hazard *haz);
+	void buff(const Power &power, StatBlock &src_stats, const Point &target);
+	void playSound(const Power &power, StatBlock &src_stats);
 
-	bool effect(int powernum, StatBlock *src_stats, Point target);
-	bool missile(int powernum, StatBlock *src_stats, Point target);
-	bool repeater(int powernum, StatBlock *src_stats, Point target);
-	bool single(int powernum, StatBlock *src_stats, Point target);
-	bool spawn(int powernum, StatBlock *src_stats, Point target);
+	bool effect(const Power &power, StatBlock &src_stats, const Point &target);
+	bool missile(const Power &power, StatBlock &src_stats, const Point &target);
+	bool repeater(const Power &power, StatBlock &src_stats, const Point &target);
+	bool single(const Power &power, StatBlock &src_stats, const Point &target);
+	bool spawn(const Power &power, StatBlock &src_stats, const Point &target);
 
 public:
 	PowerManager();
 	~PowerManager();
 
 	void handleNewMap(MapCollision *_collider);
-	bool activate(int power_index, StatBlock *src_stats, Point target);
+	bool activate(int power_index, StatBlock *src_stats, const Point &target);
 	float calcTheta(int x1, int y1, int x2, int y2);
 	const Power &getPower(unsigned id) 	{assert(id < (unsigned)POWER_COUNT); return powers[id];}
 	bool canUsePower(unsigned id) const;

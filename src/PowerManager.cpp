@@ -88,6 +88,7 @@ void PowerManager::loadPowers(const std::string& filename) {
 			// data to the correct power.
 			if (infile.key == "id") {
 				input_id = atoi(infile.val.c_str());
+				powers[input_id].id = input_id;
 			}
 			else if (infile.key == "type") {
 				if (infile.val == "single") powers[input_id].type = POWTYPE_SINGLE;
@@ -516,159 +517,159 @@ int PowerManager::calcDirection(int origin_x, int origin_y, int target_x, int ta
  * @param target Aim position in map coordinates
  * @param haz A newly-initialized hazard
  */
-void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point target, Hazard *haz) {
+void PowerManager::initHazard(const Power &power, StatBlock &src_stats, const Point &target, Hazard *haz) {
 
 	//the hazard holds the statblock of its source
-	haz->src_stats = src_stats;
+	haz->src_stats = &src_stats;
 
-	haz->power_index = power_index;
+	haz->power_index = power.id;
 
-	if (powers[power_index].source_type == -1){
-		if (src_stats->hero) haz->source_type = SOURCE_TYPE_HERO;
+	if (power.source_type == -1){
+		if (src_stats.hero) haz->source_type = SOURCE_TYPE_HERO;
 		else haz->source_type = SOURCE_TYPE_ENEMY;
 	}
 	else {
-		haz->source_type = powers[power_index].source_type;
+		haz->source_type = power.source_type;
 	}
 
 	// Hazard attributes based on power source
-	haz->crit_chance = src_stats->crit;
-	haz->accuracy = src_stats->accuracy;
-	
+	haz->crit_chance = src_stats.crit;
+	haz->accuracy = src_stats.accuracy;
+
 	// Hazard damage depends on equipped weapons and the power's optional damage_multiplier
-	if (powers[power_index].base_damage == BASE_DAMAGE_MELEE) {
-		haz->dmg_min = src_stats->dmg_melee_min;
-		haz->dmg_max = src_stats->dmg_melee_max;
+	if (power.base_damage == BASE_DAMAGE_MELEE) {
+		haz->dmg_min = src_stats.dmg_melee_min;
+		haz->dmg_max = src_stats.dmg_melee_max;
 	}
-	else if (powers[power_index].base_damage == BASE_DAMAGE_RANGED) {
-		haz->dmg_min = src_stats->dmg_ranged_min;
-		haz->dmg_max = src_stats->dmg_ranged_max;
+	else if (power.base_damage == BASE_DAMAGE_RANGED) {
+		haz->dmg_min = src_stats.dmg_ranged_min;
+		haz->dmg_max = src_stats.dmg_ranged_max;
 	}
-	else if (powers[power_index].base_damage == BASE_DAMAGE_MENT) {
-		haz->dmg_min = src_stats->dmg_ment_min;
-		haz->dmg_max = src_stats->dmg_ment_max;
+	else if (power.base_damage == BASE_DAMAGE_MENT) {
+		haz->dmg_min = src_stats.dmg_ment_min;
+		haz->dmg_max = src_stats.dmg_ment_max;
 	}
 	//apply the multiplier
-	haz->dmg_min = (int)ceil(haz->dmg_min * powers[power_index].damage_multiplier / 100.0);
-	haz->dmg_max = (int)ceil(haz->dmg_max * powers[power_index].damage_multiplier / 100.0);
-	
+	haz->dmg_min = (int)ceil(haz->dmg_min * power.damage_multiplier / 100.0);
+	haz->dmg_max = (int)ceil(haz->dmg_max * power.damage_multiplier / 100.0);
+
 	// Only apply stats from powers that are not defaults
 	// If we do this, we can init with multiple power layers
 	// (e.g. base spell plus weapon type)
-	
-	if (powers[power_index].gfx_index != -1) {
-		haz->sprites = gfx[powers[power_index].gfx_index];
+
+	if (power.gfx_index != -1) {
+		haz->sprites = gfx[power.gfx_index];
 	}
-	if (powers[power_index].rendered) {
-		haz->rendered = powers[power_index].rendered;
+	if (power.rendered) {
+		haz->rendered = power.rendered;
 	}
-	if (powers[power_index].lifespan != 0) {
-		haz->lifespan = powers[power_index].lifespan;
+	if (power.lifespan != 0) {
+		haz->lifespan = power.lifespan;
 	}
-	if (powers[power_index].frame_loop != 1) {
-		haz->frame_loop = powers[power_index].frame_loop;
+	if (power.frame_loop != 1) {
+		haz->frame_loop = power.frame_loop;
 	}
-	if (powers[power_index].frame_duration != 1) {
-		haz->frame_duration = powers[power_index].frame_duration;
+	if (power.frame_duration != 1) {
+		haz->frame_duration = power.frame_duration;
 	}
-	if (powers[power_index].frame_size.x != 0) {
-		haz->frame_size.x = powers[power_index].frame_size.x;
+	if (power.frame_size.x != 0) {
+		haz->frame_size.x = power.frame_size.x;
 	}
-	if (powers[power_index].frame_size.y != 0) {
-		haz->frame_size.y = powers[power_index].frame_size.y;
+	if (power.frame_size.y != 0) {
+		haz->frame_size.y = power.frame_size.y;
 	}
-	if (powers[power_index].frame_offset.x != 0) {
-		haz->frame_offset.x = powers[power_index].frame_offset.x;
+	if (power.frame_offset.x != 0) {
+		haz->frame_offset.x = power.frame_offset.x;
 	}
-	if (powers[power_index].frame_offset.y != 0) {
-		haz->frame_offset.y = powers[power_index].frame_offset.y;
+	if (power.frame_offset.y != 0) {
+		haz->frame_offset.y = power.frame_offset.y;
 	}
-	if (powers[power_index].directional) {
-		haz->direction = calcDirection(src_stats->pos.x, src_stats->pos.y, target.x, target.y);
+	if (power.directional) {
+		haz->direction = calcDirection(src_stats.pos.x, src_stats.pos.y, target.x, target.y);
 	}
-	else if (powers[power_index].visual_random != 0) {
-		haz->visual_option = rand() % powers[power_index].visual_random;
+	else if (power.visual_random != 0) {
+		haz->visual_option = rand() % power.visual_random;
 	}
-	else if (powers[power_index].visual_option != 0) {
-		haz->visual_option = powers[power_index].visual_option;
+	else if (power.visual_option != 0) {
+		haz->visual_option = power.visual_option;
 	}
-	haz->floor = powers[power_index].floor;
-	if (powers[power_index].speed > 0) {
-		haz->base_speed = powers[power_index].speed;
+	haz->floor = power.floor;
+	if (power.speed > 0) {
+		haz->base_speed = power.speed;
 	}
-	if (powers[power_index].complete_animation) {
+	if (power.complete_animation) {
 		haz->complete_animation = true;
 	}
 
 	// combat traits
-	if (powers[power_index].no_attack) {
+	if (power.no_attack) {
 		haz->active = false;
 	}
-	if (powers[power_index].multitarget) {
+	if (power.multitarget) {
 		haz->multitarget = true;
 	}
-	if (powers[power_index].active_frame != -1) {
-		haz->active_frame = powers[power_index].active_frame;
+	if (power.active_frame != -1) {
+		haz->active_frame = power.active_frame;
 	}
-	if (powers[power_index].radius != 0) {
-		haz->radius = powers[power_index].radius;
+	if (power.radius != 0) {
+		haz->radius = power.radius;
 	}
-	if (powers[power_index].trait_armor_penetration) {
+	if (power.trait_armor_penetration) {
 		haz->trait_armor_penetration = true;
 	}
-	haz->trait_crits_impaired = powers[power_index].trait_crits_impaired;
-	if (powers[power_index].trait_elemental) {
-		haz->trait_elemental = powers[power_index].trait_elemental;
+	haz->trait_crits_impaired = power.trait_crits_impaired;
+	if (power.trait_elemental) {
+		haz->trait_elemental = power.trait_elemental;
 	}
 
 	// status effect durations
 	// durations stack when combining powers (e.g. base power and weapon/ammo type)
-	haz->bleed_duration += powers[power_index].bleed_duration;
-	haz->stun_duration += powers[power_index].stun_duration;
-	haz->slow_duration += powers[power_index].slow_duration;
-	haz->immobilize_duration += powers[power_index].immobilize_duration;
+	haz->bleed_duration += power.bleed_duration;
+	haz->stun_duration += power.stun_duration;
+	haz->slow_duration += power.slow_duration;
+	haz->immobilize_duration += power.immobilize_duration;
 	// forced move
-	haz->forced_move_speed += powers[power_index].forced_move_speed;
-	haz->forced_move_duration += powers[power_index].forced_move_duration;
+	haz->forced_move_speed += power.forced_move_speed;
+	haz->forced_move_duration += power.forced_move_duration;
 	// steal effects
-	haz->hp_steal += powers[power_index].hp_steal;
-	haz->mp_steal += powers[power_index].mp_steal;
-	
+	haz->hp_steal += power.hp_steal;
+	haz->mp_steal += power.mp_steal;
+
 	// hazard starting position
-	if (powers[power_index].starting_pos == STARTING_POS_SOURCE) {
-		haz->pos.x = (float)src_stats->pos.x;
-		haz->pos.y = (float)src_stats->pos.y;
+	if (power.starting_pos == STARTING_POS_SOURCE) {
+		haz->pos.x = (float)src_stats.pos.x;
+		haz->pos.y = (float)src_stats.pos.y;
 	}
-	else if (powers[power_index].starting_pos == STARTING_POS_TARGET) {
+	else if (power.starting_pos == STARTING_POS_TARGET) {
 		haz->pos.x = (float)target.x;
 		haz->pos.y = (float)target.y;
 	}
-	else if (powers[power_index].starting_pos == STARTING_POS_MELEE) {
-		haz->pos = calcVector(src_stats->pos, src_stats->direction, src_stats->melee_range);
+	else if (power.starting_pos == STARTING_POS_MELEE) {
+		haz->pos = calcVector(src_stats.pos, src_stats.direction, src_stats.melee_range);
 	}
 
 	// pre/post power effects
-	if (powers[power_index].post_power != -1) {
-		haz->post_power = powers[power_index].post_power;
+	if (power.post_power != -1) {
+		haz->post_power = power.post_power;
 	}
-	if (powers[power_index].wall_power != -1) {
-		haz->wall_power = powers[power_index].wall_power;
+	if (power.wall_power != -1) {
+		haz->wall_power = power.wall_power;
 	}
 
 	// if equipment has special powers, apply it here (if it hasn't already been applied)
-	if (!haz->equipment_modified && powers[power_index].allow_power_mod) {
-		if (powers[power_index].base_damage == BASE_DAMAGE_MELEE && src_stats->melee_weapon_power != -1) {
+	if (!haz->equipment_modified && power.allow_power_mod) {
+		if (power.base_damage == BASE_DAMAGE_MELEE && src_stats.melee_weapon_power != -1) {
 			haz->equipment_modified = true;
-			initHazard(src_stats->melee_weapon_power, src_stats, target, haz);
+			initHazard(getPower(src_stats.melee_weapon_power), src_stats, target, haz);
 		}
-		else if (powers[power_index].base_damage == BASE_DAMAGE_MENT && src_stats->mental_weapon_power != -1) {
+		else if (power.base_damage == BASE_DAMAGE_MENT && src_stats.mental_weapon_power != -1) {
 			haz->equipment_modified = true;
-			initHazard(src_stats->mental_weapon_power, src_stats, target, haz);
+			initHazard(getPower(src_stats.mental_weapon_power), src_stats, target, haz);
 		}
-		else if (powers[power_index].base_damage == BASE_DAMAGE_RANGED && src_stats->ranged_weapon_power != -1) {
+		else if (power.base_damage == BASE_DAMAGE_RANGED && src_stats.ranged_weapon_power != -1) {
 			haz->equipment_modified = true;
-			initHazard(src_stats->ranged_weapon_power, src_stats, target, haz);
-		}		
+			initHazard(getPower(src_stats.ranged_weapon_power), src_stats, target, haz);
+		}
 	}
 }
 
@@ -676,70 +677,71 @@ void PowerManager::initHazard(int power_index, StatBlock *src_stats, Point targe
  * Any attack-based effects are handled by hazards.
  * Self-enhancements (buffs) are handled by this function.
  */
-void PowerManager::buff(int power_index, StatBlock *src_stats, Point target) {
+void PowerManager::buff(const Power& power, StatBlock &src_stats, const Point &target
+) {
 
 	// heal for ment weapon damage * damage multiplier
-	if (powers[power_index].buff_heal) {
+	if (power.buff_heal) {
 		int heal_amt = 0;
-		int heal_max = (int)ceil(src_stats->dmg_ment_max * powers[power_index].damage_multiplier / 100.0);
-		int heal_min = (int)ceil(src_stats->dmg_ment_min * powers[power_index].damage_multiplier / 100.0);
+		int heal_max = (int)ceil(src_stats.dmg_ment_max * power.damage_multiplier / 100.0);
+		int heal_min = (int)ceil(src_stats.dmg_ment_min * power.damage_multiplier / 100.0);
 		if (heal_max > heal_min)
 			heal_amt = rand() % (heal_max - heal_min) + heal_min;
 		else // avoid div by 0
 			heal_amt = heal_min;
-		CombatText::Instance()->addMessage(heal_amt, src_stats->pos, DISPLAY_HEAL);
-		src_stats->hp += heal_amt;
-		if (src_stats->hp > src_stats->maxhp) src_stats->hp = src_stats->maxhp;
+		CombatText::Instance()->addMessage(heal_amt, src_stats.pos, DISPLAY_HEAL);
+		src_stats.hp += heal_amt;
+		if (src_stats.hp > src_stats.maxhp) src_stats.hp = src_stats.maxhp;
 	}
 
 	// hp restore
-	if (powers[power_index].buff_restore_hp > 0) {
-		src_stats->hp += powers[power_index].buff_restore_hp;
-		if (src_stats->hp > src_stats->maxhp) src_stats->hp = src_stats->maxhp;
+	if (power.buff_restore_hp > 0) {
+		src_stats.hp += power.buff_restore_hp;
+		if (src_stats.hp > src_stats.maxhp) src_stats.hp = src_stats.maxhp;
 	}
 
 	// mp restore
-	if (powers[power_index].buff_restore_mp > 0) {
-		src_stats->mp += powers[power_index].buff_restore_mp;
-		if (src_stats->mp > src_stats->maxmp) src_stats->mp = src_stats->maxmp;
+	if (power.buff_restore_mp > 0) {
+		src_stats.mp += power.buff_restore_mp;
+		if (src_stats.mp > src_stats.maxmp) src_stats.mp = src_stats.maxmp;
 	}
 
 	// charge shield to max ment weapon damage * damage multiplier
-	if (powers[power_index].buff_shield) {
-	    int shield_amt = (int)ceil(src_stats->dmg_ment_max * powers[power_index].damage_multiplier / 100.0);
-	    CombatText::Instance()->addMessage(shield_amt, src_stats->pos, DISPLAY_SHIELD);
-		src_stats->shield_hp = shield_amt;
+	if (power.buff_shield) {
+	    int shield_amt = (int)ceil(src_stats.dmg_ment_max * power.damage_multiplier / 100.0);
+	    CombatText::Instance()->addMessage(shield_amt, src_stats.pos, DISPLAY_SHIELD);
+		src_stats.shield_hp = shield_amt;
 	}
 
 	// teleport to the target location
-	if (powers[power_index].buff_teleport) {
-		src_stats->teleportation = true;
-		src_stats->teleport_destination.x = target.x;
-		src_stats->teleport_destination.y = target.y;
+	if (power.buff_teleport) {
+		src_stats.teleportation = true;
+		src_stats.teleport_destination.x = target.x;
+		src_stats.teleport_destination.y = target.y;
 	}
 
 	// buff_immunity removes all existing debuffs
-	if (powers[power_index].buff_immunity) {
-		src_stats->slow_duration = 0;
-		src_stats->immobilize_duration = 0;
-		src_stats->stun_duration = 0;
-		src_stats->bleed_duration = 0;
+	if (power.buff_immunity) {
+		src_stats.slow_duration = 0;
+		src_stats.immobilize_duration = 0;
+		src_stats.stun_duration = 0;
+		src_stats.bleed_duration = 0;
 	}
 
 	// immunity_duration makes one immune to new debuffs
-	if (src_stats->immunity_duration < powers[power_index].immunity_duration) {
-		src_stats->immunity_duration = powers[power_index].immunity_duration;
+	if (src_stats.immunity_duration < power.immunity_duration) {
+		src_stats.immunity_duration = power.immunity_duration;
 	}
 
 	// haste doubles run speed and removes power cooldowns
-	if (src_stats->haste_duration < powers[power_index].haste_duration) {
-		src_stats->haste_duration = powers[power_index].haste_duration;
+	if (src_stats.haste_duration < power.haste_duration) {
+		src_stats.haste_duration = power.haste_duration;
 	}
 
 	// hot is healing over time
-	if (src_stats->hot_duration < powers[power_index].hot_duration) {
-		src_stats->hot_duration = powers[power_index].hot_duration;
-		src_stats->hot_value = powers[power_index].hot_value;
+	if (src_stats.hot_duration < power.hot_duration) {
+		src_stats.hot_duration = power.hot_duration;
+		src_stats.hot_value = power.hot_value;
 	}
 }
 
@@ -747,32 +749,32 @@ void PowerManager::buff(int power_index, StatBlock *src_stats, Point target) {
  * Play the sound effect for this power
  * Equipped items may have unique sounds
  */
-void PowerManager::playSound(int power_index, StatBlock *src_stats) {
+void PowerManager::playSound(const Power &power, StatBlock &src_stats) {
 	bool play_base_sound = false;
-	
-	if (powers[power_index].allow_power_mod) {
-		if (powers[power_index].base_damage == BASE_DAMAGE_MELEE && src_stats->melee_weapon_power != -1 
-				&& powers[src_stats->melee_weapon_power].sfx_index != -1) {
-            if (sfx[powers[src_stats->melee_weapon_power].sfx_index])
-    			Mix_PlayChannel(-1,sfx[powers[src_stats->melee_weapon_power].sfx_index],0);
+
+	if (power.allow_power_mod) {
+		if (power.base_damage == BASE_DAMAGE_MELEE && src_stats.melee_weapon_power != -1
+				&& powers[src_stats.melee_weapon_power].sfx_index != -1) {
+            if (sfx[powers[src_stats.melee_weapon_power].sfx_index])
+    			Mix_PlayChannel(-1,sfx[powers[src_stats.melee_weapon_power].sfx_index],0);
 		}
-		else if (powers[power_index].base_damage == BASE_DAMAGE_MENT && src_stats->mental_weapon_power != -1 
-				&& powers[src_stats->mental_weapon_power].sfx_index != -1) {
-            if (sfx[powers[src_stats->mental_weapon_power].sfx_index])
-                Mix_PlayChannel(-1,sfx[powers[src_stats->mental_weapon_power].sfx_index],0);
+		else if (power.base_damage == BASE_DAMAGE_MENT && src_stats.mental_weapon_power != -1
+				&& powers[src_stats.mental_weapon_power].sfx_index != -1) {
+            if (sfx[powers[src_stats.mental_weapon_power].sfx_index])
+                Mix_PlayChannel(-1,sfx[powers[src_stats.mental_weapon_power].sfx_index],0);
 		}
-		else if (powers[power_index].base_damage == BASE_DAMAGE_RANGED && src_stats->ranged_weapon_power != -1 
-				&& powers[src_stats->ranged_weapon_power].sfx_index != -1) {
-            if (sfx[powers[src_stats->ranged_weapon_power].sfx_index])
-                Mix_PlayChannel(-1,sfx[powers[src_stats->ranged_weapon_power].sfx_index],0);
+		else if (power.base_damage == BASE_DAMAGE_RANGED && src_stats.ranged_weapon_power != -1
+				&& powers[src_stats.ranged_weapon_power].sfx_index != -1) {
+            if (sfx[powers[src_stats.ranged_weapon_power].sfx_index])
+                Mix_PlayChannel(-1,sfx[powers[src_stats.ranged_weapon_power].sfx_index],0);
 		}
 		else play_base_sound = true;
 	}
 	else play_base_sound = true;
 
-	if (play_base_sound && powers[power_index].sfx_index != -1) {
-        if (sfx[powers[power_index].sfx_index])
-            Mix_PlayChannel(-1,sfx[powers[power_index].sfx_index],0);
+	if (play_base_sound && power.sfx_index != -1) {
+        if (sfx[power.sfx_index])
+            Mix_PlayChannel(-1,sfx[power.sfx_index],0);
 	}
 
 }
@@ -786,25 +788,25 @@ void PowerManager::playSound(int power_index, StatBlock *src_stats) {
  * @param target The mouse cursor position in map coordinates
  * return boolean true if successful
  */
-bool PowerManager::effect(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::effect(const Power &power, StatBlock &src_stats, const Point &target) {
 
-	if (powers[power_index].use_hazard) {
+	if (power.use_hazard) {
 		Hazard *haz = new Hazard();
-		initHazard(power_index, src_stats, target, haz);
-		
+		initHazard(power, src_stats, target, haz);
+
 		// Hazard memory is now the responsibility of HazardManager
 		hazards.push(haz);
 	}
 
-	buff(power_index, src_stats, target);
-	
+	buff(power, src_stats, target);
+
 	// If there's a sound effect, play it here
-	playSound(power_index, src_stats);
+	playSound(power, src_stats);
 
 	// if all else succeeded, pay costs
-	if (src_stats->hero && powers[power_index].requires_mp > 0) src_stats->mp -= powers[power_index].requires_mp;
-	if (src_stats->hero && powers[power_index].requires_item != -1) used_item = powers[power_index].requires_item;
-	
+	if (src_stats.hero && power.requires_mp > 0) src_stats.mp -= power.requires_mp;
+	if (src_stats.hero && power.requires_item != -1) used_item = power.requires_item;
+
 	return true;
 }
 
@@ -818,17 +820,17 @@ bool PowerManager::effect(int power_index, StatBlock *src_stats, Point target) {
  * @param target The mouse cursor position in map coordinates
  * return boolean true if successful
  */
-bool PowerManager::missile(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::missile(const Power &power, StatBlock &src_stats, const Point &target) {
 	float pi = 3.1415926535898;
 
 	Point src;
-	if (powers[power_index].starting_pos == STARTING_POS_TARGET) {
+	if (power.starting_pos == STARTING_POS_TARGET) {
 		src.x = target.x;
 		src.y = target.y;
 	}
 	else {
-		src.x = src_stats->pos.x;
-		src.y = src_stats->pos.y;
+		src.x = src_stats.pos.x;
+		src.y = src_stats.pos.y;
 	}
 
 	Hazard *haz;
@@ -837,51 +839,52 @@ bool PowerManager::missile(int power_index, StatBlock *src_stats, Point target) 
 	float theta = calcTheta(src.x, src.y, target.x, target.y);
 
 	//generate hazards
-	for (int i=0; i < powers[power_index].missile_num; i++) {
+	for (int i=0; i < power.missile_num; i++) {
 		haz = new Hazard();
 
 		//calculate individual missile angle
-		float offset_angle = ((1.0 - powers[power_index].missile_num)/2 + i) * (powers[power_index].missile_angle * pi / 180.0);
+		float offset_angle = ((1.0 - power.missile_num)/2 + i) * (power.missile_angle * pi / 180.0);
 		float variance = 0;
-		if (powers[power_index].angle_variance != 0)
-			variance = pow(-1.0f, (rand() % 2) - 1) * (rand() % powers[power_index].angle_variance) * pi / 180.0; //random between 0 and angle_variance away
+		if (power.angle_variance != 0)
+			variance = pow(-1.0f, (rand() % 2) - 1) * (rand() % power.angle_variance) * pi / 180.0; //random between 0 and angle_variance away
 		float alpha = theta + offset_angle + variance;
 		while (alpha >= pi+pi) alpha -= pi+pi;
 		while (alpha < 0.0) alpha += pi+pi;
 
-		initHazard(power_index, src_stats, target, haz);
+		initHazard(power, src_stats, target, haz);
 
 		//calculate the missile velocity
 		int speed_var = 0;
-		if (powers[power_index].speed_variance != 0)
-			speed_var = (int)(pow(-1.0f, (rand() % 2) - 1) * (rand() % powers[power_index].speed_variance + 1) - 1);
+		if (power.speed_variance != 0)
+			speed_var = (int)(pow(-1.0f, (rand() % 2) - 1) * (rand() % power.speed_variance + 1) - 1);
 		haz->speed.x = (haz->base_speed + speed_var) * cos(alpha);
 		haz->speed.y = (haz->base_speed + speed_var) * sin(alpha);
 
 		//calculate direction based on trajectory, not actual target (UNITS_PER_TILE reduces round off error)
-		if (powers[power_index].directional)
+		if (power.directional)
 			haz->direction = calcDirection(src.x, src.y, src.x + UNITS_PER_TILE * haz->speed.x, src.y + UNITS_PER_TILE * haz->speed.y);
 
 		hazards.push(haz);
 	}
 
 	// if all else succeeded, pay costs
-	if (src_stats->hero && powers[power_index].requires_mp > 0) src_stats->mp -= powers[power_index].requires_mp;
-	if (src_stats->hero && powers[power_index].requires_item != -1) used_item = powers[power_index].requires_item;
+	if (src_stats.hero && power.requires_mp > 0) src_stats.mp -= power.requires_mp;
+	if (src_stats.hero && power.requires_item != -1) used_item = power.requires_item;
 
-	playSound(power_index, src_stats);
+	playSound(power, src_stats);
 	return true;
 }
 
 /**
  * Repeaters are multiple hazards that spawn in a straight line
  */
-bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::repeater(const Power &power, StatBlock &src_stats, const Point &target) {
+
 
 	// pay costs up front
-	if (src_stats->hero && powers[power_index].requires_mp > 0) src_stats->mp -= powers[power_index].requires_mp;
-	if (src_stats->hero && powers[power_index].requires_item != -1) used_item = powers[power_index].requires_item;
-	
+	if (src_stats.hero && power.requires_mp > 0) src_stats.mp -= power.requires_mp;
+	if (src_stats.hero && power.requires_item != -1) used_item = power.requires_item;
+
 	//initialize variables
 	Hazard *haz[10];
 	FPoint location_iterator;
@@ -890,18 +893,18 @@ bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target)
 	int map_speed = 64;
 
 	// calculate polar coordinates angle
-	float theta = calcTheta(src_stats->pos.x, src_stats->pos.y, target.x, target.y);
+	float theta = calcTheta(src_stats.pos.x, src_stats.pos.y, target.x, target.y);
 
 	speed.x = (float)map_speed * cos(theta);
 	speed.y = (float)map_speed * sin(theta);
 
-	location_iterator.x = (float)src_stats->pos.x;
-	location_iterator.y = (float)src_stats->pos.y;
+	location_iterator.x = (float)src_stats.pos.x;
+	location_iterator.y = (float)src_stats.pos.y;
 	delay_iterator = 0;
 
-	playSound(power_index, src_stats);
+	playSound(power, src_stats);
 
-	for (int i=0; i<powers[power_index].repeater_num; i++) {
+	for (int i=0; i<power.repeater_num; i++) {
 
 		location_iterator.x += speed.x;
 		location_iterator.y += speed.y;
@@ -912,15 +915,15 @@ bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target)
 		}
 
 		haz[i] = new Hazard();
-		initHazard(power_index, src_stats, target, haz[i]);
+		initHazard(power, src_stats, target, haz[i]);
 
 		haz[i]->pos.x = location_iterator.x;
 		haz[i]->pos.y = location_iterator.y;
 		haz[i]->delay_frames = delay_iterator;
-		delay_iterator += powers[power_index].delay;
-		
-		haz[i]->frame = powers[power_index].start_frame; // start at bottom frame
-		
+		delay_iterator += power.delay;
+
+		haz[i]->frame = power.start_frame; // start at bottom frame
+
 		hazards.push(haz[i]);
 	}
 
@@ -932,24 +935,24 @@ bool PowerManager::repeater(int power_index, StatBlock *src_stats, Point target)
 /**
  * Basic single-frame area hazard
  */
-bool PowerManager::single(int power_index, StatBlock *src_stats, Point target) {
-	
+bool PowerManager::single(const Power &power, StatBlock &src_stats, const Point &target) {
+
 	Hazard *haz = new Hazard();
 
-	initHazard(power_index, src_stats, target, haz);
+	initHazard(power, src_stats, target, haz);
 
 	// specific powers have different stats here
-	if (power_index == POWER_VENGEANCE) {
-		haz->pos = calcVector(src_stats->pos, src_stats->direction, src_stats->melee_range);
-		haz->dmg_min = src_stats->dmg_melee_min;
-		haz->dmg_max = src_stats->dmg_melee_max;
+	if (power.id == POWER_VENGEANCE) {
+		haz->pos = calcVector(src_stats.pos, src_stats.direction, src_stats.melee_range);
+		haz->dmg_min = src_stats.dmg_melee_min;
+		haz->dmg_max = src_stats.dmg_melee_max;
 		haz->radius = 64;
-		src_stats->mp--;
-		
+		src_stats.mp--;
+
 		// use vengeance stacks
-		haz->accuracy += src_stats->vengeance_stacks * 25;
-		haz->crit_chance += src_stats->vengeance_stacks * 25;
-		src_stats->vengeance_stacks = 0;
+		haz->accuracy += src_stats.vengeance_stacks * 25;
+		haz->crit_chance += src_stats.vengeance_stacks * 25;
+		src_stats.vengeance_stacks = 0;
 	}
 
 	hazards.push(haz);
@@ -961,34 +964,34 @@ bool PowerManager::single(int power_index, StatBlock *src_stats, Point target) {
 /**
  * Spawn a creature. Does not create a hazard
  */
-bool PowerManager::spawn(int power_index, StatBlock *src_stats, Point target) {
-		
+bool PowerManager::spawn(const Power &power, StatBlock &src_stats, const Point &target) {
+
 	// apply any buffs
-	buff(power_index, src_stats, target);
-	
+	buff(power, src_stats, target);
+
 	// If there's a sound effect, play it here
-	playSound(power_index, src_stats);
-	
+	playSound(power, src_stats);
+
 	EnemySpawn espawn;
-	espawn.type = powers[power_index].spawn_type;
-	
+	espawn.type = power.spawn_type;
+
 	// enemy spawning position
-	if (powers[power_index].starting_pos == STARTING_POS_SOURCE) {
-		espawn.pos.x = (float)src_stats->pos.x;
-		espawn.pos.y = (float)src_stats->pos.y;
+	if (power.starting_pos == STARTING_POS_SOURCE) {
+		espawn.pos.x = (float)src_stats.pos.x;
+		espawn.pos.y = (float)src_stats.pos.y;
 	}
-	else if (powers[power_index].starting_pos == STARTING_POS_TARGET) {
+	else if (power.starting_pos == STARTING_POS_TARGET) {
 		espawn.pos.x = (float)target.x;
 		espawn.pos.y = (float)target.y;
 	}
-	else if (powers[power_index].starting_pos == STARTING_POS_MELEE) {
-		FPoint fpos = calcVector(src_stats->pos, src_stats->direction, src_stats->melee_range);
+	else if (power.starting_pos == STARTING_POS_MELEE) {
+		FPoint fpos = calcVector(src_stats.pos, src_stats.direction, src_stats.melee_range);
 		espawn.pos.x = (int)fpos.x;
 		espawn.pos.y = (int)fpos.y;
 	}
-	
-	espawn.direction = calcDirection(src_stats->pos.x, src_stats->pos.y, target.x, target.y);
-	
+
+	espawn.direction = calcDirection(src_stats.pos.x, src_stats.pos.y, target.x, target.y);
+
 	enemies.push(espawn);
 	return true;
 }
@@ -997,26 +1000,27 @@ bool PowerManager::spawn(int power_index, StatBlock *src_stats, Point target) {
 /**
  * Activate is basically a switch/redirect to the appropriate function
  */
-bool PowerManager::activate(int power_index, StatBlock *src_stats, Point target) {
+bool PowerManager::activate(int power_index, StatBlock *src_stats, const Point &target) {
+	const Power &power = powers[power_index];
 
 	if (src_stats->hero) {
-		if (powers[power_index].requires_mp > src_stats->mp)
+		if (power.requires_mp > src_stats->mp)
 			return false;
 	}
 
 	// logic for different types of powers are very different.  We allow these
 	// separate functions to handle the details.
-	if (powers[power_index].type == POWTYPE_SINGLE)
-		return single(power_index, src_stats, target);
-	else if (powers[power_index].type == POWTYPE_MISSILE)
-		return missile(power_index, src_stats, target);
-	else if (powers[power_index].type == POWTYPE_REPEATER)
-		return repeater(power_index, src_stats, target);
-	else if (powers[power_index].type == POWTYPE_EFFECT)
-		return effect(power_index, src_stats, target);
-	else if (powers[power_index].type == POWTYPE_SPAWN)
-		return spawn(power_index, src_stats, target);
-	
+	if (power.type == POWTYPE_SINGLE)
+		return single(power, *src_stats, target);
+	else if (power.type == POWTYPE_MISSILE)
+		return missile(power, *src_stats, target);
+	else if (power.type == POWTYPE_REPEATER)
+		return repeater(power, *src_stats, target);
+	else if (power.type == POWTYPE_EFFECT)
+		return effect(power, *src_stats, target);
+	else if (power.type == POWTYPE_SPAWN)
+		return spawn(power, *src_stats, target);
+
 	return false;
 }
 
