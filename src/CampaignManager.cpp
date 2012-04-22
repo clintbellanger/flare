@@ -38,10 +38,10 @@ CampaignManager::CampaignManager() {
 	carried_items = NULL;
 	currency = NULL;
 	xp = NULL;
-	
+
 	log_msg = "";
 	quest_update = true;
-	
+
 	clearAll();
 
 }
@@ -84,7 +84,7 @@ bool CampaignManager::checkStatus(std::string s) {
 
 	// avoid searching empty statuses
 	if (s == "") return false;
-	
+
 	for (int i=0; i<status_count; i++) {
 		if (status[i] == s) return true;
 	}
@@ -99,10 +99,10 @@ void CampaignManager::setStatus(std::string s) {
 	// hit upper limit for status
 	// TODO: add a warning
 	if (status_count >= MAX_STATUS) return;
-	
+
 	// if it's already set, don't add it again
 	if (checkStatus(s)) return;
-	
+
 	status[status_count++] = s;
 	quest_update = true;
 }
@@ -114,7 +114,7 @@ void CampaignManager::unsetStatus(std::string s) {
 
 	for (int i=status_count-1; i>=0; i--) {
 		if (status[i] == s) {
-		
+
 			// bubble existing statuses down
 			for (int j=i; j<status_count-1; j++) {
 				status[j] = status[j+1];
@@ -161,7 +161,7 @@ void CampaignManager::rewardCurrency(int amount) {
 void CampaignManager::rewardXP(int amount) {
 	*xp += amount;
 	addMsg(msg->get("You receive %d XP.", amount));
-}	
+}
 
 void CampaignManager::addMsg(const string& new_msg) {
 	if (log_msg != "") log_msg += " ";

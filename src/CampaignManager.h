@@ -36,7 +36,7 @@ class CampaignManager {
 public:
 	CampaignManager();
 	~CampaignManager();
-	
+
 	void clearAll();
 	void setAll(std::string s);
 	std::string getAll();
@@ -49,18 +49,18 @@ public:
 	void rewardCurrency(int amount);
 	void rewardXP(int amount);
 	void addMsg(const std::string& msg);
-	
+
 	std::string status[MAX_STATUS];
 	int status_count;
 	std::string log_msg;
 	ItemStack drop_stack;
-	
+
 	// pointers to various info that can be changed
 	ItemManager *items;
 	MenuItemStorage *carried_items;
 	int *currency;
 	int *xp;
-	
+
 	bool quest_update;
 };
 
