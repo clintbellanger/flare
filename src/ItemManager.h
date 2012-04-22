@@ -144,6 +144,10 @@ private:
 	SDL_Rect dest;
 	Mix_Chunk *sfx[12];
 
+	Item *items;
+	float vendor_ratio;
+	float vendor_gem_ratio;
+
 public:
 	ItemManager();
 	~ItemManager();
@@ -157,8 +161,15 @@ public:
 	TooltipData getTooltip(int item, StatBlock *stats, bool vendor_view);
 	TooltipData getShortTooltip(ItemStack item);
 
-	Item *items;
-	int vendor_ratio;
+	const Item &getItem(int id) const {
+		assert(id < MAX_ITEM_ID);
+		return items[id];
+	}
+
+	int getSellPrice(const Item &item) const {
+		float ratio = item.type == ITEM_TYPE_GEM ? vendor_gem_ratio : vendor_ratio;
+		return (static_cast<float>(item.price) + 0.5) / ratio; // cheap positive-only round
+	}
 };
 
 #endif

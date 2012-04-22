@@ -44,7 +44,9 @@ ItemManager::ItemManager() {
 		}
 	}
 
-	vendor_ratio = 4; // this means scrap/vendor pays 1/4th price to buy items from hero
+	vendor_ratio = 4.f; // this means scrap/vendor pays 1/4th price to buy items from hero
+	vendor_gem_ratio = 2.f; // but pays 1/2 price for gems
+
 	loadAll();
 	loadSounds();
 	loadIcons();
