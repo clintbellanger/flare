@@ -39,8 +39,7 @@ int AStarNode::getY() const
 
 Point AStarNode::getCoordinate() const
 {
-	Point coord = {x,y};
-	return coord;
+	return Point(x, y);
 }
 
 Point AStarNode::getParent() const

@@ -106,24 +106,10 @@ FPoint calcVector(Point pos, int direction, int dist) {
 	return p;
 }
 
-double calcDist(Point p1, Point p2) {
-	int x = p2.x - p1.x;
-	int y = p2.y - p1.y;
-	double step1 = x*x + y*y;
-	return sqrt(step1);
-}
-
-/**
- * is target within the area defined by center and radius?
- */
-bool isWithin(Point center, int radius, Point target) {
-	return (calcDist(center, target) < radius);
-}
-
 /**
  * is target within the area defined by rectangle r?
  */
-bool isWithin(SDL_Rect r, Point target) {
+bool isWithin(const SDL_Rect &r, const Point &target) {
 	return target.x >= r.x && target.y >= r.y && target.x < r.x+r.w && target.y < r.y+r.h;
 }
 

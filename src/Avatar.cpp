@@ -91,20 +91,19 @@ void Avatar::init() {
 	}
 }
 
-void Avatar::loadGraphics(const string& _img_main, string _img_armor, const string& _img_off) {
+void Avatar::loadGraphics(const string &_img_main, const string &_img_armor, const string &_img_off) {
 	SDL_Surface *gfx_main = NULL;
 	SDL_Surface *gfx_off = NULL;
 	SDL_Surface *gfx_head = NULL;
 	SDL_Rect src;
 	SDL_Rect dest;
-
 	// Default appearance
-	if (_img_armor == "") _img_armor = "clothes";
+	string _img_armor_def(_img_armor.empty() ? string("clothes") : _img_armor);
 
 	// Check if we really need to change the graphics
-	if (_img_main != img_main || _img_armor != img_armor || _img_off != img_off) {
+	if (_img_main != img_main || _img_armor_def != img_armor || _img_off != img_off) {
 		img_main = _img_main;
-		img_armor = _img_armor;
+		img_armor = _img_armor_def;
 		img_off = _img_off;
 
 		// composite the hero graphic
@@ -226,10 +225,10 @@ void Avatar::set_direction() {
 	if(MOUSE_MOVE) {
 		Point target = screen_to_map(inp->mouse.x,  inp->mouse.y, stats.pos.x, stats.pos.y);
 		// if no line of movement to target, use pathfinder
-		if( !map->collider.line_of_movement(stats.pos.x, stats.pos.y, target.x, target.y) ) {
+		if( !map.collider.line_of_movement(stats.pos.x, stats.pos.y, target.x, target.y) ) {
 			vector<Point> path;
 			// if a path is returned, target first waypoint
-			if ( map->collider.compute_path(stats.pos,target,path,1000) ) {
+			if ( map.collider.compute_path(stats.pos,target,path,1000) ) {
 				target = path.back();
 			}
 		}
@@ -248,15 +247,15 @@ void Avatar::set_direction() {
 
 void Avatar::handlePower(int actionbar_power) {
 	if (actionbar_power != -1 && stats.cooldown_ticks == 0) {
-		const Power &power = powers->getPower(actionbar_power);
+		const Power &power = powers.getPower(actionbar_power);
 		Point target = screen_to_map(inp->mouse.x,  inp->mouse.y + power.aim_assist, stats.pos.x, stats.pos.y);
 
 		// check requirements
 		if (!stats.canUsePower(power, actionbar_power))
 			return;
-		if (power.requires_los && !map->collider.line_of_sight(stats.pos.x, stats.pos.y, target.x, target.y))
+		if (power.requires_los && !map.collider.line_of_sight(stats.pos.x, stats.pos.y, target.x, target.y))
 			return;
-		if (power.requires_empty_target && !map->collider.is_empty(target.x, target.y))
+		if (power.requires_empty_target && !map.collider.is_empty(target.x, target.y))
 			return;
 		if (stats.hero_cooldown[actionbar_power] > 0)
 			return;
@@ -309,10 +308,10 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 		move();
 		// calc new cam position from player position
 		// cam is focused at player position
-		map->cam.x = stats.pos.x;
-		map->cam.y = stats.pos.y;
-		map->hero_tile.x = stats.pos.x / 32;
-		map->hero_tile.y = stats.pos.y / 32;
+		map.cam.x = stats.pos.x;
+		map.cam.y = stats.pos.y;
+		map.hero_tile.x = stats.pos.x / 32;
+		map.hero_tile.y = stats.pos.y / 32;
 		return;
 	}
 	if (stats.stun_duration > 0) return;
@@ -338,7 +337,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 	// check for bleeding spurt
 	if (stats.bleed_duration % 30 == 1) {
 	    CombatText::Instance()->addMessage(1, stats.pos, DISPLAY_DAMAGE);
-		powers->activate(POWER_SPARK_BLOOD, &stats, stats.pos);
+		powers.activate(POWER_SPARK_BLOOD, stats, stats.pos);
 	}
 	// check for bleeding to death
 	if (stats.hp == 0 && !(stats.cur_state == AVATAR_DEAD)) {
@@ -435,7 +434,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 
 			// do power
 			if (activeAnimation->getCurFrame()  == activeAnimation->getMaxFrame()/2) {
-				powers->activate(current_power, &stats, act_target);
+				powers.activate(current_power, stats, act_target);
 			}
 
 			if (activeAnimation->getTimesPlayed() >= 1) {
@@ -450,7 +449,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 
 			// do power
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2) {
-				powers->activate(current_power, &stats, act_target);
+				powers.activate(current_power, stats, act_target);
 			}
 
 			if (activeAnimation->getTimesPlayed() >= 1) {
@@ -466,7 +465,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 
 			// do power
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2) {
-				powers->activate(current_power, &stats, act_target);
+				powers.activate(current_power, stats, act_target);
 			}
 
 			if (activeAnimation->getTimesPlayed() >= 1) {
