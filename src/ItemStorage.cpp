@@ -22,6 +22,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "ItemStorage.h"
 
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -177,8 +178,15 @@ bool ItemStorage::remove(int item) {
 	return false;
 }
 
+static inline bool mycompare(const ItemStack &a, const ItemStack &b) {
+	int aval = a.item ? a.item->id : 0x7fffff;
+	int bval = b.item ? b.item->id : 0x7fffff;
+	return aval < bval;
+}
+
 void ItemStorage::sort() {
-	bubbleSort(storage, slot_number);
+	std::sort(storage, &storage[slot_number], mycompare);
+	//bubbleSort(storage, slot_number);
 }
 
 //TODO: handle stackable items
