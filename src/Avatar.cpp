@@ -23,6 +23,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "Avatar.h"
 #include "SharedResources.h"
+#include "GameStatePlay.h"
 
 #include <sstream>
 
@@ -643,7 +644,24 @@ bool Avatar::takeHit(const Hazard &h) {
 		else if (prev_hp > stats.hp) { // only interrupt if damage was taken
             if (sound_hit)
                 Mix_PlayChannel(-1, sound_hit, 0);
-			stats.cur_state = AVATAR_HIT;
+
+			const Item *offhand = GameStatePlay::getInstance().getMenu().inv.getOffHand();
+			if (offhand && offhand->abs_max && stats.cur_state == AVATAR_MELEE) {
+				/* if we're wielding a shield and using a melee attack, give a chance to avoid
+				 * interruption at 20% base plus an 20% per point of absorption, with a max
+				 * of 90% chance (for an absorb 3.5 shield)
+				 */
+				float fmin = static_cast<float>(offhand->abs_min);
+				float fmax = static_cast<float>(offhand->abs_max);
+				float favg = fmin + (fmax - fmin) / 2.f;
+				float chance = favg / 5.f + .2f;
+
+				if (frand() > std::min(chance, .9f)) {
+					stats.cur_state = AVATAR_HIT;
+				}
+			} else {
+				stats.cur_state = AVATAR_HIT;
+			}
 		}
 
 		return true;
