@@ -26,10 +26,10 @@ Created and destroyed by main.cpp
 
 #include "SharedResources.h"
 
-SDL_Surface *screen;
-ModManager *mods;
-MessageEngine *msg;
-InputState *inp;
-FontEngine *font;
+SDL_Surface *screen = NULL;
+ModManager *mods = NULL;
+MessageEngine *msg = NULL;
+InputState *inp = NULL;
+FontEngine *font = NULL;
 
 bool audio;
