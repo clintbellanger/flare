@@ -145,19 +145,18 @@ void GameStateNew::logic() {
 	}
 
 	if (button_exit->checkClick()) {
-		requestedGameState = new GameStateLoad();
+		setRequestedGameState(new GameStateLoad());
 	}
 	
 	if (button_create->checkClick()) {
 		// start the new game
-		GameStatePlay* play = new GameStatePlay();
-		play->pc->stats.base = base[current_option];
-		play->pc->stats.head = head[current_option];
-		play->pc->stats.portrait = portrait[current_option];
-		play->pc->stats.name = input_name->getText();
-		play->game_slot = game_slot;
+		GameStatePlay* play = new GameStatePlay(game_slot);
+		play->getPc().stats.base = base[current_option];
+		play->getPc().stats.head = head[current_option];
+		play->getPc().stats.portrait = portrait[current_option];
+		play->getPc().stats.name = input_name->getText();
 		play->resetGame();
-		requestedGameState = play;
+		setRequestedGameState(play);
 	}
 	
 	// scroll through portrait options	

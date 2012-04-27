@@ -17,16 +17,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "GameState.h"
 
-GameState::GameState() {
-
-	requestedGameState = NULL;
-
-	exitRequested = false;
-	hasMusic = false;
+GameState::GameState(bool __hasMusic)
+	: _hasMusic(__hasMusic)
+	, requestedGameState(NULL)
+	, exitRequested(false) {
 }
 
-GameState* GameState::getRequestedGameState() {
-	return requestedGameState;
+GameState::~GameState() {
 }
 
 void GameState::logic() {
@@ -35,5 +32,3 @@ void GameState::logic() {
 void GameState::render() {
 }
 
-GameState::~GameState() {
-}

@@ -71,7 +71,7 @@ void GameSwitcher::logic() {
 		currentState = newState;
 		
 		// if this game state does not provide music, use the title theme
-        if (!currentState->hasMusic) {
+        if (!currentState->hasMusic()) {
             if (!Mix_PlayingMusic()) {
                 if (music)
                     Mix_PlayMusic(music, -1);

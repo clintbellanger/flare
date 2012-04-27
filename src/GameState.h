@@ -25,22 +25,25 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Utils.h"
 
 class GameState : private Uncopyable {
+private:
+	bool _hasMusic;
+	GameState* requestedGameState;
+	bool exitRequested;
+
 public:
-	GameState();
+	GameState(bool hasMusic = false);
 	virtual ~GameState();
 
 	virtual void logic();
 	virtual void render();
 
-	GameState* getRequestedGameState();
-	bool isExitRequested() { return exitRequested; };
-	bool hasMusic;
+	GameState* getRequestedGameState() const	{return requestedGameState;}
+	bool isExitRequested() const				{return exitRequested;}
+	bool hasMusic() const						{return _hasMusic;}
 
 protected:
-
-	GameState* requestedGameState;	
-
-	bool exitRequested;
+	void setRequestedGameState(GameState* val)	{requestedGameState = val;}
+	void setExitRequested(bool val)				{exitRequested = val;}
 };
 
 #endif

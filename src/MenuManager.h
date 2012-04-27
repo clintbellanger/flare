@@ -58,15 +58,14 @@ private:
 	
 	SDL_Surface *icons;
 
-	PowerManager *powers;
-	StatBlock *stats;
-	CampaignManager *camp;
+	PowerManager &powers;
+	StatBlock &stats;
+	CampaignManager &camp;
+	ItemManager &items;
 	
 	TooltipData tip_buf;
 
 	bool key_lock;
-	void loadSounds();
-	void loadIcons();
 	
 	bool dragging;
 	ItemStack drag_stack;
@@ -76,30 +75,20 @@ private:
 	bool done;
 	
 public:
-	MenuManager(PowerManager *powers, StatBlock *stats, CampaignManager *camp, ItemManager *items);
-	~MenuManager();
-	void logic();
-	void render();
-	void renderIcon(int icon_id, int x, int y);
-	void closeAll(bool play_sound);
-	void closeLeft(bool play_sound);
-	void closeRight(bool play_sound);
-
-	ItemManager *items;
-	MenuInventory *inv;
-	MenuPowers *pow;
-	MenuCharacter *chr;
-	MenuLog *log;
-	MenuHUDLog *hudlog;
-	MenuActionBar *act;
-	MenuHPMP *hpmp;
-	WidgetTooltip *tip;
-	MenuMiniMap *mini;
-	MenuExperience *xp;
-	MenuEnemy *enemy;
-	MenuVendor *vendor;
-	MenuTalker *talker;
-	MenuExit *exit;
+	MenuCharacter chr;
+	MenuInventory inv;
+	MenuPowers pow;
+	MenuLog log;
+	MenuHUDLog hudlog;
+	MenuActionBar act;
+	MenuHPMP hpmp;
+	WidgetTooltip tip;
+	MenuMiniMap mini;
+	MenuExperience xp;
+	MenuEnemy enemy;
+	MenuVendor vendor;
+	MenuTalker talker;
+	MenuExit exit;
 	
 	bool pause;
 	bool menus_open;
@@ -108,7 +97,22 @@ public:
 	Mix_Chunk *sfx_open;
 	Mix_Chunk *sfx_close;
 	
+public:
+	MenuManager(PowerManager &powers, StatBlock &stats, CampaignManager &camp, ItemManager &items);
+	~MenuManager();
+	void logic();
+	void render();
+	void renderIcon(int icon_id, int x, int y);
+	void closeAll(bool play_sound);
+	void closeLeft(bool play_sound);
+	void closeRight(bool play_sound);
 	bool requestingExit() { return done; }
+
+	const ItemManager &getItemManager() const	{return items;}
+
+private:
+	SDL_Surface *loadIcons();
+	void loadSounds();
 };
 
 #endif

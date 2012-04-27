@@ -59,10 +59,10 @@ private:
 	void loadPortrait(int slot);
 	std::string getMapName(const std::string& map_filename);
 
-	ItemManager *items;
-	WidgetButton *button_exit;
-	WidgetButton *button_action;
-	WidgetButton *button_alternate;
+	ItemManager items;
+	WidgetButton button_exit;
+	WidgetButton button_action;
+	WidgetButton button_alternate;
 	WidgetLabel *label_loading;
 	WidgetLabel *label_slots;
 

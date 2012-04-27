@@ -63,11 +63,11 @@ void GameStateTitle::loadGraphics() {
 void GameStateTitle::logic() {
 
 	if (button_play->checkClick()) {
-		requestedGameState = new GameStateLoad();
+		setRequestedGameState(new GameStateLoad());
 	}
 	
 	if (button_exit->checkClick()) {
-		exitRequested = true;
+		setExitRequested(true);
 	}
 }
 

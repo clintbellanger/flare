@@ -45,26 +45,32 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <stdexcept>
 
 class GameStatePlay : public GameState {
 private:
-
-	MapIso *map;
+	PowerManager powers;
+	ItemManager items;
+	CampaignManager camp;
+	MapIso map;
+	Avatar pc;
+	EnemyManager enemies;
+	HazardManager hazards;
+	MenuManager menu;
+	LootManager loot;
+	NPCManager npcs;
+	QuestLog quests;
 	Enemy *enemy;
 	Renderable r[1024];
 	int renderableCount;
-	HazardManager *hazards;
-	EnemyManager *enemies;
-	MenuManager *menu;
-	LootManager *loot;
-	PowerManager *powers;
-	ItemManager *items;
-	NPCManager *npcs;
-	CampaignManager *camp;
-	QuestLog *quests;
 
-	WidgetLabel *label_mapname;
-	WidgetLabel *label_fps;
+	WidgetLabel label_mapname;
+	WidgetLabel label_fps;
+
+	int npc_id;
+	int game_slot;
+
+	static GameStatePlay *instance;
 	
 	bool restrictPowerUse();
 	void checkEnemyFocus();
@@ -78,11 +84,17 @@ private:
 	void checkNotifications();
 	void checkNPCInteraction();
 
-	int npc_id;
 	
 public:
-	GameStatePlay();
+	GameStatePlay(int game_slot);
 	~GameStatePlay();
+
+	static GameStatePlay &getInstance() {
+		if (!instance) {
+			throw std::runtime_error("Game not in play state");
+		}
+		return *instance;
+	}
 
 	void logic();
 	void render();
@@ -91,8 +103,8 @@ public:
 	void loadGame();
 	void resetGame();
 
-	Avatar *pc;
-	int game_slot;
+	Avatar &getPc()			{return pc;}
+	MenuManager &getMenu()	{return menu;}
 };
 
 #endif
