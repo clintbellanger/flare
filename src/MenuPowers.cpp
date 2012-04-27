@@ -117,7 +117,7 @@ bool MenuPowers::requirementsMet(int power_index) {
 /**
  * Click-to-drag a power (to the action bar)
  */
-int MenuPowers::click(Point mouse) {
+int MenuPowers::click(const Point &mouse) {
 	
 	for (int i=0; i<20; i++) {
 		if (isWithin(slots[i], mouse)) {
@@ -237,7 +237,7 @@ void MenuPowers::displayBuild(int value, int x) {
 /**
  * Show mouseover descriptions of disciplines and powers
  */
-TooltipData MenuPowers::checkTooltip(Point mouse) {
+TooltipData MenuPowers::checkTooltip(const Point &mouse) {
 
 	TooltipData tip;
 

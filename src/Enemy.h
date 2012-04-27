@@ -52,7 +52,7 @@ public:
 	int faceNextBest(int mapx, int mapy);
 	void newState(int state);
 	int getDistance(Point dest);
-	bool takeHit(Hazard h);
+	bool takeHit(const Hazard &h);
 	void doRewards();
 
 	virtual Renderable getRender();

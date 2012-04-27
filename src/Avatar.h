@@ -40,6 +40,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <string>
 
+using std::string;
 
 /**
  * Avatar State enum
@@ -73,24 +74,24 @@ private:
 	Mix_Chunk *sound_steps[4];
 	Mix_Chunk *level_up;
 
-	std::string img_main;
-	std::string img_armor;
-	std::string img_off;
+	string img_main;
+	string img_armor;
+	string img_off;
 
 public:
-	Avatar(PowerManager *_powers, MapIso *_map);
+	Avatar(PowerManager &_powers, MapIso &_map);
 	~Avatar();
 
 	void init();
-	void loadGraphics(const std::string& img_main, std::string img_armor, const std::string& img_off);
+	void loadGraphics(const string &img_main, const string &img_armor, const string &img_off);
 	void loadSounds();
-	void loadStepFX(const std::string& stepname);
+	void loadStepFX(const string& stepname);
 
 	void logic(int actionbar_power, bool restrictPowerUse);
 	bool pressing_move();
 	void set_direction();
-	bool takeHit(Hazard h);
-	std::string log_msg;
+	bool takeHit(const Hazard &h);
+	string log_msg;
 
 	virtual Renderable getRender();
 

@@ -133,7 +133,7 @@ void MenuInventory::render() {
 	inventory[CARRIED].render();
 }
 
-int MenuInventory::areaOver(Point mouse) {
+int MenuInventory::areaOver(const Point &mouse) {
 	if (isWithin(equipped_area, mouse)) {
 		return EQUIPMENT;
 	}
@@ -148,7 +148,7 @@ int MenuInventory::areaOver(Point mouse) {
  *
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
-TooltipData MenuInventory::checkTooltip(Point mouse) {
+TooltipData MenuInventory::checkTooltip(const Point &mouse) {
 	int area;
 	TooltipData tip;
 	
@@ -168,7 +168,7 @@ TooltipData MenuInventory::checkTooltip(Point mouse) {
 /**
  * Click-start dragging in the inventory
  */
-ItemStack MenuInventory::click(InputState * input) {
+ItemStack MenuInventory::click(const InputState &input) {
 	ItemStack item;
 	item.item = 0;
 	item.quantity = 0;
@@ -188,7 +188,7 @@ ItemStack MenuInventory::click(InputState * input) {
 /**
  * Return dragged item to previous slot
  */
-void MenuInventory::itemReturn( ItemStack stack) {
+void MenuInventory::itemReturn(const ItemStack &stack) {
 	inventory[drag_prev_src].itemReturn( stack);
 	// if returning equipment, prepare to change stats/sprites
 	if (drag_prev_src == EQUIPMENT) {
@@ -201,7 +201,7 @@ void MenuInventory::itemReturn( ItemStack stack) {
  * Dragging and dropping an item can be used to rearrange the inventory
  * and equip items
  */
-void MenuInventory::drop(Point mouse, ItemStack stack) {
+void MenuInventory::drop(const Point &mouse, const ItemStack &stack) {
 	int area;
 	int slot;
 	int drag_prev_slot;
@@ -299,7 +299,7 @@ void MenuInventory::drop(Point mouse, ItemStack stack) {
  * e.g. drink a potion
  * e.g. equip an item
  */
-void MenuInventory::activate(InputState * input) {
+void MenuInventory::activate(const InputState &input) {
 	int slot;
 	int equip_slot;
 	ItemStack stack;
@@ -368,7 +368,7 @@ void MenuInventory::activate(InputState * input) {
  * @param area Area number where it will try to store the item
  * @param slot Slot number where it will try to store the item
  */
-void MenuInventory::add(ItemStack stack, int area, int slot) {
+void MenuInventory::add(const ItemStack &stack, int area, int slot) {
 	int max_quantity;
 	int quantity_added;
 	int i;
@@ -427,7 +427,7 @@ void MenuInventory::add(ItemStack stack, int area, int slot) {
 /**
  * Remove one given item from the player's inventory.
  */
-void MenuInventory::remove(int item) {
+void MenuInventory::remove(const Item &item) {
 	if( ! inventory[CARRIED].remove(item)) {
 		inventory[EQUIPMENT].remove(item);
 	}
@@ -445,7 +445,7 @@ void MenuInventory::addGold(int count) {
  * Check if there is enough gold to buy the given stack, and if so remove it from the current total and add the stack.
  * (Handle the drop into the equipment area, but add() don't handle it well in all circonstances. MenuManager::logic() allow only into the carried area.)
  */
-bool MenuInventory::buy(ItemStack stack, Point mouse) {
+bool MenuInventory::buy(const ItemStack &stack, const Point &mouse) {
 	int area;
 	int slot = -1;
 	int count = items->items[stack.item].price * stack.quantity;
@@ -474,7 +474,7 @@ bool MenuInventory::buy(ItemStack stack, Point mouse) {
 /**
  * Sell a specific stack of items
  */
-bool MenuInventory::sell(ItemStack stack) {
+bool MenuInventory::sell(const ItemStack &stack) {
 	// items that have no price cannot be sold
 	if (items->items[stack.item].price == 0) return false;
 	
@@ -497,14 +497,14 @@ bool MenuInventory::full() {
 /**
  * Get the number of the specified item carried (not equipped)
  */
-int MenuInventory::getItemCountCarried(int item) {
+int MenuInventory::getItemCountCarried(const Item &item) const {
 	return inventory[CARRIED].count(item);
 }
 
 /**
  * Check to see if the given item is equipped
  */
-bool MenuInventory::isItemEquipped(int item) {
+bool MenuInventory::isItemEquipped(const Item &item) const {
 	return inventory[EQUIPMENT].contain(item);
 }
 

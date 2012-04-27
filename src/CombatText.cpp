@@ -38,11 +38,11 @@ CombatText* CombatText::Instance() {
    return m_pInstance;
 }
 
-void CombatText::setCam(Point location) {
+void CombatText::setCam(const Point &location) {
     cam = location;
 }
 
-void CombatText::addMessage(std::string message, Point location, int displaytype) {
+void CombatText::addMessage(const string &message, const Point &location, int displaytype) {
     if (COMBAT_TEXT) {
 	    Point p = map_to_screen(location.x - UNITS_PER_TILE, location.y - UNITS_PER_TILE, cam.x, cam.y);
         Combat_Text_Item *c = new Combat_Text_Item();
@@ -57,7 +57,7 @@ void CombatText::addMessage(std::string message, Point location, int displaytype
     }
 }
 
-void CombatText::addMessage(int num, Point location, int displaytype) {
+void CombatText::addMessage(int num, const Point &location, int displaytype) {
     if (COMBAT_TEXT) {
 	    Point p = map_to_screen(location.x - UNITS_PER_TILE, location.y - UNITS_PER_TILE, cam.x, cam.y);
         Combat_Text_Item *c = new Combat_Text_Item();

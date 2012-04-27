@@ -70,23 +70,23 @@ public:
 	~MenuInventory();
 	void logic();
 	void render();
-	TooltipData checkTooltip(Point mouse);
+	TooltipData checkTooltip(const Point &mouse);
 
-	ItemStack click(InputState * input);
-	void itemReturn(ItemStack stack);
-	void drop(Point mouse, ItemStack stack);
-	void activate(InputState * input);
+	ItemStack click(const InputState &input);
+	void itemReturn(const ItemStack &stack);
+	void drop(const Point &mouse, const ItemStack &stack);
+	void activate(const InputState &input);
 
-	void add( ItemStack stack, int area = CARRIED, int slot = -1);
-	void remove(int item);
+	void add(const ItemStack &stack, int area = CARRIED, int slot = -1);
+	void remove(const Item &item);
 	void addGold(int count);
-	bool buy(ItemStack stack, Point mouse = Point());
-	bool sell(ItemStack stack);
+	bool buy(const ItemStack &stack, const Point &mouse = Point());
+	bool sell(const ItemStack &stack);
 
 	bool full();
-	int getItemCountCarried(int item);
-	bool isItemEquipped(int item);
-	bool requirementsMet(int item);
+	int getItemCountCarried(const Item &item) const;
+	bool isItemEquipped(const Item &item) const;
+	bool requirementsMet(const Item &item) const;
 	
 	void applyEquipment(ItemStack *equipped);
 

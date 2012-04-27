@@ -59,10 +59,10 @@ public:
 	void loadMerchant(const std::string& filename);
 	void logic();
 	void render();
-	ItemStack click(InputState * input);
+	ItemStack click(const InputState &input);
 	void itemReturn(ItemStack stack);
 	void add(ItemStack stack);
-	TooltipData checkTooltip(Point mouse);
+	TooltipData checkTooltip(const Point &mouse);
 	bool full();
 	void setInventory();
 	void saveInventory();

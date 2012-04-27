@@ -133,7 +133,7 @@ struct Item : private Uncopyable {
 struct ItemStack {
 	int item;
 	int quantity;
-	bool operator > (ItemStack param);
+	bool operator > (const ItemStack &param) const;
 };
 
 class ItemManager : private Uncopyable {

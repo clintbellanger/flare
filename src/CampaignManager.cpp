@@ -134,7 +134,7 @@ void CampaignManager::removeItem(int item_id) {
 	carried_items->remove(item_id);
 }
 
-void CampaignManager::rewardItem(ItemStack istack) {
+void CampaignManager::rewardItem(const ItemStack &istack) {
 
 	if (carried_items->full()) {
 		drop_stack.item = istack.item;

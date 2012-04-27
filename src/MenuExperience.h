@@ -40,7 +40,7 @@ public:
 	MenuExperience();
 	~MenuExperience();
 	void loadGraphics();
-	void render(StatBlock *stats, Point mouse);
+	void render(const StatBlock &stats, const Point &mouse);
 	
 	// variables to make the experience bar display configurable
 	

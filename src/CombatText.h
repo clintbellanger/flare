@@ -50,9 +50,9 @@ class CombatText : private Uncopyable {
 public:
     static CombatText* Instance();
     void render();
-    void addMessage(std::string message, Point location, int displaytype);
-    void addMessage(int num, Point location, int displaytype);
-    void setCam(Point location);
+    void addMessage(const string &message, const Point &location, int displaytype);
+    void addMessage(int num, const Point &location, int displaytype);
+    void setCam(const Point &location);
 
 private:
     Point cam;

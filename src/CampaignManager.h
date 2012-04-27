@@ -45,7 +45,7 @@ public:
 	void unsetStatus(std::string s);
 	bool checkItem(int item_id);
 	void removeItem(int item_id);
-	void rewardItem(ItemStack istack);
+	void rewardItem(const ItemStack &istack);
 	void rewardCurrency(int amount);
 	void rewardXP(int amount);
 	void addMsg(const std::string& msg);

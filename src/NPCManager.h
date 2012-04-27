@@ -49,8 +49,8 @@ public:
 	NPC *npcs[MAX_NPC_COUNT];
 	void handleNewMap();
 	void logic();
-	int checkNPCClick(Point mouse, Point cam);
-	void renderTooltips(Point cam, Point mouse);
+	int checkNPCClick(const Point &mouse, const Point &cam);
+	void renderTooltips(const Point &cam, const Point &mouse);
 	int npc_count;
 	int tooltip_margin;
 };

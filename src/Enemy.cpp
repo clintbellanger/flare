@@ -603,7 +603,7 @@ void Enemy::logic() {
  *
  * Returns false on miss
  */
-bool Enemy::takeHit(Hazard h) {
+bool Enemy::takeHit(const Hazard &h) {
 	if (stats.cur_state != ENEMY_DEAD && stats.cur_state != ENEMY_CRITDEAD) 
 	{   
 		if (!stats.in_combat) {

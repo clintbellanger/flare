@@ -120,6 +120,7 @@ private:
 	
 public:
 	MenuCharacter(StatBlock *stats);
+	MenuCharacter(StatBlock &stats);
 	~MenuCharacter();
 	void logic();
 	void render();

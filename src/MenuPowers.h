@@ -66,9 +66,9 @@ public:
 	~MenuPowers();
 	void logic();
 	void render();
-	TooltipData checkTooltip(Point mouse);
+	TooltipData checkTooltip(const Point &mouse);
 	bool requirementsMet(int power_index);
-	int click(Point mouse);
+	int click(const Point &mouse);
 	
 	bool visible;
 	SDL_Rect slots[20]; // the location of power slots

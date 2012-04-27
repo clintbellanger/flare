@@ -436,7 +436,7 @@ void LootManager::removeLoot(int index) {
  * screen coordinates to map locations.  We need the hero position because
  * the hero has to be within range to pick up an item.
  */
-ItemStack LootManager::checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full) {
+ItemStack LootManager::checkPickup(const Point &mouse, const Point &cam, const Point &hero_pos, int &gold, bool inv_full) {
 	Point p;
 	SDL_Rect r;
 	ItemStack loot_stack;

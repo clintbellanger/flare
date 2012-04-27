@@ -29,6 +29,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL.h>
 #include <string>
 
+using std::string;
+
 const int VALIGN_CENTER = 0;
 const int VALIGN_TOP = 1;
 const int VALIGN_BOTTOM = 2;
@@ -39,7 +41,7 @@ private:
 	void refresh();
 	void applyOffsets();
 
-	std::string text;
+	string text;
 	int color;
 	int x_origin;
 	int y_origin;
@@ -51,11 +53,11 @@ public:
 	WidgetLabel();
 	~WidgetLabel();
 	void render();
-	void set(int _x, int _y, int _justify, int _valign, const std::string& _text, int _color);
 	
-	void set(const std::string& _text);
-	std::string get() {return text;}
 
+	void set(int x, int y, int justify, int valign, const string& text, int color);
+	void set(const string& text);
+	const string &get() const 			{return text;}
 	SDL_Rect bounds;	
 };
 

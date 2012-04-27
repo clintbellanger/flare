@@ -280,7 +280,7 @@ void MenuActionBar::renderItemCounts() {
 /**
  * On mouseover, show tooltip for buttons
  */
-TooltipData MenuActionBar::checkTooltip(Point mouse) {
+TooltipData MenuActionBar::checkTooltip(const Point &mouse) {
 	TooltipData tip;
 
 	//int offset_x = (VIEW_W - 640)/2;
@@ -314,7 +314,7 @@ TooltipData MenuActionBar::checkTooltip(Point mouse) {
 /**
  * After dragging a power or item onto the action bar, set as new hotkey
  */
-void MenuActionBar::drop(Point mouse, int power_index, bool rearranging) {
+void MenuActionBar::drop(const Point &mouse, int power_index, bool rearranging) {
 	for (int i=0; i<12; i++) {
 		if (isWithin(slots[i], mouse)) {
 			if (rearranging) {
@@ -329,7 +329,7 @@ void MenuActionBar::drop(Point mouse, int power_index, bool rearranging) {
 /**
  * CTRL-click a hotkey to clear it
  */
-void MenuActionBar::remove(Point mouse) {
+void MenuActionBar::remove(const Point &mouse) {
 	for (int i=0; i<12; i++) {
 		if (isWithin(slots[i], mouse)) {
 			hotkeys[i] = -1;
@@ -342,7 +342,7 @@ void MenuActionBar::remove(Point mouse) {
  * If pressing an action key (keyboard or mouseclick) and the power is enabled,
  * return that power's ID.
  */
-int MenuActionBar::checkAction(Point mouse) {
+int MenuActionBar::checkAction(const Point &mouse) {
 
 	// check click action
 	if ((inp->pressing[MAIN1] && !inp->lock[MAIN1]) || (inp->pressing[MAIN2] && !inp->lock[MAIN2])) {
@@ -377,7 +377,7 @@ int MenuActionBar::checkAction(Point mouse) {
 /**
  * If clicking while a menu is open, assume the player wants to rearrange the action bar
  */
-int MenuActionBar::checkDrag(Point mouse) {
+int MenuActionBar::checkDrag(const Point &mouse) {
 	int power_index;
 
 	for (int i=0; i<12; i++) {
@@ -395,7 +395,7 @@ int MenuActionBar::checkDrag(Point mouse) {
 /**
  * if clicking a menu, act as if the player pressed that menu's hotkey
  */
-void MenuActionBar::checkMenu(Point mouse, bool &menu_c, bool &menu_i, bool &menu_p, bool &menu_l) {
+void MenuActionBar::checkMenu(const Point &mouse, bool &menu_c, bool &menu_i, bool &menu_p, bool &menu_l) {
 	if ((inp->pressing[MAIN1] && !inp->lock[MAIN1]) || (inp->pressing[MAIN2] && !inp->lock[MAIN2])) {
 		if (isWithin(menus[MENU_CHARACTER], mouse)) {
 			if (inp->pressing[MAIN1] && !inp->lock[MAIN1]) inp->lock[MAIN1] = true;

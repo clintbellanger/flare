@@ -104,7 +104,7 @@ void ItemStorage::clear() {
  * @param ItemStack Stack of items
  * @param slot Slot number where it will try to store the item
  */
-void ItemStorage::add( ItemStack stack, int slot) {
+void ItemStorage::add(const ItemStack &stack, int slot) {
 	int max_quantity;
 	int quantity_added;
 	int i;

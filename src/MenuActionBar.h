@@ -67,15 +67,15 @@ public:
 	void renderAttention(int menu_id);
 	void logic();
 	void render();
-	int checkAction(Point mouse);
-	int checkDrag(Point mouse);
-	void checkMenu(Point mouse, bool &menu_c, bool &menu_i, bool &menu_p, bool &menu_l);
-	void drop(Point mouse, int power_index, bool rearranging);
-	void remove(Point mouse);
+	int checkAction(const Point &mouse);
+	int checkDrag(const Point &mouse);
+	void checkMenu(const Point &mouse, bool &menu_c, bool &menu_i, bool &menu_p, bool &menu_l);
+	void drop(const Point &mouse, int power_index, bool rearranging);
+	void remove(const Point &mouse);
 	void set(int power_id[12]);
 	void clear();
 
-	TooltipData checkTooltip(Point mouse);
+	TooltipData checkTooltip(const Point &mouse);
 
 	int hotkeys[12]; // refer to power_index in PowerManager
 	SDL_Rect slots[12]; // the location of hotkey slots

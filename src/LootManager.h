@@ -107,7 +107,7 @@ public:
 	void addLoot(ItemStack stack, Point pos);
 	void addGold(int count, Point pos);
 	void removeLoot(int index);
-	ItemStack checkPickup(Point mouse, Point cam, Point hero_pos, int &gold, bool inv_full);
+	ItemStack checkPickup(const Point &mouse, const Point &cam, const Point &hero_pos, int &gold, bool inv_full);
 	
 	Renderable getRender(int index);
 	

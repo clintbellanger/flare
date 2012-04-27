@@ -247,7 +247,7 @@ void EnemyManager::logic() {
 	}
 }
 
-Enemy* EnemyManager::enemyFocus(Point mouse, Point cam, bool alive_only) {
+Enemy* EnemyManager::enemyFocus(const Point &mouse, const Point &cam, bool alive_only) {
 	Point p;
 	SDL_Rect r;
 	for(int i = 0; i < enemy_count; i++) {
@@ -272,7 +272,7 @@ Enemy* EnemyManager::enemyFocus(Point mouse, Point cam, bool alive_only) {
 /**
  * If an enemy has died, reward the hero with experience points
  */
-void EnemyManager::checkEnemiesforXP(StatBlock *stats) {
+void EnemyManager::checkEnemiesforXP(StatBlock &stats) {
 	for (int i=0; i<enemy_count; i++) {
 		if (enemies[i]->reward_xp) {
 			stats->xp += enemies[i]->stats.level;

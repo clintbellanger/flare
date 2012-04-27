@@ -36,10 +36,10 @@ public:
 
 	// rendering
 	void render();
-	int slotOver(Point mouse);
-	TooltipData checkTooltip(Point mouse, StatBlock *stats, bool vendor_view);
-	ItemStack click(InputState * input);
-	void itemReturn(ItemStack stack);
+	int slotOver(const Point &mouse) const;
+	TooltipData checkTooltip(const Point &mouse, const StatBlock &stats, bool vendor_view);
+	ItemStack click(const InputState &input);
+	void itemReturn(const ItemStack &stack);
 
 	int drag_prev_slot;
 };

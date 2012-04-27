@@ -23,7 +23,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
-void MenuItemStorage::init(int _slot_number, ItemManager *_items, SDL_Rect _area, int _icon_size, int _nb_cols) {
+void MenuItemStorage::init(int _slot_number, ItemManager &_items, SDL_Rect _area, int _icon_size, int _nb_cols) {
 	ItemStorage::init( _slot_number, _items);
 	area = _area;
 	icon_size = _icon_size;
@@ -38,7 +38,7 @@ void MenuItemStorage::render() {
 	}
 }
 
-int MenuItemStorage::slotOver(Point mouse) {
+int MenuItemStorage::slotOver(const Point &mouse) const {
 	if( isWithin( area, mouse)) {
 		return (mouse.x - area.x) / icon_size + (mouse.y - area.y) / icon_size * nb_cols;
 	}
@@ -47,7 +47,7 @@ int MenuItemStorage::slotOver(Point mouse) {
 	}
 }
 
-TooltipData MenuItemStorage::checkTooltip(Point mouse, StatBlock *stats, bool vendor_view) {
+TooltipData MenuItemStorage::checkTooltip(const Point &mouse, const StatBlock &stats, bool vendor_view) {
 	TooltipData tip;
 	int slot = slotOver( mouse);
 
@@ -57,7 +57,7 @@ TooltipData MenuItemStorage::checkTooltip(Point mouse, StatBlock *stats, bool ve
 	return tip;
 }
 
-ItemStack MenuItemStorage::click(InputState * input) {
+ItemStack MenuItemStorage::click(const InputState &input) {
 	ItemStack item;
 	drag_prev_slot = slotOver(input->mouse);
 	if( drag_prev_slot > -1) { 
@@ -75,7 +75,7 @@ ItemStack MenuItemStorage::click(InputState * input) {
 	}
 }
 
-void MenuItemStorage::itemReturn(ItemStack stack) {
+void MenuItemStorage::itemReturn(const ItemStack &stack) {
 	add( stack, drag_prev_slot);
 	drag_prev_slot = -1;
 }
