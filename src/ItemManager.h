@@ -32,6 +32,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL_mixer.h>
 
 #include <string>
+#include <cassert>
 
 
 const int MAX_ITEM_ID = 10000;
@@ -76,6 +77,7 @@ const int ITEM_MAX_BONUSES = 8;
 
 struct Item : private Uncopyable {
 	std::string name;          // item name displayed on long and short tool tips
+	int id;
 	int level;            // rough estimate of quality, used in the loot algorithm
 	int quality;          // low, normal, high, epic; corresponds to item name color
 	int type;             // equipment slot or base item type
@@ -131,8 +133,10 @@ struct Item : private Uncopyable {
 };
 
 struct ItemStack {
-	int item;
+	const Item *item;
 	int quantity;
+
+	ItemStack(const Item *_item = NULL, int _quantity = 0) : item(_item), quantity(_quantity) {}
 	bool operator > (const ItemStack &param) const;
 };
 
@@ -156,9 +160,9 @@ public:
 	void loadSounds();
 	void loadIcons();
 	void renderIcon(ItemStack stack, int x, int y, int size);
-	void playSound(int item);
+	void playSound(const Item &item);
 	void playCoinsSound();
-	TooltipData getTooltip(int item, StatBlock *stats, bool vendor_view);
+	TooltipData getTooltip(const Item &item, const StatBlock &stats, bool vendor_view);
 	TooltipData getShortTooltip(ItemStack item);
 
 	const Item &getItem(int id) const {

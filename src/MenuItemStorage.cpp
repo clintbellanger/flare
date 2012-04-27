@@ -52,7 +52,7 @@ TooltipData MenuItemStorage::checkTooltip(const Point &mouse, const StatBlock &s
 	int slot = slotOver( mouse);
 
 	if (slot > -1 && storage[slot].item > 0) {
-		return items->getTooltip( storage[slot].item, stats, vendor_view);
+		return items->getTooltip( *storage[slot].item, stats, vendor_view);
 	}
 	return tip;
 }

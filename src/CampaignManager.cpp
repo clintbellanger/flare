@@ -31,7 +31,7 @@ using namespace std;
 
 CampaignManager::CampaignManager() {
 
-	drop_stack.item = 0;
+	drop_stack.item = NULL;
 	drop_stack.quantity = 0;
 
 	items = NULL;
@@ -127,11 +127,11 @@ void CampaignManager::unsetStatus(std::string s) {
 }
 
 bool CampaignManager::checkItem(int item_id) {
-	return carried_items->contain(item_id);
+	return carried_items->contain(items->getItem(item_id));
 }
 
 void CampaignManager::removeItem(int item_id) {
-	carried_items->remove(item_id);
+	carried_items->remove(items->getItem(item_id));
 }
 
 void CampaignManager::rewardItem(const ItemStack &istack) {
@@ -144,11 +144,11 @@ void CampaignManager::rewardItem(const ItemStack &istack) {
 		carried_items->add(istack);
 
 		if (istack.quantity <= 1)
-			addMsg(msg->get("You receive %s.", items->items[istack.item].name));
+			addMsg(msg->get("You receive %s.", istack.item->name));
 		if (istack.quantity > 1)
-			addMsg(msg->get("You receive %s x%d.", istack.quantity, items->items[istack.item].name));
+			addMsg(msg->get("You receive %s x%d.", istack.quantity, istack.item->name));
 		
-		items->playSound(istack.item);
+		items->playSound(*istack.item);
 	}
 }
 

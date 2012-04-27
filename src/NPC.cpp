@@ -165,7 +165,7 @@ void NPC::load(const string& npc_id) {
 				else if (infile.key == "constant_stock") {
 					stack.quantity = 1;
 					while (infile.val != "") {
-						stack.item = atoi(infile.nextValue().c_str());
+						stack.item = &items.getItem(atoi(infile.nextValue().c_str()));
 						stock.add(stack);
 					}
 				}

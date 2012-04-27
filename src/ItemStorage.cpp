@@ -34,24 +34,27 @@ void ItemStorage::init(int _slot_number, ItemManager &_items) {
 	storage = new ItemStack[slot_number];
 
 	for( int i=0; i<slot_number; i++) {
-		storage[i].item = 0;
+		storage[i].item = NULL;
 		storage[i].quantity = 0;
 	}
-}
-
-ItemStack & ItemStorage::operator [] (int slot) {
-	return storage[slot];
 }
 
 /**
  * Take the savefile CSV list of items id and convert to storage array
  */
 void ItemStorage::setItems(string s) {
-	s = s + ',';
+	s += ',';
 	for (int i=0; i<slot_number; i++) {
-		storage[i].item = eatFirstInt(s, ',');
-		if( storage[i].item != 0) storage[i].quantity = 1;
-		else storage[i].quantity = 0;
+		ItemStack &slot = storage[i];
+		slot.item = &items->getItem(eatFirstInt(s, ','));
+
+		if (slot.item->id) {
+			slot.quantity = 1;
+		} else {
+			// if item is zero (for some reason), we'll use null pointer
+			slot.item = NULL;
+			slot.quantity = 0;
+		}
 	}
 }
 
@@ -72,7 +75,8 @@ string ItemStorage::getItems() {
 	stringstream ss;
 	ss.str("");
 	for (int i=0; i<slot_number; i++) {
-		ss << storage[i].item;
+		int item_id = storage[i].item ? storage[i].item->id : 0;
+		ss << item_id;
 		if (i < slot_number-1) ss << ',';
 	}
 	return ss.str();
@@ -93,7 +97,7 @@ string ItemStorage::getQuantities() {
 
 void ItemStorage::clear() {
 	for( int i=0; i<slot_number; i++) {
-		storage[i].item = 0;
+		storage[i].item = NULL;
 		storage[i].quantity = 0;
 	}
 }
@@ -106,50 +110,50 @@ void ItemStorage::clear() {
  */
 void ItemStorage::add(const ItemStack &stack, int slot) {
 	int max_quantity;
-	int quantity_added;
 	int i;
 
-	if( stack.item != 0) {
-		max_quantity = items->items[stack.item].max_quantity;
-		if( slot > -1) {
-			// a slot is specified
-			if( storage[slot].item != 0 && storage[slot].item != stack.item) {
-				// the proposed slot isn't available
-				slot = -1;
-			}
-		} else {
-			// first search of stack to complete if the item is stackable
-			i = 0;
-			while( max_quantity > 1 && slot == -1 && i < slot_number) {
-				if (storage[i].item == stack.item && storage[i].quantity < max_quantity) {
-					slot = i;
-				}
-				i++;
-			}
-			// then an empty slot
-			i = 0;
-			while( slot == -1 && i < slot_number) {
-				if (storage[i].item == 0) {
-					slot = i;
-				}
-				i++;
-			}
+	if (!stack.item) return;
+
+	max_quantity = stack.item->max_quantity;
+	if( slot > -1) {
+		// a slot is specified
+		if (storage[slot].item && storage[slot].item != stack.item) {
+			// the proposed slot isn't available
+			slot = -1;
 		}
-		if( slot != -1) {
-			// Add
-			quantity_added = min( stack.quantity, max_quantity - storage[slot].quantity);
-			storage[slot].item = stack.item;
-			storage[slot].quantity += quantity_added;
-			stack.quantity -= quantity_added;
-			// Add back the remaining
-			if( stack.quantity > 0) {
-				add( stack);
+	} else {
+		// first search of stack to complete if the item is stackable
+		i = 0;
+		while( max_quantity > 1 && slot == -1 && i < slot_number) {
+			if (storage[i].item == stack.item && storage[i].quantity < max_quantity) {
+				slot = i;
 			}
+			i++;
 		}
-		else {
-			// No available slot, drop
-			// TODO: We should drop on the floor an item we can't store
+		// then an empty slot
+		i = 0;
+		while( slot == -1 && i < slot_number) {
+			if (!storage[i].item) {
+				slot = i;
+			}
+			i++;
 		}
+	}
+	if( slot != -1) {
+		// Add
+		int quantity_added = min( stack.quantity, max_quantity - storage[slot].quantity);
+		storage[slot].item = stack.item;
+		storage[slot].quantity += quantity_added;
+		// Add back the remaining
+		if(stack.quantity > quantity_added) {
+			ItemStack overflowStack = stack;		// create a non-const local copy
+			overflowStack.quantity -= quantity_added;
+			add(overflowStack);
+		}
+	}
+	else {
+		// No available slot, drop
+		// TODO: We should drop on the floor an item we can't store
 	}
 }
 
@@ -161,16 +165,16 @@ void ItemStorage::add(const ItemStack &stack, int slot) {
 void ItemStorage::substract(int slot, int quantity) {
 	storage[slot].quantity -= quantity;
 	if (storage[slot].quantity <= 0) {
-		storage[slot].item = 0;
+		storage[slot].item = NULL;
 	}
 }
 
 /**
  * Remove one given item
  */
-bool ItemStorage::remove(int item) {
+bool ItemStorage::remove(const Item &item) {
 	for (int i=0; i<slot_number; i++) {
-		if (storage[i].item == item) {
+		if (storage[i].item == &item) {
 			substract(i, 1);
 			return true;
 		}
@@ -190,9 +194,9 @@ void ItemStorage::sort() {
 }
 
 //TODO: handle stackable items
-bool ItemStorage::full() {
+bool ItemStorage::full() const {
 	for (int i=0; i<slot_number; i++) {
-		if (storage[i].item == 0) {
+		if (!storage[i].item) {
 			return false;
 		}
 	}
@@ -202,10 +206,10 @@ bool ItemStorage::full() {
 /**
  * Get the number of the specified item carried (not equipped)
  */
-int ItemStorage::count(int item) {
+int ItemStorage::count(const Item &item) const {
 	int item_count=0;
 	for (int i=0; i<slot_number; i++) {
-		if (storage[i].item == item) {
+		if (storage[i].item == &item) {
 			item_count += storage[i].quantity;
 		}
 	}
@@ -215,9 +219,9 @@ int ItemStorage::count(int item) {
 /**
  * Check to see if the given item is equipped
  */
-bool ItemStorage::contain(int item) {
+bool ItemStorage::contain(const Item &item) const {
 	for (int i=0; i<slot_number; i++) {
-		if (storage[i].item == item)
+		if (storage[i].item == &item)
 			return true;
 	}
 	return false;

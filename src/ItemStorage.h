@@ -35,7 +35,8 @@ public:
 	void init(int _slot_number, ItemManager &_items);
 	~ItemStorage();
 
-	ItemStack & operator [] (int slot);
+	const ItemStack &operator [] (int slot) const	{return storage[slot];}
+	ItemStack &operator [] (int slot)				{return storage[slot];}
 
 	void setItems(std::string s);
 	void setQuantities(std::string s);
@@ -43,13 +44,13 @@ public:
 	std::string getQuantities();
 	void add(const ItemStack &stack, int slot = -1);
 	void substract(int slot, int quantity = 1);
-	bool remove(int item);
+	bool remove(const Item &item);
 	void sort();
 	void clear();
 
-	bool full();
-	int count(int item);
-	bool contain(int item);
+	bool full() const;
+	int count(const Item &item) const;
+	bool contain(const Item &item) const;
 
 	ItemStack * storage;
 };

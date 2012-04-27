@@ -83,13 +83,13 @@ void MenuInventory::loadGraphics() {
 void MenuInventory::logic() {
 	
 	// if the player has just died, the penalty is half his current gold.
-	if (stats->death_penalty) {
+	if (stats.death_penalty) {
 		gold = gold/2;
-		stats->death_penalty = false;
+		stats.death_penalty = false;
 	}
 	
 	// a copy of gold is kept in stats, to help with various situations
-	stats->gold = gold;
+	stats.gold = gold;
 	
 	// check close button
 	if (visible) {
@@ -170,10 +170,10 @@ TooltipData MenuInventory::checkTooltip(const Point &mouse) {
  */
 ItemStack MenuInventory::click(const InputState &input) {
 	ItemStack item;
-	item.item = 0;
+	item.item = NULL;
 	item.quantity = 0;
 
-	drag_prev_src = areaOver(input->mouse);
+	drag_prev_src = areaOver(input.mouse);
 	if( drag_prev_src > -1) {
 		item = inventory[drag_prev_src].click(input);
 		// if dragging equipment, prepare to change stats/sprites
@@ -206,7 +206,10 @@ void MenuInventory::drop(const Point &mouse, const ItemStack &stack) {
 	int slot;
 	int drag_prev_slot;
 
-	items->playSound(stack.item);
+	assert(stack.item);
+	if (!stack.item)
+		return;
+	items.playSound(*stack.item);
 
 	area = areaOver( mouse);
 	slot = inventory[area].slotOver(mouse);
@@ -217,12 +220,12 @@ void MenuInventory::drop(const Point &mouse, const ItemStack &stack) {
 		// make sure the item is going to the correct slot
 		// note: equipment slots 0-3 correspond with item types 0-3
 		// also check to see if the hero meets the requirements
-		if (drag_prev_src == CARRIED && slot == items->items[stack.item].type && requirementsMet(stack.item)) {
+		if (drag_prev_src == CARRIED && slot == stack.item->type && requirementsMet(*stack.item)) {
 			if( inventory[area][slot].item == stack.item) {
 				// Merge the stacks
 				add( stack, area, slot);
 			}
-			else if( inventory[drag_prev_src][drag_prev_slot].item == 0) {
+			else if( inventory[drag_prev_src][drag_prev_slot].item == NULL) {
 				// Swap the two stacks
 				itemReturn( inventory[area][slot]);
 				inventory[area][slot] = stack;
@@ -275,8 +278,8 @@ void MenuInventory::drop(const Point &mouse, const ItemStack &stack) {
 			else if(
 				inventory[EQUIPMENT][drag_prev_slot].item == 0
 				&& inventory[CARRIED][slot].item != stack.item
-				&& items->items[inventory[CARRIED][slot].item].type == drag_prev_slot
-				&& requirementsMet(inventory[CARRIED][slot].item)
+				&& inventory[CARRIED][slot].item->type == drag_prev_slot
+				&& requirementsMet(*inventory[CARRIED][slot].item)
 			) { // The whole equipped stack is dropped on an empty carried slot or on a wearable item
 				// Swap the two stacks
 				itemReturn( inventory[area][slot]);
@@ -303,21 +306,24 @@ void MenuInventory::activate(const InputState &input) {
 	int slot;
 	int equip_slot;
 	ItemStack stack;
-	Point nullpt;
-	nullpt.x = nullpt.y = 0;
+	Point nullpt(0, 0);
 
 	// clicked a carried item
-	slot = inventory[CARRIED].slotOver(input->mouse);
+	slot = inventory[CARRIED].slotOver(input.mouse);
+	const Item &item = *inventory[CARRIED][slot].item;
+	assert(&item);
+	if (!&item)
+		return;
 
 	// use a consumable item
-	if (items->items[inventory[CARRIED][slot].item].type == ITEM_TYPE_CONSUMABLE) {
+	if (item.type == ITEM_TYPE_CONSUMABLE) {
 	
 		// if this item requires targeting it can't be used this way
-		if (!powers->powers[items->items[inventory[CARRIED][slot].item].power].requires_targeting) {
+		if (!powers.powers[item.power].requires_targeting) {
 	
-			powers->activate(items->items[inventory[CARRIED][slot].item].power, stats, nullpt);
+			powers.activate(item.power, stats, nullpt);
 			// intercept used_item flag.  We will destroy the item here.
-			powers->used_item = -1;
+			powers.used_item = -1;
 			inventory[CARRIED].substract(slot);
 		}
 		else {
@@ -328,23 +334,25 @@ void MenuInventory::activate(const InputState &input) {
 	}
 	// equip an item
 	else {
-		equip_slot = items->items[inventory[CARRIED][slot].item].type;
+		equip_slot = item.type;
 		if (equip_slot == ITEM_TYPE_MAIN ||
 			 equip_slot == ITEM_TYPE_BODY ||
 			 equip_slot == ITEM_TYPE_OFF ||
 			 equip_slot == ITEM_TYPE_ARTIFACT) {
-			if (requirementsMet(inventory[CARRIED][slot].item)) {
-				stack = click( input);
-				if( inventory[EQUIPMENT][equip_slot].item == stack.item) {
-					// Merge the stacks
-					add( stack, EQUIPMENT, equip_slot);
-				}
-				else if( inventory[EQUIPMENT][equip_slot].item == 0) {
+			if (requirementsMet(item)) {
+				stack = click( input);	// don't use item reference after this call.
+				const ItemStack &equip_stack = inventory[EQUIPMENT][equip_slot];
+				const Item *equip_item = inventory[EQUIPMENT][equip_slot].item;
+				if(!equip_item) {
 					// Drop the stack
 					inventory[EQUIPMENT][equip_slot] = stack;
 				}
+				else if (equip_item == stack.item) {
+					// Merge the stacks
+					add( stack, EQUIPMENT, equip_slot);
+				}
 				else {
-					if( inventory[CARRIED][slot].item == 0) { // Don't forget this slot may have been emptied by the click()
+					if(!inventory[CARRIED][slot].item) { // Don't forget this slot may have been emptied by the click()
 						// Swap the two stacks
 						itemReturn( inventory[EQUIPMENT][equip_slot]);
 					}
@@ -355,7 +363,7 @@ void MenuInventory::activate(const InputState &input) {
 					inventory[EQUIPMENT][equip_slot] = stack;
 				}
 				updateEquipment( equip_slot);
-				items->playSound(inventory[EQUIPMENT][equip_slot].item);
+				items.playSound(*inventory[EQUIPMENT][equip_slot].item);
 			}
 		}
 	}
@@ -373,54 +381,56 @@ void MenuInventory::add(const ItemStack &stack, int area, int slot) {
 	int quantity_added;
 	int i;
 
-	items->playSound(stack.item);
+	if (!stack.item) return;
 
-	if( stack.item != 0) {
-		if( area < 0) {
-			area = CARRIED;
-		}
-		max_quantity = items->items[stack.item].max_quantity;
-		if( slot > -1 && inventory[area][slot].item != 0 && inventory[area][slot].item != stack.item) {
-			// the proposed slot isn't available, search for another one
-			slot = -1;
-		}
-		if( area == CARRIED) {
-			// first search of stack to complete if the item is stackable
-			i = 0;
-			while( max_quantity > 1 && slot == -1 && i < MAX_CARRIED) {
-				if (inventory[area][i].item == stack.item && inventory[area][i].quantity < max_quantity) {
-					slot = i;
-				}
-				i++;
+	items.playSound(*stack.item);
+
+	if( area < 0) {
+		area = CARRIED;
+	}
+	max_quantity = stack.item->max_quantity;
+	if( slot > -1 && inventory[area][slot].item && inventory[area][slot].item != stack.item) {
+		// the proposed slot isn't available, search for another one
+		slot = -1;
+	}
+	if( area == CARRIED) {
+		// first search of stack to complete if the item is stackable
+		i = 0;
+		while( max_quantity > 1 && slot == -1 && i < MAX_CARRIED) {
+			if (inventory[area][i].item == stack.item && inventory[area][i].quantity < max_quantity) {
+				slot = i;
 			}
-			// then an empty slot
-			i = 0;
-			while( slot == -1 && i < MAX_CARRIED) {
-				if (inventory[area][i].item == 0) {
-					slot = i;
-				}
-				i++;
+			i++;
+		}
+		// then an empty slot
+		i = 0;
+		while( slot == -1 && i < MAX_CARRIED) {
+			if (!inventory[area][i].item) {
+				slot = i;
+			}
+			i++;
+		}
+	}
+	if( slot != -1) {
+		// Add
+		ItemStack newStack(stack);
+
+		quantity_added = min( stack.quantity, max_quantity - inventory[area][slot].quantity);
+		inventory[area][slot].item = stack.item;
+		inventory[area][slot].quantity += quantity_added;
+		newStack.quantity -= quantity_added;
+		// Add back the remaining
+		if( newStack.quantity > 0) {
+			if( drag_prev_src > -1) {
+				itemReturn( newStack);
+			} else {
+				add( newStack);
 			}
 		}
-		if( slot != -1) {
-			// Add
-			quantity_added = min( stack.quantity, max_quantity - inventory[area][slot].quantity);
-			inventory[area][slot].item = stack.item;
-			inventory[area][slot].quantity += quantity_added;
-			stack.quantity -= quantity_added;
-			// Add back the remaining
-			if( stack.quantity > 0) {
-				if( drag_prev_src > -1) {
-					itemReturn( stack);
-				} else {
-					add( stack);
-				}
-			}
-		}
-		else {
-			// No available slot, drop
-			// TODO: We should drop on the floor an item we can't store
-		}
+	}
+	else {
+		// No available slot, drop
+		// TODO: We should drop on the floor an item we can't store
 	}
 }
 
@@ -438,7 +448,7 @@ void MenuInventory::remove(const Item &item) {
  */
 void MenuInventory::addGold(int count) {
 	gold += count;
-	items->playCoinsSound();
+	items.playCoinsSound();
 }
 
 /**
@@ -448,7 +458,7 @@ void MenuInventory::addGold(int count) {
 bool MenuInventory::buy(const ItemStack &stack, const Point &mouse) {
 	int area;
 	int slot = -1;
-	int count = items->items[stack.item].price * stack.quantity;
+	int count = stack.item->price * stack.quantity;
 	
 	if( gold >= count) {
 		gold -= count;
@@ -463,7 +473,7 @@ bool MenuInventory::buy(const ItemStack &stack, const Point &mouse) {
 		else {
 			add(stack);
 		}
-		items->playCoinsSound();
+		items.playCoinsSound();
 		return true;
 	}
 	else {
@@ -475,14 +485,15 @@ bool MenuInventory::buy(const ItemStack &stack, const Point &mouse) {
  * Sell a specific stack of items
  */
 bool MenuInventory::sell(const ItemStack &stack) {
+	assert(stack.item);
 	// items that have no price cannot be sold
-	if (items->items[stack.item].price == 0) return false;
+	if (stack.item->price == 0) return false;
 	
-	int value_each = items->items[stack.item].price / items->vendor_ratio;
+	int value_each = items.getSellPrice(*stack.item);
 	if (value_each == 0) value_each = 1;
 	int value = value_each * stack.quantity;
 	gold += value;
-	items->playCoinsSound();
+	items.playCoinsSound();
 	return true;
 }
 
@@ -511,18 +522,18 @@ bool MenuInventory::isItemEquipped(const Item &item) const {
 /**
  * Check requirements on an item
  */
-bool MenuInventory::requirementsMet(int item) {
-	if (items->items[item].req_stat == REQUIRES_PHYS) {
-		return (stats->get_physical() >= items->items[item].req_val);
+bool MenuInventory::requirementsMet(const Item &item) const {
+	if (item.req_stat == REQUIRES_PHYS) {
+		return (stats.get_physical() >= item.req_val);
 	}
-	else if (items->items[item].req_stat == REQUIRES_MENT) {
-		return (stats->get_mental() >= items->items[item].req_val);
+	else if (item.req_stat == REQUIRES_MENT) {
+		return (stats.get_mental() >= item.req_val);
 	}
-	else if (items->items[item].req_stat == REQUIRES_OFF) {
-		return (stats->get_offense() >= items->items[item].req_val);
+	else if (item.req_stat == REQUIRES_OFF) {
+		return (stats.get_offense() >= item.req_val);
 	}
-	else if (items->items[item].req_stat == REQUIRES_DEF) {
-		return (stats->get_defense() >= items->items[item].req_val);
+	else if (item.req_stat == REQUIRES_DEF) {
+		return (stats.get_defense() >= item.req_val);
 	}
 	// otherwise there is no requirement, so it is usable.
 	return true;
@@ -542,43 +553,42 @@ void MenuInventory::updateEquipment(int slot) {
  */
 void MenuInventory::applyEquipment(ItemStack *equipped) {
 
-	int bonus_counter;
-	
-	int prev_hp = stats->hp;
-	int prev_mp = stats->mp;
-
-	Item *pc_items = this->items->items;
+	int prev_hp = stats.hp;
+	int prev_mp = stats.mp;
 
 	// calculate bonuses to basic stats and check that each equipped item fit requirements
 	bool checkRequired = true;
 	while(checkRequired)
 	{
 		checkRequired = false;
-		stats->offense_additional = stats->defense_additional = stats->physical_additional = stats->mental_additional = 0;
+		stats.offense_additional = stats.defense_additional = stats.physical_additional = stats.mental_additional = 0;
 		for (int i = 0; i < 4; i++) {
-			int item_id = equipped[i].item;
-			bonus_counter = 0;
-			while (pc_items[item_id].bonus_stat[bonus_counter] != "") {
-				if (pc_items[item_id].bonus_stat[bonus_counter] == "offense")
-					stats->offense_additional += pc_items[item_id].bonus_val[bonus_counter];
-				else if (pc_items[item_id].bonus_stat[bonus_counter] == "defense")
-					stats->defense_additional += pc_items[item_id].bonus_val[bonus_counter];
-				else if (pc_items[item_id].bonus_stat[bonus_counter] == "physical")
-					stats->physical_additional += pc_items[item_id].bonus_val[bonus_counter];
-				else if (pc_items[item_id].bonus_stat[bonus_counter] == "mental")
-					stats->mental_additional += pc_items[item_id].bonus_val[bonus_counter];
-				else if (pc_items[item_id].bonus_stat[bonus_counter] == "all basic stats") {
-					stats->offense_additional += pc_items[item_id].bonus_val[bonus_counter];
-					stats->defense_additional += pc_items[item_id].bonus_val[bonus_counter];
-					stats->physical_additional += pc_items[item_id].bonus_val[bonus_counter];
-					stats->mental_additional += pc_items[item_id].bonus_val[bonus_counter];
+			if (!equipped[i].item) continue;
+			const Item &item = *equipped[i].item;
+
+			for(int j = 0; j != ITEM_MAX_BONUSES && !item.bonus_stat[j].empty(); ++j) {
+				const string &stat = item.bonus_stat[j];
+				int val = item.bonus_val[j];
+
+				if (stat == "offense")
+					stats.offense_additional += val;
+				else if (stat == "defense")
+					stats.defense_additional += val;
+				else if (stat == "physical")
+					stats.physical_additional += val;
+				else if (stat == "mental")
+					stats.mental_additional += val;
+				else if (stat == "all basic stats") {
+					stats.offense_additional += val;
+					stats.defense_additional += val;
+					stats.physical_additional += val;
+					stats.mental_additional += val;
 				}
-				bonus_counter++;
-				if (bonus_counter == ITEM_MAX_BONUSES) break;
 			}
 		}
 		for (int i = 0; i < 4; i++) {
-			if (!requirementsMet(equipped[i].item)) {
+			if (!equipped[i].item) continue;
+			if (!requirementsMet(*equipped[i].item)) {
 				add(equipped[i]);
 				equipped[i].item = 0;
 				equipped[i].quantity = 0;
@@ -588,122 +598,112 @@ void MenuInventory::applyEquipment(ItemStack *equipped) {
 	}
 
 	// defaults
-	stats->recalc();
-	stats->offense_additional = stats->defense_additional = stats->physical_additional = stats->mental_additional = 0;
-	stats->dmg_melee_min = stats->dmg_ment_min = 1;
-	stats->dmg_melee_max = stats->dmg_ment_max = 4;
-	stats->dmg_ranged_min = stats->dmg_ranged_max = 0;
-	stats->absorb_min = stats->absorb_max = 0;
-	stats->speed = 14;
-	stats->dspeed = 10;
-	stats->attunement_fire = 100;
-	stats->attunement_ice = 100;
+	stats.recalc();
+	stats.offense_additional = stats.defense_additional = stats.physical_additional = stats.mental_additional = 0;
+	stats.dmg_melee_min = stats.dmg_ment_min = 1;
+	stats.dmg_melee_max = stats.dmg_ment_max = 4;
+	stats.dmg_ranged_min = stats.dmg_ranged_max = 0;
+	stats.absorb_min = stats.absorb_max = 0;
+	stats.speed = 14;
+	stats.dspeed = 10;
+	stats.attunement_fire = 100;
+	stats.attunement_ice = 100;
 
 	// reset wielding vars
-	stats->wielding_physical = false;
-	stats->wielding_mental = false;
-	stats->wielding_offense = false;
+	stats.wielding_physical = false;
+	stats.wielding_mental = false;
+	stats.wielding_offense = false;
 
 	// main hand weapon
-	int item_id = equipped[SLOT_MAIN].item;
-	if (item_id > 0) {
-		if (pc_items[item_id].req_stat == REQUIRES_PHYS) {
-			stats->dmg_melee_min = pc_items[item_id].dmg_min;
-			stats->dmg_melee_max = pc_items[item_id].dmg_max;
-			stats->melee_weapon_power = pc_items[item_id].power_mod;
-			stats->wielding_physical = true;
+	if (equipped[SLOT_MAIN].item) {
+		const Item &item = *equipped[SLOT_MAIN].item;
+		if (item.req_stat == REQUIRES_PHYS) {
+			stats.dmg_melee_min = item.dmg_min;
+			stats.dmg_melee_max = item.dmg_max;
+			stats.melee_weapon_power = item.power_mod;
+			stats.wielding_physical = true;
 		}
-		else if (pc_items[item_id].req_stat == REQUIRES_MENT) {
-			stats->dmg_ment_min = pc_items[item_id].dmg_min;
-			stats->dmg_ment_max = pc_items[item_id].dmg_max;
-			stats->mental_weapon_power = pc_items[item_id].power_mod;
-			stats->wielding_mental = true;
+		else if (item.req_stat == REQUIRES_MENT) {
+			stats.dmg_ment_min = item.dmg_min;
+			stats.dmg_ment_max = item.dmg_max;
+			stats.mental_weapon_power = item.power_mod;
+			stats.wielding_mental = true;
 		}
 	}
 	// off hand item
-	item_id = equipped[SLOT_OFF].item;
-	if (item_id > 0) {
-		if (pc_items[item_id].req_stat == REQUIRES_OFF) {
-			stats->dmg_ranged_min = pc_items[item_id].dmg_min;
-			stats->dmg_ranged_max = pc_items[item_id].dmg_max;
-			stats->ranged_weapon_power = pc_items[item_id].power_mod;
-			stats->wielding_offense = true;
+	if (equipped[SLOT_OFF].item) {
+		const Item &item = *equipped[SLOT_OFF].item;
+		if (item.req_stat == REQUIRES_OFF) {
+			stats.dmg_ranged_min = item.dmg_min;
+			stats.dmg_ranged_max = item.dmg_max;
+			stats.ranged_weapon_power = item.power_mod;
+			stats.wielding_offense = true;
 		}
-		else if (pc_items[item_id].req_stat == REQUIRES_DEF) {
-			stats->absorb_min += pc_items[item_id].abs_min;
-			stats->absorb_max += pc_items[item_id].abs_max;
+		else if (item.req_stat == REQUIRES_DEF) {
+			stats.absorb_min += item.abs_min;
+			stats.absorb_max += item.abs_max;
 		}
 	}
 	// body item
-	item_id = equipped[SLOT_BODY].item;
-	if (item_id > 0) {
-		stats->absorb_min += pc_items[item_id].abs_min;
-		stats->absorb_max += pc_items[item_id].abs_max;
+	if (equipped[SLOT_BODY].item) {
+		const Item &item = *equipped[SLOT_BODY].item;
+		stats.absorb_min += item.abs_min;
+		stats.absorb_max += item.abs_max;
 	}
 
 
 
 	// apply bonuses from all items
 	for (int i=0; i<4; i++) {
-		item_id = equipped[i].item;
-	
-		bonus_counter = 0;
-		while (pc_items[item_id].bonus_stat[bonus_counter] != "") {
-	
-			if (pc_items[item_id].bonus_stat[bonus_counter] == "HP")
-				stats->maxhp += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "HP regen")
-				stats->hp_per_minute += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "MP")
-				stats->maxmp += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "MP regen")
-				stats->mp_per_minute += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "accuracy")
-				stats->accuracy += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "avoidance")
-				stats->avoidance += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "crit")
-				stats->crit += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "speed") {
-				stats->speed += pc_items[item_id].bonus_val[bonus_counter];
+		if (!equipped[i].item) continue;
+		const Item &item = *equipped[i].item;
+
+		for(int j = 0; j != ITEM_MAX_BONUSES && !item.bonus_stat[j].empty(); ++j) {
+			const string &stat = item.bonus_stat[j];
+			int val = item.bonus_val[j];
+
+			if (stat == "HP")				stats.maxhp += val;
+			else if (stat == "HP regen")	stats.hp_per_minute += val;
+			else if (stat == "MP")			stats.maxmp += val;
+			else if (stat == "MP regen")	stats.mp_per_minute += val;
+			else if (stat == "accuracy")	stats.accuracy += val;
+			else if (stat == "avoidance")	stats.avoidance += val;
+			else if (stat == "crit")		stats.crit += val;
+			else if (stat == "speed") {
+				stats.speed += val;
 				// speed bonuses are in multiples of 3
 				// 3 ordinal, 2 diagonal is rounding pythagorus
-				stats->dspeed += ((pc_items[item_id].bonus_val[bonus_counter]) * 2) /3;
+				stats.dspeed += ((val) * 2) /3;
 			}
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "fire resist")
-				stats->attunement_fire -= pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "ice resist")
-				stats->attunement_ice -= pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "offense")
-				stats->offense_additional += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "defense")
-				stats->defense_additional += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "physical")
-				stats->physical_additional += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "mental")
-				stats->mental_additional += pc_items[item_id].bonus_val[bonus_counter];
-			else if (pc_items[item_id].bonus_stat[bonus_counter] == "all basic stats") {
-				stats->offense_additional += pc_items[item_id].bonus_val[bonus_counter];
-				stats->defense_additional += pc_items[item_id].bonus_val[bonus_counter];
-				stats->physical_additional += pc_items[item_id].bonus_val[bonus_counter];
-				stats->mental_additional += pc_items[item_id].bonus_val[bonus_counter];
+			else if (stat == "fire resist")	stats.attunement_fire -= val;
+			else if (stat == "ice resist")	stats.attunement_ice -= val;
+			else if (stat == "offense")		stats.offense_additional += val;
+			else if (stat == "defense")		stats.defense_additional += val;
+			else if (stat == "physical")	stats.physical_additional += val;
+			else if (stat == "mental")		stats.mental_additional += val;
+			else if (stat == "all basic stats") {
+				stats.offense_additional += val;
+				stats.defense_additional += val;
+				stats.physical_additional += val;
+				stats.mental_additional += val;
 			}
-			
-			bonus_counter++;
-			if (bonus_counter == ITEM_MAX_BONUSES) break;
+			else {
+				std::cout << "WARNING: unknown stat '" << stat << "' on item '"
+						  << item.name << "'." << std::endl;
+			}
 		}
 	}
 
 	// apply previous hp/mp
-	if (prev_hp < stats->maxhp)
-		stats->hp = prev_hp;
+	if (prev_hp < stats.maxhp)
+		stats.hp = prev_hp;
 	else
-		stats->hp = stats->maxhp;
+		stats.hp = stats.maxhp;
 
-	if (prev_mp < stats->maxmp)
-		stats->mp = prev_mp;
+	if (prev_mp < stats.maxmp)
+		stats.mp = prev_mp;
 	else
-		stats->mp = stats->maxmp;
+		stats.mp = stats.maxmp;
 
 }
 
