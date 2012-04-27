@@ -39,6 +39,8 @@ private:
 	
 	Event_Component quests[MAX_QUESTS][MAX_QUEST_EVENTS];
 	int quest_count;
+    bool newQuestNotification;
+    bool resetQuestNotification;
 	
 public:
 	QuestLog(CampaignManager &_camp, MenuLog &_log);
@@ -47,8 +49,9 @@ public:
 	void load(const std::string& filename);
 	void logic();
 	void createQuestList();
-    bool newQuestNotification;
-    bool resetQuestNotification;
+
+	bool getNewQuestNotification()		{return newQuestNotification   ? !(newQuestNotification   = false) : false;}
+	bool getResetQuestNotification()	{return resetQuestNotification ? !(resetQuestNotification = false) : false;}
 };
 
 #endif
