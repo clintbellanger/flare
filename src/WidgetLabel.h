@@ -33,7 +33,7 @@ const int VALIGN_CENTER = 0;
 const int VALIGN_TOP = 1;
 const int VALIGN_BOTTOM = 2;
 
-class WidgetLabel {
+class WidgetLabel : private Uncopyable {
 private:
 
 	void refresh();

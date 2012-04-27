@@ -121,7 +121,7 @@ private:
 };
 
 // message passing struct for various sprites rendered map inline
-struct Renderable {
+struct Renderable /*: private Uncopyable */{ // WARNING: copied in Animation::getCurrentFrame()
 	Point map_pos;
 	SDL_Surface *sprite;
 	SDL_Rect src;

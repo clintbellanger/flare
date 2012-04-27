@@ -40,7 +40,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 const int VENDOR_SLOTS = 80;
 
-class MenuVendor {
+class MenuVendor : private Uncopyable {
 private:
 	ItemManager *items;
 	StatBlock *stats;

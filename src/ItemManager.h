@@ -74,7 +74,7 @@ const int ITEM_QUALITY_EPIC = 3;
 
 const int ITEM_MAX_BONUSES = 8;
 
-struct Item {
+struct Item : private Uncopyable {
 	std::string name;          // item name displayed on long and short tool tips
 	int level;            // rough estimate of quality, used in the loot algorithm
 	int quality;          // low, normal, high, epic; corresponds to item name color
@@ -136,7 +136,7 @@ struct ItemStack {
 	bool operator > (ItemStack param);
 };
 
-class ItemManager {
+class ItemManager : private Uncopyable {
 private:
 	SDL_Surface *icons32;
 	SDL_Surface *icons64; // item db is the only module that currently uses the 64px icons

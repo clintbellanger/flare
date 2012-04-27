@@ -26,7 +26,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <string>
 
-class WidgetTabControl {
+class WidgetTabControl : private Uncopyable {
   
 private:
   

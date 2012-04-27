@@ -49,7 +49,7 @@ const int FONT_BLACK = 5;
  * Handles rendering a bitmap font.
  */
 
-class FontEngine {
+class FontEngine : private Uncopyable {
 private:
 	SDL_Color colors[6];
 	int font_pt;

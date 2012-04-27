@@ -22,7 +22,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
-class GameState {
+#include "Utils.h"
+
+class GameState : private Uncopyable {
 public:
 	GameState();
 	virtual ~GameState();

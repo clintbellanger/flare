@@ -26,10 +26,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef ENEMY_BEHAVIOR_H
 #define ENEMY_BEHAVIOR_H
 
+#include "Utils.h"
+
 // fwd-declare Enemy class
 class Enemy;
 
-class EnemyBehavior {
+class EnemyBehavior : private Uncopyable {
 protected:
 	Enemy *e;
 public:

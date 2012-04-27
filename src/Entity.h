@@ -30,7 +30,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Utils.h"
 #include <vector>
 
-class Entity {
+class Entity : private Uncopyable {
 protected:
 	SDL_Surface *sprites;
 	std::vector<Animation*> animations;

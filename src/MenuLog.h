@@ -42,7 +42,7 @@ const int LOG_TYPE_QUESTS = 0;
 const int LOG_TYPE_MESSAGES = 1;
 const int LOG_TYPE_STATISTICS = 2;
 
-class MenuLog {
+class MenuLog : private Uncopyable {
 private:
 
 	SDL_Surface *background;

@@ -46,7 +46,7 @@ struct Enemy_Level {
  * Loads Enemies into category lists and manages spawning randomized groups of
  * enemies.
  */
-class EnemyGroupManager {
+class EnemyGroupManager : private Uncopyable {
 public:
 	/** Get instance of the Singleton */
 	static EnemyGroupManager& instance();

@@ -45,7 +45,7 @@ class GameState;
  * - maybe full-video cutscenes
  */
 
-class GameSwitcher {
+class GameSwitcher : private Uncopyable {
 private:
 	Mix_Music *music;
 	

@@ -34,7 +34,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 const int MAX_HUD_MESSAGES = 16;
 
-class MenuHUDLog{
+class MenuHUDLog : private Uncopyable {
 private:
 
 	int calcDuration(const std::string& s);

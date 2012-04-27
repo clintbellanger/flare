@@ -35,7 +35,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 // max number of NPCs for a single map
 const int MAX_NPC_COUNT = 32;
 
-class NPCManager {
+class NPCManager : private Uncopyable {
 private:
 	MapIso *map;
 	WidgetTooltip *tip;

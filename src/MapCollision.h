@@ -41,7 +41,7 @@ const int BLOCKS_MOVEMENT_HIDDEN = 4;
 const int CHECK_MOVEMENT = 1;
 const int CHECK_SIGHT = 2;
 
-class MapCollision {
+class MapCollision : private Uncopyable {
 private:
 
 	bool line_check(int x1, int y1, int x2, int y2, int checktype);

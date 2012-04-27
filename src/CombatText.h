@@ -46,7 +46,7 @@ struct Combat_Text_Item {
     int displaytype;
 };
 
-class CombatText {
+class CombatText : private Uncopyable {
 public:
     static CombatText* Instance();
     void render();
@@ -58,7 +58,6 @@ private:
     Point cam;
     std::vector<Combat_Text_Item> combat_text;
     CombatText(){};
-    CombatText(CombatText const&){};
     
     static CombatText* m_pInstance;
 

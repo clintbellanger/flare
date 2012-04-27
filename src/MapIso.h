@@ -84,7 +84,7 @@ struct Map_Event {
 
 const int CLICK_RANGE = 3 * UNITS_PER_TILE; //for activating events
 
-class MapIso {
+class MapIso : private Uncopyable {
 private:
 	Mix_Music *music;
 

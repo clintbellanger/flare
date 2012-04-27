@@ -26,7 +26,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL.h>
 
 
-class ItemStorage {
+class ItemStorage : private Uncopyable {
 protected:
 	ItemManager *items;
 	int slot_number;

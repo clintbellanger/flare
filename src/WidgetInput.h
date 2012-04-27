@@ -30,7 +30,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL.h>
 #include <string>
 
-class WidgetInput {
+class WidgetInput : private Uncopyable {
 
 protected:
 

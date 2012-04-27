@@ -28,7 +28,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "FontEngine.h"
 #include "InputState.h"
 
-class Menu {
+class Menu : private Uncopyable {
 protected:
 
 	SDL_Surface *background;

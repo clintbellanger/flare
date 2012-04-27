@@ -35,7 +35,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 const int MENU_ENEMY_TIMEOUT = FRAMES_PER_SEC * 10;
 
-class MenuEnemy {
+class MenuEnemy : private Uncopyable {
 private:
 	SDL_Surface *background;
 	SDL_Surface *bar_hp;

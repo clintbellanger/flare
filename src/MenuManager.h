@@ -53,7 +53,7 @@ const int DRAG_SRC_INVENTORY = 2;
 const int DRAG_SRC_ACTIONBAR = 3;
 const int DRAG_SRC_VENDOR = 4;
 
-class MenuManager {
+class MenuManager : private Uncopyable {
 private:
 	
 	SDL_Surface *icons;

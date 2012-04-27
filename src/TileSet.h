@@ -38,7 +38,7 @@ struct Tile_Def {
 	Point offset;
 };
 
-class TileSet {
+class TileSet : private Uncopyable {
 private:
 	void loadGraphics(const std::string& filename);
 	void reset();

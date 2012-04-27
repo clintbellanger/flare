@@ -33,7 +33,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL_image.h>
 
 
-class MenuHPMP {
+class MenuHPMP : private Uncopyable {
 private:
 	SDL_Surface *background;
 	SDL_Surface *bar_hp;

@@ -34,7 +34,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL.h>
 #include <SDL_image.h>
 
-class MenuPowers {
+class MenuPowers : private Uncopyable {
 private:
 	StatBlock *stats;
 	PowerManager *powers;

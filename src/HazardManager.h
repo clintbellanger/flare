@@ -31,7 +31,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "MapCollision.h"
 #include "PowerManager.h"
 
-class HazardManager {
+class HazardManager : private Uncopyable {
 private:
 	Avatar *hero;
 	EnemyManager *enemies;

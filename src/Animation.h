@@ -32,7 +32,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Utils.h"
 #include <string>
 
-class Animation {
+class Animation : private Uncopyable {
 
 protected:
 	std::string name;

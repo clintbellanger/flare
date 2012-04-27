@@ -31,12 +31,14 @@ mods in priority order when loading data files.
 #include <map>
 #include <vector>
 
-class ModManager {
+#include "Utils.h"
+
+class ModManager : private Uncopyable {
 private:
 	void loadModList();
 
 	std::map<std::string,std::string> loc_cache;
-	
+
 public:
 	ModManager();
 	~ModManager();

@@ -76,7 +76,7 @@ const int CPROF_D4 = 14;
 const int CPROF_D5 = 15;
 const int CPROF_COUNT = 16;
 
-struct CharStat {
+struct CharStat : private Uncopyable {
 	WidgetLabel *label;
 	WidgetLabel *value;
 	SDL_Rect hover;
@@ -102,7 +102,7 @@ struct CharProf {
 	}
 };
 
-class MenuCharacter {
+class MenuCharacter : private Uncopyable {
 private:
 	StatBlock *stats;
 

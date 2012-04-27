@@ -40,7 +40,7 @@ const int SOURCE_TYPE_HERO = 0;
 const int SOURCE_TYPE_NEUTRAL = 1;
 const int SOURCE_TYPE_ENEMY = 2;
 
-class Hazard {
+class Hazard : private Uncopyable {
 private:
 	MapCollision *collider;
 	// Keeps track of entities already hit

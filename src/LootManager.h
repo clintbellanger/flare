@@ -56,7 +56,7 @@ const int RARITY_EPIC = 1;
 // how close (map units) does the hero have to be to pick up loot?
 const int LOOT_RANGE = 3 * UNITS_PER_TILE;
 
-class LootManager {
+class LootManager : private Uncopyable {
 private:
 
 	ItemManager *items;

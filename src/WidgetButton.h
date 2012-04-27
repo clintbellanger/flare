@@ -39,7 +39,7 @@ const int BUTTON_GFX_PRESSED = 1;
 const int BUTTON_GFX_HOVER = 2;
 const int BUTTON_GFX_DISABLED = 3;
 
-class WidgetButton {
+class WidgetButton : private Uncopyable {
 private:
 
 	std::string fileName; // the path to the buttons background image

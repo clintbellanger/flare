@@ -52,7 +52,7 @@ enum InventorySlotsType {
 };
 
 
-class MenuInventory {
+class MenuInventory : private Uncopyable {
 private:
 	ItemManager *items;
 	StatBlock *stats;

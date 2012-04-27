@@ -36,7 +36,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <sstream>
 
 
-class MenuTalker {
+class MenuTalker : private Uncopyable {
 private:
 	CampaignManager *camp;
 

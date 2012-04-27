@@ -32,7 +32,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 const int max_sfx = 8;
 const int max_gfx = 32;
 
-class EnemyManager {
+class EnemyManager : private Uncopyable {
 private:
 
 	MapIso *map;

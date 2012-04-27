@@ -39,7 +39,7 @@ const int MENU_INVENTORY = 1;
 const int MENU_POWERS = 2;
 const int MENU_LOG = 3;
 
-class MenuActionBar {
+class MenuActionBar : private Uncopyable {
 private:
 	void renderCooldowns();
 	void renderItemCounts();

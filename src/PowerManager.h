@@ -82,7 +82,7 @@ const int POWER_SHIELD = 11;
 const int POWER_VENGEANCE = 17;
 const int POWER_SPARK_BLOOD = 127;
 
-struct Power {
+struct Power : private Uncopyable {
 
 	// base info
 	int id;
@@ -275,7 +275,7 @@ struct EnemySpawn {
 	int direction;
 };
 
-class PowerManager {
+class PowerManager : private Uncopyable {
 private:
 
 	MapCollision *collider;

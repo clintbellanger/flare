@@ -32,7 +32,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL_image.h>
 
 
-class MenuExperience {
+class MenuExperience : private Uncopyable {
 private:
 	SDL_Surface *background;
 	SDL_Surface *bar;
