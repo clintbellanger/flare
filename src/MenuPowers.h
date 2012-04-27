@@ -36,8 +36,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 class MenuPowers : private Uncopyable {
 private:
-	StatBlock *stats;
-	PowerManager *powers;
+	StatBlock &stats;
+	PowerManager &powers;
 
 	SDL_Surface *background;
 	SDL_Surface *powers_step;
@@ -62,7 +62,7 @@ private:
 	void displayBuild(int value, int x);
 
 public:
-	MenuPowers(StatBlock *_stats, PowerManager *_powers);
+	MenuPowers(StatBlock &_stats, PowerManager &_powers);
 	~MenuPowers();
 	void logic();
 	void render();

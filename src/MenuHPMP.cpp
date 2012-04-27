@@ -80,15 +80,15 @@ void MenuHPMP::render(const StatBlock &stats, const Point &mouse) {
 	
 	SDL_BlitSurface(background, &src, screen, &dest);
 	
-	if (stats->maxhp == 0)
+	if (stats.maxhp == 0)
 		hp_bar_length = 0;
 	else
-		hp_bar_length = (stats->hp * 100) / stats->maxhp;
+		hp_bar_length = (stats.hp * 100) / stats.maxhp;
 		
-	if (stats->maxmp == 0)
+	if (stats.maxmp == 0)
 		mp_bar_length = 0;
 	else
-		mp_bar_length = (stats->mp * 100) / stats->maxmp;
+		mp_bar_length = (stats.mp * 100) / stats.maxmp;
 	
 	// draw hp bar
 	src.x = 0;
@@ -108,12 +108,12 @@ void MenuHPMP::render(const StatBlock &stats, const Point &mouse) {
 	if (mouse.x <= 106 && mouse.y <= 33) {
 
 		stringstream ss;
-		ss << stats->hp << "/" << stats->maxhp;
+		ss << stats.hp << "/" << stats.maxhp;
 		hphover->set(ss.str());
 		hphover->render();
 
 		ss.str("");
-		ss << stats->mp << "/" << stats->maxmp;
+		ss << stats.mp << "/" << stats.maxmp;
 		mphover->set(ss.str());
 		mphover->render();
 	}

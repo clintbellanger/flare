@@ -35,8 +35,8 @@ const int max_gfx = 32;
 class EnemyManager : private Uncopyable {
 private:
 
-	MapIso *map;
-	PowerManager *powers;
+	PowerManager &powers;
+	MapIso &map;
 	void loadGraphics(const std::string& type_id);
 	void loadSounds(const std::string& type_id);
 
@@ -53,7 +53,7 @@ private:
 	Mix_Chunk *sound_critdie[max_sfx];
 	
 public:
-	EnemyManager(PowerManager *_powers, MapIso *_map);
+	EnemyManager(PowerManager &_powers, MapIso &_map);
 	~EnemyManager();
 	void handleNewMap();
 	void handleSpawn();

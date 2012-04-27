@@ -106,11 +106,11 @@ private:
 	int event_count;
 
 public:
-	CampaignManager *camp;
-	PowerManager *powers;
+	PowerManager &powers;
+	CampaignManager &camp;
 
 	// functions
-	MapIso(CampaignManager *_camp);
+	MapIso(PowerManager &_powers, CampaignManager &_camp);
 	~MapIso();
 	void clearEnemy(Map_Enemy &e);
 	void clearNPC(Map_NPC &n);

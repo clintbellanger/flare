@@ -45,7 +45,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 class Enemy : public Entity {
 
 public:
-	Enemy(PowerManager *_powers, MapIso *_map);
+	Enemy(PowerManager &_powers, MapIso &_map);
 	~Enemy();
 	bool lineOfSight();
 	void logic();
@@ -59,7 +59,7 @@ public:
 	
 	Hazard *haz;	
 	EnemyBehavior *eb;
-	PowerManager *powers;
+	PowerManager &powers;
 
 	// sound effects flags
 	bool sfx_phys;

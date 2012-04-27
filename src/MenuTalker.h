@@ -38,7 +38,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 class MenuTalker : private Uncopyable {
 private:
-	CampaignManager *camp;
+	CampaignManager &camp;
 
 	void loadGraphics();
 	SDL_Surface *background;
@@ -49,7 +49,7 @@ private:
 	int dialog_node;
 
 public:
-	MenuTalker(CampaignManager *camp);
+	MenuTalker(CampaignManager &camp);
 	~MenuTalker();
 
 	NPC *npc;

@@ -32,7 +32,7 @@ protected:
 	int slot_number;
 
 public:
-	void init(int _slot_number, ItemManager *_items);
+	void init(int _slot_number, ItemManager &_items);
 	~ItemStorage();
 
 	ItemStack & operator [] (int slot);

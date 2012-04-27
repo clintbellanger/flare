@@ -27,13 +27,12 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-NPCManager::NPCManager(MapIso *_map, LootManager *_loot, ItemManager *_items) {
-
-	map = _map;
-	loot = _loot;
-	items = _items;
-
-	tip = new WidgetTooltip();
+NPCManager::NPCManager(MapIso &_map, LootManager &_loot, ItemManager &_items)
+	: map(_map)
+	, tip()
+	, loot(_loot)
+	, items(_items)
+	, tip_buf() {
 
 	npc_count = 0;
 	for (int i=0; i<MAX_NPC_COUNT; i++) {
@@ -57,9 +56,9 @@ void NPCManager::handleNewMap() {
 	npc_count = 0;
 	
 	// read the queued NPCs in the map file
-	while (!map->npcs.empty()) {
-		mn = map->npcs.front();
-		map->npcs.pop();
+	while (!map.npcs.empty()) {
+		mn = map.npcs.front();
+		map.npcs.pop();
 		
 		npcs[npc_count] = new NPC(map, items);
 		npcs[npc_count]->load(mn.id);
@@ -68,8 +67,8 @@ void NPCManager::handleNewMap() {
 		
 		// if this NPC needs randomized items
 		while (npcs[npc_count]->random_stock > 0 && npcs[npc_count]->stock_count < NPC_VENDOR_MAX_STOCK) {
-			item_roll.item = loot->randomItem(npcs[npc_count]->level);
-			item_roll.quantity = rand() % items->items[item_roll.item].rand_vendor + 1;
+			item_roll.item = loot.randomItem(npcs[npc_count]->level);
+			item_roll.quantity = rand() % item_roll.item->rand_vendor + 1;
 			npcs[npc_count]->stock.add( item_roll);
 			npcs[npc_count]->random_stock--;
 		}
@@ -128,12 +127,12 @@ void NPCManager::renderTooltips(const Point &cam, const Point &mouse) {
 			
 			// use current tip or make a new one?
 			if (tip_buf.lines[0] != npcs[i]->name) {
-				tip->clear(tip_buf);
+				tip.clear(tip_buf);
 				tip_buf.num_lines = 1;
 				tip_buf.lines[0] = npcs[i]->name;
 			}
 			
-			tip->render(tip_buf, p, STYLE_TOPLABEL);
+			tip.render(tip_buf, p, STYLE_TOPLABEL);
 			
 			break; // display only one NPC tooltip at a time
 		}
@@ -145,6 +144,5 @@ NPCManager::~NPCManager() {
 		delete npcs[i];
 	}
 	
-	tip->clear(tip_buf);
-	delete tip;
+	tip.clear(tip_buf);
 }

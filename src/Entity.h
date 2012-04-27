@@ -36,7 +36,7 @@ protected:
 	std::vector<Animation*> animations;
 
 public:
-	Entity(MapIso*);
+	Entity(MapIso &map);
 	virtual ~Entity();
 
 	bool move();
@@ -49,7 +49,7 @@ public:
 	bool setAnimation(const std::string& animation);
 	Animation *activeAnimation;
 
-	MapIso* map;
+	MapIso &map;
 	StatBlock stats;
 };
 

@@ -33,12 +33,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 class HazardManager : private Uncopyable {
 private:
-	Avatar *hero;
-	EnemyManager *enemies;
+	PowerManager &powers;
+	Avatar &hero;
+	EnemyManager &enemies;
 	MapCollision *collider;
-	PowerManager *powers;
+
 public:
-	HazardManager(PowerManager *_powers, Avatar *_hero, EnemyManager *_enemies);
+	HazardManager(PowerManager &_powers, Avatar &_hero, EnemyManager &_enemies);
 	~HazardManager();
 	void logic();
 	void expire(int index);

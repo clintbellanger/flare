@@ -54,19 +54,19 @@ enum InventorySlotsType {
 
 class MenuInventory : private Uncopyable {
 private:
-	ItemManager *items;
-	StatBlock *stats;
-	PowerManager *powers;
+	ItemManager &items;
+	StatBlock &stats;
+	PowerManager &powers;
 
 	void loadGraphics();
-	int areaOver(Point mouse);
+	int areaOver(const Point &mouse);
 	void updateEquipment(int slot);
 
 	SDL_Surface *background;
 	WidgetButton *closeButton;
 	
 public:
-	MenuInventory(ItemManager *items, StatBlock *stats, PowerManager *powers);
+	MenuInventory(ItemManager &items, StatBlock &stats, PowerManager &powers);
 	~MenuInventory();
 	void logic();
 	void render();

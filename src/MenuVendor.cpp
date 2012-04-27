@@ -26,9 +26,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-MenuVendor::MenuVendor(ItemManager *_items, StatBlock *_stats) {
-	items = _items;
-	stats = _stats;
+MenuVendor::MenuVendor(ItemManager &_items, StatBlock &_stats)
+	: items(_items)
+	, stats(_stats) {
 
 	int offset_y = (VIEW_H - 416)/2;
 

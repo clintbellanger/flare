@@ -50,8 +50,8 @@ private:
 	SDL_Surface *disabled;
     SDL_Surface *attention;
 
-	StatBlock *hero;
-	PowerManager *powers;
+	StatBlock &hero;
+	const PowerManager &powers;
 	SDL_Rect src;
 	SDL_Rect label_src;
 
@@ -60,7 +60,7 @@ private:
 
 public:
 
-	MenuActionBar(PowerManager *_powers, StatBlock *hero, SDL_Surface *icons);
+	MenuActionBar(const PowerManager &_powers, StatBlock &hero, SDL_Surface *icons);
 	~MenuActionBar();
 	void loadGraphics();
 	void renderIcon(int icon_id, int x, int y);

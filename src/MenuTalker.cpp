@@ -25,8 +25,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-MenuTalker::MenuTalker(CampaignManager *_camp) {
-	camp = _camp;
+MenuTalker::MenuTalker(CampaignManager &_camp)
+	: camp(_camp) {
 	npc = NULL;
 	background = NULL;
 	portrait = NULL;

@@ -104,7 +104,7 @@ struct CharProf {
 
 class MenuCharacter : private Uncopyable {
 private:
-	StatBlock *stats;
+	StatBlock &stats;
 
 	SDL_Surface *background;
 	SDL_Surface *proficiency;
@@ -119,7 +119,6 @@ private:
 	int bonusColor(int stat);
 	
 public:
-	MenuCharacter(StatBlock *stats);
 	MenuCharacter(StatBlock &stats);
 	~MenuCharacter();
 	void logic();

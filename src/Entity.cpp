@@ -28,7 +28,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
-Entity::Entity(MapIso* _map) : sprites(NULL), activeAnimation(NULL), map(_map) {
+Entity::Entity(MapIso &_map) : sprites(NULL), activeAnimation(NULL), map(_map) {
 }
 
 /**
@@ -39,7 +39,7 @@ Entity::Entity(MapIso* _map) : sprites(NULL), activeAnimation(NULL), map(_map) {
  */
 bool Entity::move() {
 	if (stats.forced_move_duration > 0) {
-		return map->collider.move(stats.pos.x, stats.pos.y, stats.forced_speed.x, stats.forced_speed.y, 1);
+		return map.collider.move(stats.pos.x, stats.pos.y, stats.forced_speed.x, stats.forced_speed.y, 1);
 	}
 	if (stats.immobilize_duration > 0) return false;
 
@@ -57,21 +57,21 @@ bool Entity::move() {
 	
 	switch (stats.direction) {
 		case 0:
-			return map->collider.move(stats.pos.x, stats.pos.y, -1, 1, speed_diagonal);
+			return map.collider.move(stats.pos.x, stats.pos.y, -1, 1, speed_diagonal);
 		case 1:
-			return map->collider.move(stats.pos.x, stats.pos.y, -1, 0, speed_straight);
+			return map.collider.move(stats.pos.x, stats.pos.y, -1, 0, speed_straight);
 		case 2:
-			return map->collider.move(stats.pos.x, stats.pos.y, -1, -1, speed_diagonal);
+			return map.collider.move(stats.pos.x, stats.pos.y, -1, -1, speed_diagonal);
 		case 3:
-			return map->collider.move(stats.pos.x, stats.pos.y, 0, -1, speed_straight);
+			return map.collider.move(stats.pos.x, stats.pos.y, 0, -1, speed_straight);
 		case 4:
-			return map->collider.move(stats.pos.x, stats.pos.y, 1, -1, speed_diagonal);
+			return map.collider.move(stats.pos.x, stats.pos.y, 1, -1, speed_diagonal);
 		case 5:
-			return map->collider.move(stats.pos.x, stats.pos.y, 1, 0, speed_straight);
+			return map.collider.move(stats.pos.x, stats.pos.y, 1, 0, speed_straight);
 		case 6:
-			return map->collider.move(stats.pos.x, stats.pos.y, 1, 1, speed_diagonal);
+			return map.collider.move(stats.pos.x, stats.pos.y, 1, 1, speed_diagonal);
 		case 7:
-			return map->collider.move(stats.pos.x, stats.pos.y, 0, 1, speed_straight);
+			return map.collider.move(stats.pos.x, stats.pos.y, 0, 1, speed_straight);
 	}
 	return true;
 }

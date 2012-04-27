@@ -307,9 +307,9 @@ public:
 	~PowerManager();
 
 	void handleNewMap(MapCollision *_collider);
-	bool activate(int power_index, StatBlock *src_stats, const Point &target);
+	bool activate(int power_index, StatBlock &src_stats, const Point &target);
 	float calcTheta(int x1, int y1, int x2, int y2);
-	const Power &getPower(unsigned id) 	{assert(id < (unsigned)POWER_COUNT); return powers[id];}
+	const Power &getPower(unsigned id) const	{assert(id < (unsigned)POWER_COUNT); return powers[id];}
 	bool canUsePower(unsigned id) const;
 
 	Power powers[POWER_COUNT];

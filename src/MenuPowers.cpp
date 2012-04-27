@@ -29,9 +29,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-MenuPowers::MenuPowers(StatBlock *_stats, PowerManager *_powers) {
-	stats = _stats;
-	powers = _powers;
+MenuPowers::MenuPowers(StatBlock &_stats, PowerManager &_powers)
+	: stats(_stats)
+	, powers(_powers) {
 
 	visible = false;
 	loadGraphics();
@@ -99,16 +99,16 @@ bool MenuPowers::requirementsMet(int power_index) {
 	int required_stat = power_index % 4;
 	switch (required_stat) {
 		case 0:
-			return (stats->physoff >= required_val);
+			return (stats.physoff >= required_val);
 			break;
 		case 1:
-			return (stats->physdef >= required_val);
+			return (stats.physdef >= required_val);
 			break;
 		case 2:
-			return (stats->mentoff >= required_val);
+			return (stats.mentoff >= required_val);
 			break;
 		case 3:
-			return (stats->mentdef >= required_val);
+			return (stats.mentdef >= required_val);
 			break;			
 	}
 	return false;
@@ -173,30 +173,30 @@ void MenuPowers::render() {
 	stringstream ss;
 
 	ss.str("");
-	ss << stats->physoff;
+	ss << stats.physoff;
 	stat_po.set(ss.str());
 	stat_po.render();
 
 	ss.str("");
-	ss << stats->physdef;
+	ss << stats.physdef;
 	stat_pd.set(ss.str());
 	stat_pd.render();
 
 	ss.str("");
-	ss << stats->mentoff;
+	ss << stats.mentoff;
 	stat_mo.set(ss.str());
 	stat_mo.render();
 
 	ss.str("");
-	ss << stats->mentdef;
+	ss << stats.mentdef;
 	stat_md.set(ss.str());
 	stat_md.render();
 
 	// highlighting
-	displayBuild(stats->physoff, offset_x+48);
-	displayBuild(stats->physdef, offset_x+112);
-	displayBuild(stats->mentoff, offset_x+176);
-	displayBuild(stats->mentdef, offset_x+240);	
+	displayBuild(stats.physoff, offset_x+48);
+	displayBuild(stats.physdef, offset_x+112);
+	displayBuild(stats.mentoff, offset_x+176);
+	displayBuild(stats.mentdef, offset_x+240);
 }
 
 /**
@@ -265,14 +265,14 @@ TooltipData MenuPowers::checkTooltip(const Point &mouse) {
 	else {
 		for (int i=0; i<20; i++) {
 			if (isWithin(slots[i], mouse)) {
-				tip.lines[tip.num_lines++] = powers->powers[i].name;
-				tip.lines[tip.num_lines++] = powers->powers[i].description;
+				tip.lines[tip.num_lines++] = powers.powers[i].name;
+				tip.lines[tip.num_lines++] = powers.powers[i].description;
 				
-				if (powers->powers[i].requires_physical_weapon)
+				if (powers.powers[i].requires_physical_weapon)
 					tip.lines[tip.num_lines++] = msg->get("Requires a physical weapon");
-				else if (powers->powers[i].requires_mental_weapon)
+				else if (powers.powers[i].requires_mental_weapon)
 					tip.lines[tip.num_lines++] = msg->get("Requires a mental weapon");
-				else if (powers->powers[i].requires_offense_weapon)
+				else if (powers.powers[i].requires_offense_weapon)
 					tip.lines[tip.num_lines++] = msg->get("Requires an offense weapon");
 				
 				
@@ -292,12 +292,12 @@ TooltipData MenuPowers::checkTooltip(const Point &mouse) {
 				}
 
 				// add mana cost
-				if (powers->powers[i].requires_mp > 0) {
-					tip.lines[tip.num_lines++] = msg->get("Costs %d MP", powers->powers[i].requires_mp);
+				if (powers.powers[i].requires_mp > 0) {
+					tip.lines[tip.num_lines++] = msg->get("Costs %d MP", powers.powers[i].requires_mp);
 				}
 				// add cooldown time
-				if (powers->powers[i].cooldown > 0) {
-					tip.lines[tip.num_lines++] = msg->get("Cooldown: %d seconds", powers->powers[i].cooldown / 1000.0);
+				if (powers.powers[i].cooldown > 0) {
+					tip.lines[tip.num_lines++] = msg->get("Cooldown: %d seconds", powers.powers[i].cooldown / 1000.0);
 				}
 
 				return tip;

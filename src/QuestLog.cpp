@@ -31,13 +31,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-QuestLog::QuestLog(CampaignManager *_camp, MenuLog *_log) {
-	camp = _camp;
-	log = _log;
+QuestLog::QuestLog(CampaignManager &_camp, MenuLog &_log)
+	: camp(_camp)
+	, log(_log)
+	, quests()		// this sucker is just going to call Event_Component default ctor 8192 times :)
+	, quest_count(0)
+	, newQuestNotification(false)
+	, resetQuestNotification(false) {
 	
-	newQuestNotification = false;
-	resetQuestNotification = false;
-	quest_count = 0;
 	loadAll();
 }
 
@@ -115,9 +116,9 @@ void QuestLog::load(const std::string& filename) {
 }
 
 void QuestLog::logic() {
-	if (camp->quest_update) {
+	if (camp.quest_update) {
 		resetQuestNotification = true;
-		camp->quest_update = false;
+		camp.quest_update = false;
 		createQuestList();
 	}
 }
@@ -126,7 +127,7 @@ void QuestLog::logic() {
  * All active quests are placed in the Quest tab of the Log Menu
  */
 void QuestLog::createQuestList() {
-	log->clear(LOG_TYPE_QUESTS);
+	log.clear(LOG_TYPE_QUESTS);
 
 	for (int i=0; i<quest_count; i++) {
 		for (int j=0; j<MAX_QUEST_EVENTS; j++) {
@@ -136,13 +137,13 @@ void QuestLog::createQuestList() {
 			// if we reach an event that is not a requirement, succeed
 
 			if (quests[i][j].type == "requires_status") {
-				if (!camp->checkStatus(quests[i][j].s)) break;
+				if (!camp.checkStatus(quests[i][j].s)) break;
 			}
 			else if (quests[i][j].type == "requires_not") {
-				if (camp->checkStatus(quests[i][j].s)) break;
+				if (camp.checkStatus(quests[i][j].s)) break;
 			}
 			else if (quests[i][j].type == "quest_text") {
-				log->add(quests[i][j].s, LOG_TYPE_QUESTS);
+				log.add(quests[i][j].s, LOG_TYPE_QUESTS);
 				newQuestNotification = true;
 				break;
 			}

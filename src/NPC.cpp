@@ -29,8 +29,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-NPC::NPC(MapIso *_map, ItemManager *_items) : Entity(_map) {
-	items = _items;
+NPC::NPC(MapIso &_map, ItemManager &_items)
+	: Entity(_map)
+	, items(_items) {
 
 	// init general vars
 	name = "";
@@ -279,13 +280,13 @@ int NPC::chooseDialogNode() {
 			// if we reach an event that is not a requirement, succeed
 			
 			if (dialog[i][j].type == "requires_status") {
-				if (!map->camp->checkStatus(dialog[i][j].s)) break;
+				if (!map.camp.checkStatus(dialog[i][j].s)) break;
 			}
 			else if (dialog[i][j].type == "requires_not") {
-				if (map->camp->checkStatus(dialog[i][j].s)) break;
+				if (map.camp.checkStatus(dialog[i][j].s)) break;
 			}
 			else if (dialog[i][j].type == "requires_item") {
-				if (!map->camp->checkItem(dialog[i][j].x)) break;
+				if (!map.camp.checkItem(dialog[i][j].x)) break;
 			}
 			else {
 				return i;
@@ -319,10 +320,10 @@ bool NPC::processDialog(int dialog_node, int &event_cursor) {
 			// continue to next event component	
 		}
 		else if (dialog[dialog_node][event_cursor].type == "set_status") {
-			map->camp->setStatus(dialog[dialog_node][event_cursor].s);
+			map.camp.setStatus(dialog[dialog_node][event_cursor].s);
 		}
 		else if (dialog[dialog_node][event_cursor].type == "unset_status") {
-			map->camp->unsetStatus(dialog[dialog_node][event_cursor].s);
+			map.camp.unsetStatus(dialog[dialog_node][event_cursor].s);
 		}
 		else if (dialog[dialog_node][event_cursor].type == "him") {
 			return true;
@@ -334,19 +335,18 @@ bool NPC::processDialog(int dialog_node, int &event_cursor) {
 			return true;
 		}
 		else if (dialog[dialog_node][event_cursor].type == "reward_xp") {
-			map->camp->rewardXP(dialog[dialog_node][event_cursor].x);
+			map.camp.rewardXP(dialog[dialog_node][event_cursor].x);
 		}
 		else if (dialog[dialog_node][event_cursor].type == "reward_currency") {
-			map->camp->rewardCurrency(dialog[dialog_node][event_cursor].x);
+			map.camp.rewardCurrency(dialog[dialog_node][event_cursor].x);
 		}
 		else if (dialog[dialog_node][event_cursor].type == "reward_item") {
-			ItemStack istack;
-			istack.item = dialog[dialog_node][event_cursor].x;
-			istack.quantity = dialog[dialog_node][event_cursor].y;
-			map->camp->rewardItem(istack);
+			map.camp.rewardItem(ItemStack(
+					&items.getItem(dialog[dialog_node][event_cursor].x),
+					dialog[dialog_node][event_cursor].y));
 		}
 		else if (dialog[dialog_node][event_cursor].type == "remove_item") {
-			map->camp->removeItem(dialog[dialog_node][event_cursor].x);
+			map.camp.removeItem(dialog[dialog_node][event_cursor].x);
 		}
 		else if (dialog[dialog_node][event_cursor].type == "") {
 			// conversation ends

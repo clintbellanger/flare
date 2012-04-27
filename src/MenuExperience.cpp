@@ -86,7 +86,7 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 	int xp_bar_length;
 
 	// don't display anything if max level
-	if (stats->level < 1 || stats->level == MAX_CHARACTER_LEVEL) return;
+	if (stats.level < 1 || stats.level == MAX_CHARACTER_LEVEL) return;
 	
 	// lay down the background image first
 	src.x = 0;
@@ -101,8 +101,8 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 	// when at a new level, 0% progress
 	src.x = 0;
 	src.y = 0;
-	int required = stats->xp_table[stats->level] - stats->xp_table[stats->level-1];
-	int current = stats->xp - stats->xp_table[stats->level-1];
+	int required = stats.xp_table[stats.level] - stats.xp_table[stats.level-1];
+	int current = stats.xp - stats.xp_table[stats.level-1];
 	xp_bar_length = (current * bar_size.x) / required;
 	src.w = xp_bar_length;
 	src.h = bar_size.y;
@@ -118,11 +118,11 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 	// if mouseover, draw text
 	if (isWithin(hud_position, mouse)) {
 
-		if (stats->level < MAX_CHARACTER_LEVEL) {
-			text_label = msg->get("XP: %d/%d", stats->xp, stats->xp_table[stats->level]);
+		if (stats.level < MAX_CHARACTER_LEVEL) {
+			text_label = msg->get("XP: %d/%d", stats.xp, stats.xp_table[stats.level]);
 		}
 		else {
-			text_label = msg->get("XP: %d", stats->xp);
+			text_label = msg->get("XP: %d", stats.xp);
 		}
 
 		WidgetLabel label;

@@ -50,42 +50,42 @@ void GameStatePlay::saveGame() {
 	if (outfile.is_open()) {
 
 		// hero name
-		outfile << "name=" << pc->stats.name << "\n";
+		outfile << "name=" << pc.stats.name << "\n";
 		
 		// hero visual option
-		outfile << "option=" << pc->stats.base << "," << pc->stats.head << "," << pc->stats.portrait << "\n";
+		outfile << "option=" << pc.stats.base << "," << pc.stats.head << "," << pc.stats.portrait << "\n";
 
 		// current experience
-		outfile << "xp=" << pc->stats.xp << "\n";
+		outfile << "xp=" << pc.stats.xp << "\n";
 
 		// stat spec
-		outfile << "build=" << pc->stats.physical_character << "," << pc->stats.mental_character << "," << pc->stats.offense_character << "," << pc->stats.defense_character << "\n";
+		outfile << "build=" << pc.stats.physical_character << "," << pc.stats.mental_character << "," << pc.stats.offense_character << "," << pc.stats.defense_character << "\n";
 
 		// current gold
-		outfile << "gold=" << menu->inv->gold << "\n";
+		outfile << "gold=" << menu.inv.gold << "\n";
 
 		// equipped gear
-		outfile << "equipped=" << menu->inv->inventory[EQUIPMENT].getItems() << "\n";
-		outfile << "equipped_quantity=" << menu->inv->inventory[EQUIPMENT].getQuantities() << "\n";
+		outfile << "equipped=" << menu.inv.inventory[EQUIPMENT].getItems() << "\n";
+		outfile << "equipped_quantity=" << menu.inv.inventory[EQUIPMENT].getQuantities() << "\n";
 
 		// carried items
-		outfile << "carried=" << menu->inv->inventory[CARRIED].getItems() << "\n";
-		outfile << "carried_quantity=" << menu->inv->inventory[CARRIED].getQuantities() << "\n";
+		outfile << "carried=" << menu.inv.inventory[CARRIED].getItems() << "\n";
+		outfile << "carried_quantity=" << menu.inv.inventory[CARRIED].getQuantities() << "\n";
 
 		// spawn point
-		outfile << "spawn=" << map->respawn_map << "," << map->respawn_point.x/UNITS_PER_TILE << "," << map->respawn_point.y/UNITS_PER_TILE << "\n";
+		outfile << "spawn=" << map.respawn_map << "," << map.respawn_point.x/UNITS_PER_TILE << "," << map.respawn_point.y/UNITS_PER_TILE << "\n";
 		
 		// action bar
 		outfile << "actionbar=";
 		for (int i=0; i<12; i++) {
-			outfile << menu->act->hotkeys[i];
+			outfile << menu.act.hotkeys[i];
 			if (i<11) outfile << ",";
 		}
 		outfile << "\n";
 		
 		// campaign data
 		outfile << "campaign=";
-		outfile << camp->getAll();
+		outfile << camp.getAll();
 		
 		outfile << endl;
 		
@@ -114,81 +114,81 @@ void GameStatePlay::loadGame() {
 
 	if (infile.open(ss.str())) {
 		while (infile.next()) {
-			if (infile.key == "name") pc->stats.name = infile.val;
+			if (infile.key == "name") pc.stats.name = infile.val;
 			else if (infile.key == "option") {			
-				pc->stats.base = infile.nextValue();
-				pc->stats.head = infile.nextValue();
-				pc->stats.portrait = infile.nextValue();
+				pc.stats.base = infile.nextValue();
+				pc.stats.head = infile.nextValue();
+				pc.stats.portrait = infile.nextValue();
 			}
-			else if (infile.key == "xp") pc->stats.xp = atoi(infile.val.c_str());
+			else if (infile.key == "xp") pc.stats.xp = atoi(infile.val.c_str());
 			else if (infile.key == "build") {
-				pc->stats.physical_character = atoi(infile.nextValue().c_str());
-				pc->stats.mental_character = atoi(infile.nextValue().c_str());
-				pc->stats.offense_character = atoi(infile.nextValue().c_str());
-				pc->stats.defense_character = atoi(infile.nextValue().c_str());
+				pc.stats.physical_character = atoi(infile.nextValue().c_str());
+				pc.stats.mental_character = atoi(infile.nextValue().c_str());
+				pc.stats.offense_character = atoi(infile.nextValue().c_str());
+				pc.stats.defense_character = atoi(infile.nextValue().c_str());
 			}
 			else if (infile.key == "gold") {
-				menu->inv->gold = atoi(infile.val.c_str());
+				menu.inv.gold = atoi(infile.val.c_str());
 			}
 			else if (infile.key == "equipped") {
-				menu->inv->inventory[EQUIPMENT].setItems(infile.val);
+				menu.inv.inventory[EQUIPMENT].setItems(infile.val);
 			}
 			else if (infile.key == "equipped_quantity") {
-				menu->inv->inventory[EQUIPMENT].setQuantities(infile.val);
+				menu.inv.inventory[EQUIPMENT].setQuantities(infile.val);
 			}
 			else if (infile.key == "carried") {
-				menu->inv->inventory[CARRIED].setItems(infile.val);
+				menu.inv.inventory[CARRIED].setItems(infile.val);
 			}
 			else if (infile.key == "carried_quantity") {
-				menu->inv->inventory[CARRIED].setQuantities(infile.val);
+				menu.inv.inventory[CARRIED].setQuantities(infile.val);
 			}
 			else if (infile.key == "spawn") {
-				map->teleport_mapname = infile.nextValue();
+				map.teleport_mapname = infile.nextValue();
 				
-				if (fileExists(mods->locate("maps/" + map->teleport_mapname))) {
-					map->teleport_destination.x = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
-					map->teleport_destination.y = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
-					map->teleportation = true;
+				if (fileExists(mods->locate("maps/" + map.teleport_mapname))) {
+					map.teleport_destination.x = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
+					map.teleport_destination.y = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
+					map.teleportation = true;
 				
 					// prevent spawn.txt from putting us on the starting map
-					map->clearEvents();
+					map.clearEvents();
 				}
 				else {
-					map->teleport_mapname = "spawn.txt";
-					map->teleport_destination.x = 1;
-					map->teleport_destination.y = 1;
-					map->teleportation = true;
+					map.teleport_mapname = "spawn.txt";
+					map.teleport_destination.x = 1;
+					map.teleport_destination.y = 1;
+					map.teleportation = true;
 					
 				}
 			}
 			else if (infile.key == "actionbar") {
 				for (int i=0; i<12; i++)
 					hotkeys[i] = atoi(infile.nextValue().c_str());
-				menu->act->set(hotkeys);
+				menu.act.set(hotkeys);
 			}
-			else if (infile.key == "campaign") camp->setAll(infile.val);
+			else if (infile.key == "campaign") camp.setAll(infile.val);
 		}
 			
 		infile.close();		
 	}
 
 	// initialize vars
-	pc->stats.recalc();
-	menu->inv->applyEquipment(menu->inv->inventory[EQUIPMENT].storage);
-	pc->stats.hp = pc->stats.maxhp;
-	pc->stats.mp = pc->stats.maxmp;
+	pc.stats.recalc();
+	menu.inv.applyEquipment(menu.inv.inventory[EQUIPMENT].storage);
+	pc.stats.hp = pc.stats.maxhp;
+	pc.stats.mp = pc.stats.maxmp;
 	
 	// reset character menu
-	menu->chr->refreshStats();
+	menu.chr.refreshStats();
 	
 	// just for aesthetics, turn the hero to face the camera
-	pc->stats.direction = 6;
+	pc.stats.direction = 6;
 	
 	// set up MenuTalker for this hero
-	menu->talker->setHero(pc->stats.name, pc->stats.portrait);
+	menu.talker.setHero(pc.stats.name, pc.stats.portrait);
 	
 	// load sounds (gender specific)
-	pc->loadSounds();
+	pc.loadSounds();
 
 }
 

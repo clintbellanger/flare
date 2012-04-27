@@ -59,10 +59,10 @@ const int LOOT_RANGE = 3 * UNITS_PER_TILE;
 class LootManager : private Uncopyable {
 private:
 
-	ItemManager *items;
-	WidgetTooltip *tip;
-	EnemyManager *enemies;
-	MapIso *map;
+	ItemManager &items;
+	EnemyManager &enemies;
+	MapIso &map;
+	WidgetTooltip tip;
 
 	// functions
 	void loadGraphics();
@@ -93,7 +93,7 @@ private:
 	int anim_loot_duration;
 	
 public:
-	LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_map);
+	LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_map);
 	~LootManager();
 
 	void handleNewMap();

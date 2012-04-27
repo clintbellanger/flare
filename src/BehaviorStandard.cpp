@@ -73,7 +73,7 @@ void BehaviorStandard::doUpkeep() {
 	// TEMP: check for bleeding spurt
 	if (e->stats.bleed_duration % 30 == 1) {
 	    CombatText::Instance()->addMessage(1, e->stats.pos, DISPLAY_DAMAGE);
-		e->powers->activate(POWER_SPARK_BLOOD, &e->stats, e->stats.pos);
+		e->powers.activate(POWER_SPARK_BLOOD, e->stats, e->stats.pos);
 	}
 	
 	// check for teleport powers
@@ -104,7 +104,7 @@ void BehaviorStandard::findTarget() {
 		
 	// check line-of-sight
 	if (dist < e->stats.threat_range && e->stats.hero_alive)
-		los = e->map->collider.line_of_sight(e->stats.pos.x, e->stats.pos.y, e->stats.hero_pos.x, e->stats.hero_pos.y);
+		los = e->map.collider.line_of_sight(e->stats.pos.x, e->stats.pos.y, e->stats.hero_pos.x, e->stats.hero_pos.y);
 	else
 		los = false;
 
@@ -113,7 +113,7 @@ void BehaviorStandard::findTarget() {
 	
 		if (e->stats.in_combat) e->stats.join_combat = true;
         e->stats.in_combat = true;
-		e->powers->activate(e->stats.power_index[BEACON], &e->stats, e->stats.pos); //emit beacon
+		e->powers.activate(e->stats.power_index[BEACON], e->stats, e->stats.pos); //emit beacon
 	}
 
 	// check exiting combat (player died or got too far away)
@@ -205,7 +205,7 @@ void BehaviorStandard::checkPower() {
 			int power_slot =  e->stats.activated_powerslot;
 			int power_id = e->stats.power_index[e->stats.activated_powerslot];
 
-			e->powers->activate(power_id, &e->stats, pursue_pos);
+			e->powers.activate(power_id, e->stats, pursue_pos);
 			e->stats.power_ticks[power_slot] = e->stats.power_cooldown[power_slot];
 			e->stats.cooldown_ticks = e->stats.cooldown;
 		}
@@ -236,11 +236,11 @@ void BehaviorStandard::checkMove() {
 	if (++e->stats.turn_ticks > e->stats.turn_delay) {
 
 		// if blocked, face in pathfinder direction instead
-		if (!e->map->collider.line_of_movement(e->stats.pos.x, e->stats.pos.y, e->stats.hero_pos.x, e->stats.hero_pos.y)) {
+		if (!e->map.collider.line_of_movement(e->stats.pos.x, e->stats.pos.y, e->stats.hero_pos.x, e->stats.hero_pos.y)) {
 					
 			// if a path is returned, target first waypoint
 			std::vector<Point> path;
-			if ( e->map->collider.compute_path(e->stats.pos, pursue_pos, path) ) {
+			if ( e->map.collider.compute_path(e->stats.pos, pursue_pos, path) ) {
 				pursue_pos = path.back();
 			}
 		}
@@ -338,7 +338,7 @@ void BehaviorStandard::updateState() {
 		case ENEMY_POWER:
 		
 			power_id = e->stats.power_index[e->stats.activated_powerslot];
-			power_state = e->powers->powers[power_id].new_state;
+			power_state = e->powers.powers[power_id].new_state;
 		
 			// animation based on power type
 			if (power_state == POWSTATE_SWING) e->setAnimation("melee");

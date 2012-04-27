@@ -27,9 +27,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-void ItemStorage::init(int _slot_number, ItemManager *_items) {
+void ItemStorage::init(int _slot_number, ItemManager &_items) {
 	slot_number = _slot_number;
-	items = _items;
+	items = &_items;
 
 	storage = new ItemStack[slot_number];
 

@@ -24,15 +24,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "WidgetLabel.h"
 
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
 
-MenuInventory::MenuInventory(ItemManager *_items, StatBlock *_stats, PowerManager *_powers) {
-	items = _items;
-	stats = _stats;
-	powers = _powers;
-	
+MenuInventory::MenuInventory(ItemManager &_items, StatBlock &_stats, PowerManager &_powers)
+		: items(_items)
+		, stats(_stats)
+		, powers(_powers) {
 	visible = false;
 	loadGraphics();
 

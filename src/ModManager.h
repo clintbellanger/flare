@@ -25,12 +25,12 @@ mods in priority order when loading data files.
 #ifndef MOD_MANAGER_H
 #define MOD_MANAGER_H
 
-#include "Settings.h"
-#include "UtilsParsing.h"
 #include <string>
 #include <map>
 #include <vector>
 
+#include "Settings.h"
+#include "UtilsParsing.h"
 #include "Utils.h"
 
 class ModManager : private Uncopyable {

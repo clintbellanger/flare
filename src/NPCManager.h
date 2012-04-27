@@ -37,14 +37,14 @@ const int MAX_NPC_COUNT = 32;
 
 class NPCManager : private Uncopyable {
 private:
-	MapIso *map;
-	WidgetTooltip *tip;
-	LootManager *loot;
-	ItemManager *items;
+	MapIso &map;
+	WidgetTooltip tip;
+	LootManager &loot;
+	ItemManager &items;
 	TooltipData tip_buf;
 	
 public:
-	NPCManager(MapIso *_map, LootManager *_loot, ItemManager *_items);
+	NPCManager(MapIso &_map, LootManager &_loot, ItemManager &_items);
 	~NPCManager();
 	NPC *npcs[MAX_NPC_COUNT];
 	void handleNewMap();

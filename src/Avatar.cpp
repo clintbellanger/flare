@@ -29,7 +29,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-Avatar::Avatar(PowerManager *_powers, MapIso *_map) : Entity(_map), powers(_powers) {
+Avatar::Avatar(PowerManager &_powers, MapIso &_map) : Entity(_map), powers(_powers) {
 
 	init();
 
@@ -47,9 +47,9 @@ void Avatar::init() {
 	// other init
 	sprites = 0;
 	stats.cur_state = AVATAR_STANCE;
-	stats.pos.x = map->spawn.x;
-	stats.pos.y = map->spawn.y;
-	stats.direction = map->spawn_dir;
+	stats.pos.x = map.spawn.x;
+	stats.pos.y = map.spawn.y;
+	stats.direction = map.spawn_dir;
 	current_power = -1;
 	newLevelNotification = false;
 
@@ -478,7 +478,7 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 
 			setAnimation("block");
 
-			if (powers->powers[actionbar_power].new_state != POWSTATE_BLOCK) {
+			if (powers.powers[actionbar_power].new_state != POWSTATE_BLOCK) {
 				stats.cur_state = AVATAR_STANCE;
 				stats.blocking = false;
 			}
@@ -520,10 +520,10 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 				stats.clearEffects();
 
 				// set teleportation variables.  GameEngine acts on these.
-				map->teleportation = true;
-				map->teleport_mapname = map->respawn_map;
-				map->teleport_destination.x = map->respawn_point.x;
-				map->teleport_destination.y = map->respawn_point.y;
+				map.teleportation = true;
+				map.teleport_mapname = map.respawn_map;
+				map.teleport_destination.x = map.respawn_point.x;
+				map.teleport_destination.y = map.respawn_point.y;
 			}
 
 			break;
@@ -534,13 +534,13 @@ void Avatar::logic(int actionbar_power, bool restrictPowerUse) {
 
 	// calc new cam position from player position
 	// cam is focused at player position
-	map->cam.x = stats.pos.x;
-	map->cam.y = stats.pos.y;
-	map->hero_tile.x = stats.pos.x / 32;
-	map->hero_tile.y = stats.pos.y / 32;
+	map.cam.x = stats.pos.x;
+	map.cam.y = stats.pos.y;
+	map.hero_tile.x = stats.pos.x / 32;
+	map.hero_tile.y = stats.pos.y / 32;
 
 	// check for map events
-	map->checkEvents(stats.pos);
+	map.checkEvents(stats.pos);
 
 	// decrement all cooldowns
 	for (int i = 0; i < POWER_COUNT; i++){
@@ -609,7 +609,7 @@ bool Avatar::takeHit(const Hazard &h) {
 			if (h.immobilize_duration > stats.immobilize_duration) stats.immobilize_duration = h.immobilize_duration;
 			if (h.forced_move_duration > stats.forced_move_duration) stats.forced_move_duration = h.forced_move_duration;
 			if (h.forced_move_speed != 0) {
-				float theta = powers->calcTheta(h.src_stats->pos.x, h.src_stats->pos.y, stats.pos.x, stats.pos.y);
+				float theta = powers.calcTheta(h.src_stats->pos.x, h.src_stats->pos.y, stats.pos.x, stats.pos.y);
 				stats.forced_speed.x = ceil((float)h.forced_move_speed * cos(theta));
 				stats.forced_speed.y = ceil((float)h.forced_move_speed * sin(theta));
 			}
@@ -624,7 +624,7 @@ bool Avatar::takeHit(const Hazard &h) {
 
 		// post effect power
 		if (h.post_power >= 0 && dmg > 0) {
-			powers->activate(h.post_power, h.src_stats, stats.pos);
+			powers.activate(h.post_power, *h.src_stats, stats.pos);
 		}
 
 		// Power-specific: Vengeance gains stacks when blocking

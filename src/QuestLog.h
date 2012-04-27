@@ -34,14 +34,14 @@ const int MAX_QUEST_EVENTS = 8;
 
 class QuestLog {
 private:
-	CampaignManager *camp;
-	MenuLog *log;
+	CampaignManager &camp;
+	MenuLog &log;
 	
 	Event_Component quests[MAX_QUESTS][MAX_QUEST_EVENTS];
 	int quest_count;
 	
 public:
-	QuestLog(CampaignManager *_camp, MenuLog *_log);
+	QuestLog(CampaignManager &_camp, MenuLog &_log);
 	void loadAll();
 	void loadIndex(const std::string& filename);
 	void load(const std::string& filename);

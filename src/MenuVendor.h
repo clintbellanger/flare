@@ -42,8 +42,8 @@ const int VENDOR_SLOTS = 80;
 
 class MenuVendor : private Uncopyable {
 private:
-	ItemManager *items;
-	StatBlock *stats;
+	ItemManager &items;
+	StatBlock &stats;
 	WidgetButton *closeButton;
 
 	void loadGraphics();
@@ -51,7 +51,7 @@ private:
 	MenuItemStorage stock; // items the vendor currently has in stock
 
 public:
-	MenuVendor(ItemManager *items, StatBlock *stats);
+	MenuVendor(ItemManager &items, StatBlock &stats);
 	~MenuVendor();
 
 	NPC *npc;

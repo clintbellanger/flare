@@ -60,7 +60,7 @@ enum AvatarState {
 class Avatar : public Entity {
 private:
 
-	PowerManager *powers;
+	PowerManager &powers;
 
 	bool lockSwing;
 	bool lockCast;

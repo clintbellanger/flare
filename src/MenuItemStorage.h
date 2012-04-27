@@ -32,7 +32,7 @@ protected:
 	int nb_cols;
 
 public:
-	void init(int _slot_number, ItemManager *_items, SDL_Rect _area, int icon_size, int nb_cols);
+	void init(int slot_number, ItemManager &items, SDL_Rect _area, int icon_size, int nb_cols);
 
 	// rendering
 	void render();

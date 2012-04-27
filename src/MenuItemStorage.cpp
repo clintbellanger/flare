@@ -59,10 +59,10 @@ TooltipData MenuItemStorage::checkTooltip(const Point &mouse, const StatBlock &s
 
 ItemStack MenuItemStorage::click(const InputState &input) {
 	ItemStack item;
-	drag_prev_slot = slotOver(input->mouse);
+	drag_prev_slot = slotOver(input.mouse);
 	if( drag_prev_slot > -1) { 
 		item = storage[drag_prev_slot];
-		if( input->pressing[SHIFT]) {
+		if( input.pressing[SHIFT]) {
 			item.quantity = 1;
 		}
 		substract( drag_prev_slot, item.quantity);

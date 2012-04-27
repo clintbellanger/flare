@@ -25,8 +25,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-Enemy::Enemy(PowerManager *_powers, MapIso *_map) : Entity(_map) {
-	powers = _powers;
+Enemy::Enemy(PowerManager &_powers, MapIso &_map) : Entity(_map), powers(_powers) {
 
 	stats.cur_state = ENEMY_STANCE;
 	stats.turn_ticks = FRAMES_PER_SEC;
@@ -126,7 +125,7 @@ void Enemy::logic() {
 	// check for bleeding spurt
 	if (stats.bleed_duration % 30 == 1) {
 	    CombatText::Instance()->addMessage(1, stats.pos, DISPLAY_DAMAGE);
-		powers->activate(POWER_SPARK_BLOOD, &stats, stats.pos);
+		powers.activate(POWER_SPARK_BLOOD, &stats, stats.pos);
 	}
 	
 	// check for teleport powers
@@ -169,7 +168,7 @@ void Enemy::logic() {
 	}
 
 	if (dist < stats.threat_range && stats.hero_alive)
-		los = map->collider.line_of_sight(stats.pos.x, stats.pos.y, stats.hero_pos.x, stats.hero_pos.y);
+		los = map.collider.line_of_sight(stats.pos.x, stats.pos.y, stats.hero_pos.x, stats.hero_pos.y);
 	else
 		los = false;
 
@@ -181,7 +180,7 @@ void Enemy::logic() {
         stats.in_combat = true;
 		stats.last_seen.x = stats.hero_pos.x;
 		stats.last_seen.y = stats.hero_pos.y;
-		powers->activate(stats.power_index[BEACON], &stats, stats.pos); //emit beacon
+		powers.activate(stats.power_index[BEACON], &stats, stats.pos); //emit beacon
 	}
 	else if (stats.last_seen.x >= 0 && stats.last_seen.y >= 0) {
 		if (getDistance(stats.last_seen) <= (stats.speed+stats.speed) && stats.patrol_ticks == 0) {
@@ -257,7 +256,7 @@ void Enemy::logic() {
 				else if (dist > stats.melee_range && stats.cooldown_ticks == 0) {
 
 					// CHECK: ranged physical!
-					//if (!powers->powers[stats.power_index[RANGED_PHYS]].requires_los || los) {
+					//if (!powers.powers[stats.power_index[RANGED_PHYS]].requires_los || los) {
 					if (los) {
 						if ((rand() % 100) < stats.power_chance[RANGED_PHYS] && stats.power_ticks[RANGED_PHYS] == 0) {
 							
@@ -266,7 +265,7 @@ void Enemy::logic() {
 						}
 					}
 					// CHECK: ranged spell!
-					//if (!powers->powers[stats.power_index[RANGED_MENT]].requires_los || los) {
+					//if (!powers.powers[stats.power_index[RANGED_MENT]].requires_los || los) {
 					if (los) {			
 						if ((rand() % 100) < stats.power_index[RANGED_MENT] && stats.power_ticks[RANGED_MENT] == 0) {
 							
@@ -299,7 +298,7 @@ void Enemy::logic() {
 				else if (dist <= stats.melee_range && stats.cooldown_ticks == 0) {
 				
 					// CHECK: melee attack!
-					//if (!powers->powers[stats.power_index[MELEE_PHYS]].requires_los || los) {
+					//if (!powers.powers[stats.power_index[MELEE_PHYS]].requires_los || los) {
 					if (los) {
 						if ((rand() % 100) < stats.power_chance[MELEE_PHYS] && stats.power_ticks[MELEE_PHYS] == 0) {
 							
@@ -308,7 +307,7 @@ void Enemy::logic() {
 						}
 					}
 					// CHECK: melee ment!
-					//if (!powers->powers[stats.power_index[MELEE_MENT]].requires_los || los) {
+					//if (!powers.powers[stats.power_index[MELEE_MENT]].requires_los || los) {
 					if (los) {
 						if ((rand() % 100) < stats.power_chance[MELEE_MENT] && stats.power_ticks[MELEE_MENT] == 0) {
 													
@@ -329,10 +328,10 @@ void Enemy::logic() {
 
 				if (++stats.turn_ticks > stats.turn_delay && stats.patrol_ticks == 0) {
 					// if no line of movement to target, use pathfinder
-					if ( !map->collider.line_of_movement(stats.pos.x, stats.pos.y, pursue_pos.x, pursue_pos.y)) {
+					if ( !map.collider.line_of_movement(stats.pos.x, stats.pos.y, pursue_pos.x, pursue_pos.y)) {
 						vector<Point> path;
 						// if a path is returned, target first waypoint
-						if ( map->collider.compute_path(stats.pos,pursue_pos,path) ) {
+						if ( map.collider.compute_path(stats.pos,pursue_pos,path) ) {
 							pursue_pos = path.back();
 						}
 					}
@@ -343,7 +342,7 @@ void Enemy::logic() {
 				if (dist > stats.melee_range && stats.cooldown_ticks == 0) {
 				
 					// check ranged physical!
-					//if (!powers->powers[stats.power_index[RANGED_PHYS]].requires_los || los) {
+					//if (!powers.powers[stats.power_index[RANGED_PHYS]].requires_los || los) {
 					if (los) {
 						if ((rand() % 100) < stats.power_chance[RANGED_PHYS] && stats.power_ticks[RANGED_PHYS] == 0) {
 							
@@ -352,7 +351,7 @@ void Enemy::logic() {
 						}
 					}
 					// check ranged spell!
-					// if (!powers->powers[stats.power_index[RANGED_MENT]].requires_los || los) {
+					// if (!powers.powers[stats.power_index[RANGED_MENT]].requires_los || los) {
 					if (los) {
 						if ((rand() % 100) < stats.power_chance[RANGED_MENT] && stats.power_ticks[RANGED_MENT] == 0) {
 							
@@ -390,7 +389,7 @@ void Enemy::logic() {
 
 			// the attack hazard is alive for a single frame
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-				powers->activate(stats.power_index[MELEE_PHYS], &stats, pursue_pos);
+				powers.activate(stats.power_index[MELEE_PHYS], &stats, pursue_pos);
 				stats.power_ticks[MELEE_PHYS] = stats.power_cooldown[MELEE_PHYS];
 			}
 
@@ -413,7 +412,7 @@ void Enemy::logic() {
 			
 			// the attack hazard is alive for a single frame
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-				powers->activate(stats.power_index[RANGED_PHYS], &stats, pursue_pos);
+				powers.activate(stats.power_index[RANGED_PHYS], &stats, pursue_pos);
 				stats.power_ticks[RANGED_PHYS] = stats.power_cooldown[RANGED_PHYS];
 			}
 			
@@ -434,7 +433,7 @@ void Enemy::logic() {
 			
 			// the attack hazard is alive for a single frame
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-				powers->activate(stats.power_index[MELEE_MENT], &stats, pursue_pos);
+				powers.activate(stats.power_index[MELEE_MENT], &stats, pursue_pos);
 				stats.power_ticks[MELEE_MENT] = stats.power_cooldown[MELEE_MENT];
 			}
 			
@@ -458,7 +457,7 @@ void Enemy::logic() {
 			// the attack hazard is alive for a single frame
 			if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
 			
-				powers->activate(stats.power_index[RANGED_MENT], &stats, pursue_pos);
+				powers.activate(stats.power_index[RANGED_MENT], &stats, pursue_pos);
 				stats.power_ticks[RANGED_MENT] = stats.power_cooldown[RANGED_MENT];
 			}
 			
@@ -493,7 +492,7 @@ void Enemy::logic() {
 
             if ((rand() % 100) < stats.power_chance[ON_HIT]) {
                 if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                        powers->activate(stats.power_index[ON_HIT], &stats, stats.pos);
+                        powers.activate(stats.power_index[ON_HIT], &stats, stats.pos);
                         stats.power_ticks[ON_HIT] = stats.power_cooldown[ON_HIT];
                 }
             }
@@ -517,7 +516,7 @@ void Enemy::logic() {
 
                 if ((rand() % 100) < stats.power_chance[ON_DEATH]) {
                     if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                        powers->activate(stats.power_index[ON_DEATH], &stats, stats.pos);
+                        powers.activate(stats.power_index[ON_DEATH], &stats, stats.pos);
                         stats.power_ticks[ON_DEATH] = stats.power_cooldown[ON_DEATH];
                     }
                 }
@@ -539,7 +538,7 @@ void Enemy::logic() {
 
                 if ((rand() % 100) < stats.power_chance[ON_DEATH]) {
                     if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                        powers->activate(stats.power_index[ON_DEATH], &stats, stats.pos);
+                        powers.activate(stats.power_index[ON_DEATH], &stats, stats.pos);
                         stats.power_ticks[ON_DEATH] = stats.power_cooldown[ON_DEATH];
                     }
                 }
@@ -552,7 +551,7 @@ void Enemy::logic() {
             // enemy is at half health or lower
 
             if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                    powers->activate(stats.power_index[ON_HALF_DEAD], &stats, stats.pos);
+                    powers.activate(stats.power_index[ON_HALF_DEAD], &stats, stats.pos);
                     stats.power_ticks[ON_HALF_DEAD] = stats.power_cooldown[ON_HALF_DEAD];
             }
 
@@ -567,7 +566,7 @@ void Enemy::logic() {
             // enemy is stunned, bleeding, etc
 
             if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                    powers->activate(stats.power_index[ON_DEBUFF], &stats, stats.pos);
+                    powers.activate(stats.power_index[ON_DEBUFF], &stats, stats.pos);
                     stats.power_ticks[ON_DEBUFF] = stats.power_cooldown[ON_DEBUFF];
             }
 
@@ -582,7 +581,7 @@ void Enemy::logic() {
             // enemy joins combat
 
             if (activeAnimation->getCurFrame() == activeAnimation->getMaxFrame()/2 && haz == NULL) {
-                    powers->activate(stats.power_index[ON_JOIN_COMBAT], &stats, stats.pos);
+                    powers.activate(stats.power_index[ON_JOIN_COMBAT], &stats, stats.pos);
                     stats.power_ticks[ON_JOIN_COMBAT] = stats.power_cooldown[ON_JOIN_COMBAT];
             }
 
@@ -611,11 +610,11 @@ bool Enemy::takeHit(const Hazard &h) {
             stats.in_combat = true;
 			stats.last_seen.x = stats.hero_pos.x;
 			stats.last_seen.y = stats.hero_pos.y;
-			powers->activate(stats.power_index[BEACON], &stats, stats.pos); //emit beacon
+			powers.activate(stats.power_index[BEACON], stats, stats.pos); //emit beacon
 		}
 
 		// exit if it was a beacon (to prevent stats.targeted from being set)
-		if (powers->powers[h.power_index].beacon) return false;
+		if (powers.powers[h.power_index].beacon) return false;
 
         // prepare the combat text
 	    CombatText *combat_text = CombatText::Instance();
@@ -658,7 +657,7 @@ bool Enemy::takeHit(const Hazard &h) {
 		bool crit = (rand() % 100) < true_crit_chance;
 		if (crit) {
 			dmg = dmg + h.dmg_max;
-			map->shaky_cam_ticks = FRAMES_PER_SEC/2;
+			map.shaky_cam_ticks = FRAMES_PER_SEC/2;
 			
 			// show crit damage
 		    combat_text->addMessage(dmg, stats.pos, DISPLAY_CRIT);
@@ -682,7 +681,7 @@ bool Enemy::takeHit(const Hazard &h) {
 			if (h.immobilize_duration > stats.immobilize_duration) stats.immobilize_duration = h.immobilize_duration;
 			if (h.forced_move_duration > stats.forced_move_duration) stats.forced_move_duration = h.forced_move_duration;
 			if (h.forced_move_speed != 0) {
-				float theta = powers->calcTheta(stats.hero_pos.x, stats.hero_pos.y, stats.pos.x, stats.pos.y);
+				float theta = powers.calcTheta(stats.hero_pos.x, stats.hero_pos.y, stats.pos.x, stats.pos.y);
 				stats.forced_speed.x = ceil((float)h.forced_move_speed * cos(theta));
 				stats.forced_speed.y = ceil((float)h.forced_move_speed * sin(theta));
 			}
@@ -700,7 +699,7 @@ bool Enemy::takeHit(const Hazard &h) {
 		
 		// post effect power
 		if (h.post_power >= 0 && dmg > 0) {
-			powers->activate(h.post_power, h.src_stats, stats.pos);
+			powers.activate(h.post_power, *h.src_stats, stats.pos);
 		}
 		
 		// interrupted to new state
@@ -741,7 +740,7 @@ void Enemy::doRewards() {
 	
 		// the loot manager will check quest_loot_id
 		// if set (not zero), the loot manager will 100% generate that loot.
-		if (map->camp->checkStatus(stats.quest_loot_requires) && !map->camp->checkStatus(stats.quest_loot_not)) {
+		if (map.camp.checkStatus(stats.quest_loot_requires) && !map.camp.checkStatus(stats.quest_loot_not)) {
 			loot_drop = true;
 		}
 		else {
@@ -752,7 +751,7 @@ void Enemy::doRewards() {
 	// some creatures drop special loot the first time they are defeated
 	// this must be done in conjunction with defeat status
 	if (stats.first_defeat_loot > 0) {
-		if (!map->camp->checkStatus(stats.defeat_status)) {
+		if (!map.camp.checkStatus(stats.defeat_status)) {
 			loot_drop = true;
 			stats.quest_loot_id = stats.first_defeat_loot;
 		}
@@ -760,7 +759,7 @@ void Enemy::doRewards() {
 	
 	// defeating some creatures (e.g. bosses) affects the story
 	if (stats.defeat_status != "") {
-		map->camp->setStatus(stats.defeat_status);
+		map.camp.setStatus(stats.defeat_status);
 	}
 
 }

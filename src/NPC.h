@@ -41,7 +41,7 @@ const int NPC_MAX_EVENTS = 16;
 
 class NPC : public Entity {
 protected:
-	ItemManager *items;
+	ItemManager &items;
 
 	// animation info
 	SDL_Surface *sprites;
@@ -50,7 +50,7 @@ protected:
 	int current_frame;
 	
 public:
-	NPC(MapIso *_map, ItemManager *_items);
+	NPC(MapIso &_map, ItemManager &_items);
 	~NPC();
 	void load(const std::string& npc_id);
 	void loadGraphics(const std::string& filename_sprites, const std::string& filename_portrait);

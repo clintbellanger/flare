@@ -27,13 +27,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-WidgetLabel::WidgetLabel() {
-	
-	text_buffer = NULL;
-	text = "";
-	color = FONT_WHITE;
-	justify = JUSTIFY_LEFT;
-	valign = VALIGN_TOP;
+WidgetLabel::WidgetLabel()
+	: text()
+	, color(FONT_WHITE)
+	, x_origin(0)
+	, y_origin(0)
+	, justify(JUSTIFY_LEFT)
+	, valign(VALIGN_TOP)
+	, text_buffer(NULL) {
 	
 	bounds.x = bounds.y = 0;
 	bounds.w = bounds.h = 0;
@@ -44,15 +45,9 @@ WidgetLabel::WidgetLabel() {
  * Draw the buffered string surface to the screen
  */
 void WidgetLabel::render() {
-
-	SDL_Rect dest;
-	dest.x = bounds.x;
-	dest.y = bounds.y;
-	dest.w = bounds.w;
-	dest.h = bounds.h;
-
 	if (text_buffer != NULL) {
-		SDL_BlitSurface(text_buffer, NULL, screen, &dest);		
+		SDL_Rect rect(bounds);
+		SDL_BlitSurface(text_buffer, NULL, screen, &rect);
 	}
 }
 

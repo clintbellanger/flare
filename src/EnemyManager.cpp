@@ -26,9 +26,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
-EnemyManager::EnemyManager(PowerManager *_powers, MapIso *_map) {
-	powers = _powers;
-	map = _map;
+EnemyManager::EnemyManager(PowerManager &_powers, MapIso &_map)
+	: powers(_powers)
+	, map(_map) {
+
 	enemy_count = 0;
 	sfx_count = 0;
 	gfx_count = 0;
@@ -135,9 +136,9 @@ void EnemyManager::handleNewMap () {
 	sfx_count = 0;
 	
 	// load new enemies
-	while (!map->enemies.empty()) {
-		me = map->enemies.front();
-		map->enemies.pop();
+	while (!map.enemies.empty()) {
+		me = map.enemies.front();
+		map.enemies.pop();
 		
 		enemies[enemy_count] = new Enemy(powers, map);
 		
@@ -170,9 +171,9 @@ void EnemyManager::handleSpawn() {
 	
 	EnemySpawn espawn;
 	
-	while (!powers->enemies.empty()) {
-		espawn = powers->enemies.front();		
-		powers->enemies.pop();	
+	while (!powers.enemies.empty()) {
+		espawn = powers.enemies.front();
+		powers.enemies.pop();
 
 		enemies[enemy_count] = new Enemy(powers, map);
 		// factory
@@ -275,7 +276,7 @@ Enemy* EnemyManager::enemyFocus(const Point &mouse, const Point &cam, bool alive
 void EnemyManager::checkEnemiesforXP(StatBlock &stats) {
 	for (int i=0; i<enemy_count; i++) {
 		if (enemies[i]->reward_xp) {
-			stats->xp += enemies[i]->stats.level;
+			stats.xp += enemies[i]->stats.level;
 			enemies[i]->reward_xp = false; // clear flag
 		}
 	}

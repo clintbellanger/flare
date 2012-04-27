@@ -28,9 +28,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-MapIso::MapIso(CampaignManager *_camp) {
-
-	camp = _camp;
+MapIso::MapIso(PowerManager &_powers, CampaignManager &_camp)
+	: powers(_powers)
+	, camp(_camp) {
 	
 	tip = new WidgetTooltip();
 
@@ -745,7 +745,14 @@ void MapIso::checkEventClick() {
 		r.h = events[i].hotspot.h;
 		r.w = events[i].hotspot.w;
 		// execute if: EVENT IS ACTIVE && MOUSE IN HOTSPOT && HOTSPOT EXISTS && CLICKING && HERO WITHIN RANGE
-		if (isActive(i) && isWithin(r, inp->mouse) && (events[i].hotspot.h != 0) && inp->pressing[MAIN1] && !inp->lock[MAIN1] && (abs(cam.x - events[i].location.x * UNITS_PER_TILE) < CLICK_RANGE && abs(cam.y - events[i].location.y * UNITS_PER_TILE) < CLICK_RANGE)) {
+		if (	   isActive(i)
+				&& isWithin(r, inp->mouse)
+				&& events[i].hotspot.h != 0
+				&& inp->pressing[MAIN1]
+				&& !inp->lock[MAIN1]
+				&& cam.dist(toPoint(events[i].location) * UNITS_PER_TILE) < CLICK_RANGE /*
+				&& (abs(cam.x - events[i].location.x * UNITS_PER_TILE) < CLICK_RANGE
+				&& abs(cam.y - events[i].location.y * UNITS_PER_TILE) < CLICK_RANGE)*/) {
 			inp->lock[MAIN1] = true;
 			executeEvent(i);
 		}
@@ -755,17 +762,17 @@ void MapIso::checkEventClick() {
 bool MapIso::isActive(int eventid){
 	for (int i=0; i < events[eventid].comp_num; i++) {
 		if (events[eventid].components[i].type == "requires_not") {
-			if (camp->checkStatus(events[eventid].components[i].s)) {
+			if (camp.checkStatus(events[eventid].components[i].s)) {
 				return false;
 			}
 		}
 		else if (events[eventid].components[i].type == "requires_status") {
-			if (!camp->checkStatus(events[eventid].components[i].s)) {
+			if (!camp.checkStatus(events[eventid].components[i].s)) {
 				return false;
 			}
 		}
 		else if (events[eventid].components[i].type == "requires_item") {
-			if (!camp->checkItem(events[eventid].components[i].x)) {
+			if (!camp.checkItem(events[eventid].components[i].x)) {
 				return false;
 			}
 		}
@@ -846,19 +853,19 @@ void MapIso::executeEvent(int eid) {
 		ec = &events[eid].components[i];
 		
 		if (ec->type == "requires_status") {
-			if (!camp->checkStatus(ec->s)) return;
+			if (!camp.checkStatus(ec->s)) return;
 		}
 		else if (ec->type == "requires_not") {
-			if (camp->checkStatus(ec->s)) return;
+			if (camp.checkStatus(ec->s)) return;
 		}
 		else if (ec->type == "requires_item") {
-			if (!camp->checkItem(ec->x)) return;
+			if (!camp.checkItem(ec->x)) return;
 		}
 		else if (ec->type == "set_status") {
-			camp->setStatus(ec->s);
+			camp.setStatus(ec->s);
 		}
 		else if (ec->type == "unset_status") {
-			camp->unsetStatus(ec->s);
+			camp.unsetStatus(ec->s);
 		}
 		if (ec->type == "intermap") {
 		
@@ -898,10 +905,10 @@ void MapIso::executeEvent(int eid) {
 			shaky_cam_ticks = ec->x;
 		}
 		else if (ec->type == "remove_item") {
-			camp->removeItem(ec->x);
+			camp.removeItem(ec->x);
 		}
 		else if (ec->type == "reward_xp") {
-			camp->rewardXP(ec->x);
+			camp.rewardXP(ec->x);
 		}
 		else if (ec->type == "power") {
 
@@ -929,7 +936,7 @@ void MapIso::executeEvent(int eid) {
 				}
 			
 				events[eid].cooldown_ticks = events[eid].power_cooldown;
-				powers->activate(power_index, dummy, target);
+				powers.activate(power_index, *dummy, target);
 			}
 			
 		}

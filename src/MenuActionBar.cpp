@@ -31,10 +31,10 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-MenuActionBar::MenuActionBar(PowerManager *_powers, StatBlock *_hero, SDL_Surface *_icons) {
-	powers = _powers;
-	hero = _hero;
-	icons = _icons;
+MenuActionBar::MenuActionBar(const PowerManager &_powers, StatBlock &_hero, SDL_Surface *_icons)
+	: icons(_icons)
+	, hero(_hero)
+	, powers(_powers) {
 
 	src.x = 0;
 	src.y = 0;
@@ -192,14 +192,13 @@ void MenuActionBar::render() {
 			dest.x = offset_x + (i * 32) + 64;
 
 		if (hotkeys[i] != -1) {
-			const Power &power = powers->getPower(hotkeys[i]);
-			slot_enabled[i] = (hero->hero_cooldown[hotkeys[i]] == 0)
+			const Power &power = powers.getPower(hotkeys[i]);
+			slot_enabled[i] = (hero.hero_cooldown[hotkeys[i]] == 0)
 						   && (slot_item_count[i] != 0)
-						   && !hero->stun_duration
-						   && hero->alive
-						   && hero->canUsePower(power, hotkeys[i]); //see if the slot should be greyed out
-			unsigned icon_offset = 0;/* !slot_enabled[i] ? ICON_DISABLED_OFFSET :
-								   (hero->activated_powerslot == i ? ICON_HIGHLIGHT_OFFSET : 0); */
+						   && !hero.stun_duration
+						   && hero.alive
+						   && hero.canUsePower(power, hotkeys[i]); //see if the slot should be greyed out
+			unsigned icon_offset = 0; //(hero.activated_powerslot == i ? 64 : 0);
 			renderIcon(power.icon + icon_offset, dest.x, dest.y);
 		}
 		else {
@@ -243,8 +242,8 @@ void MenuActionBar::renderCooldowns() {
 			item_src.w = 32;
 
 			// Wipe from bottom to top
-			if (hero->hero_cooldown[hotkeys[i]]) {
-				item_src.h = 32 * (hero->hero_cooldown[hotkeys[i]] / (float)powers->powers[hotkeys[i]].cooldown);
+			if (hero.hero_cooldown[hotkeys[i]]) {
+				item_src.h = 32 * (hero.hero_cooldown[hotkeys[i]] / (float)powers.powers[hotkeys[i]].cooldown);
 			}
 
 			// SDL_BlitSurface will write to these Rects, so make a copy
@@ -303,7 +302,7 @@ TooltipData MenuActionBar::checkTooltip(const Point &mouse) {
 	for (int i=0; i<12; i++) {
 		if (hotkeys[i] != -1) {
 			if (isWithin(slots[i], mouse)) {
-				tip.lines[tip.num_lines++] = powers->powers[hotkeys[i]].name;
+				tip.lines[tip.num_lines++] = powers.powers[hotkeys[i]].name;
 			}
 		}
 	}

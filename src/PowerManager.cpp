@@ -1000,26 +1000,26 @@ bool PowerManager::spawn(const Power &power, StatBlock &src_stats, const Point &
 /**
  * Activate is basically a switch/redirect to the appropriate function
  */
-bool PowerManager::activate(int power_index, StatBlock *src_stats, const Point &target) {
+bool PowerManager::activate(int power_index, StatBlock &src_stats, const Point &target) {
 	const Power &power = powers[power_index];
 
-	if (src_stats->hero) {
-		if (power.requires_mp > src_stats->mp)
+	if (src_stats.hero) {
+		if (power.requires_mp > src_stats.mp)
 			return false;
 	}
 
 	// logic for different types of powers are very different.  We allow these
 	// separate functions to handle the details.
 	if (power.type == POWTYPE_SINGLE)
-		return single(power, *src_stats, target);
+		return single(power, src_stats, target);
 	else if (power.type == POWTYPE_MISSILE)
-		return missile(power, *src_stats, target);
+		return missile(power, src_stats, target);
 	else if (power.type == POWTYPE_REPEATER)
-		return repeater(power, *src_stats, target);
+		return repeater(power, src_stats, target);
 	else if (power.type == POWTYPE_EFFECT)
-		return effect(power, *src_stats, target);
+		return effect(power, src_stats, target);
 	else if (power.type == POWTYPE_SPAWN)
-		return spawn(power, *src_stats, target);
+		return spawn(power, src_stats, target);
 
 	return false;
 }

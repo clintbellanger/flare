@@ -29,12 +29,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 using namespace std;
 
 
-LootManager::LootManager(ItemManager *_items, EnemyManager *_enemies, MapIso *_map) {
-	items = _items;
-	enemies = _enemies; // we need to be able to read loot state when creatures die
-	map = _map; // we need to be able to read loot that drops from map containers
-
-	tip = new WidgetTooltip();
+LootManager::LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_map)
+	: items(_items)
+	, enemies(_enemies)	// we need to be able to read loot state when creatures die
+	, map(_map)			// we need to be able to read loot that drops from map containers
+	, tip() {
 	
 	tooltip_margin = 32; // pixels between loot drop center and label
 	
@@ -177,7 +176,7 @@ void LootManager::calcTables() {
 
 void LootManager::handleNewMap() {
 	for (int i=0; i<loot_count; i++) {
-		tip->clear(loot[i].tip);
+		tip.clear(loot[i].tip);
 	}
 	loot_count = 0;
 }
@@ -255,7 +254,7 @@ void LootManager::renderTooltips(Point cam) {
 				}
 			}
 			
-			tip->render(loot[i].tip, dest, STYLE_TOPLABEL);
+			tip.render(loot[i].tip, dest, STYLE_TOPLABEL);
 		}
 	}
 	
@@ -297,8 +296,8 @@ void LootManager::checkMapForLoot() {
 	Event_Component *ec;
 	ItemStack new_loot;
 	
-	while (!map->loot.empty()) {
-		ec = &map->loot.front();
+	while (!map.loot.empty()) {
+		ec = &map.loot.front();
 		p.x = ec->x;
 		p.y = ec->y;
 		
@@ -313,7 +312,7 @@ void LootManager::checkMapForLoot() {
 		else if (ec->s == "currency") {
 			addGold(ec->z, p);
 		}
-		map->loot.pop();
+		map.loot.pop();
 	}
 }
 
@@ -408,17 +407,11 @@ void LootManager::addGold(int count, Point pos) {
  */
 void LootManager::removeLoot(int index) {
 
+	LootDef &sloot = loot[index];
 	// deallocate the tooltip of the loot being removed
-	tip->clear(loot[index].tip);
+	tip.clear(sloot.tip);
 
-	loot_count--;
-
-	loot[index].stack = loot[loot_count].stack;
-	loot[index].pos.x = loot[loot_count].pos.x;
-	loot[index].pos.y = loot[loot_count].pos.y;
-	loot[index].frame = loot[loot_count].frame;
-	loot[index].gold = loot[loot_count].gold;
-	loot[index].tip = loot[loot_count].tip;
+	loot[--loot_count] = sloot;
 	
 	// the last tooltip buffer pointer has been copied up one index.
 	// NULL the last pointer without deallocating. Otherwise the same
@@ -485,9 +478,10 @@ ItemStack LootManager::checkPickup(const Point &mouse, const Point &cam, const P
 
 Renderable LootManager::getRender(int index) {
 	
+	const LootDef &sloot = loot[index];
 	Renderable r;
-	r.map_pos.x = loot[index].pos.x;
-	r.map_pos.y = loot[index].pos.y;
+	r.map_pos = sloot.pos;
+
 	
 	// Right now the animation settings (number of frames, speed, frame size)
 	// are hard coded.  At least move these to consts in the header.
@@ -532,8 +526,6 @@ LootManager::~LootManager() {
 
 	// clear loot tooltips to free buffer memory
 	for (int i=0; i<loot_count; i++) {
-		tip->clear(loot[i].tip);
+		tip.clear(loot[i].tip);
 	}
-	
-	delete tip;
 }
