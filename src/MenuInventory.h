@@ -90,6 +90,11 @@ public:
 	
 	void applyEquipment(ItemStack *equipped);
 
+	const Item *getMainHand() const		{return inventory[EQUIPMENT][SLOT_MAIN].item;}
+	const Item *getArmor() const		{return inventory[EQUIPMENT][SLOT_BODY].item;}
+	const Item *getOffHand() const		{return inventory[EQUIPMENT][SLOT_OFF].item;}
+	const Item *getArtifact() const		{return inventory[EQUIPMENT][SLOT_ARTIFACT].item;}
+
 	bool visible;
 
 	SDL_Rect window_area;
