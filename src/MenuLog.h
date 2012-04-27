@@ -48,16 +48,16 @@ private:
 	SDL_Surface *background;
 	WidgetButton *closeButton;
   WidgetTabControl *tabControl;
-	
+
 	void loadGraphics();
-	
+
 	std::string log_msg[LOG_TYPE_COUNT][MAX_LOG_MESSAGES];
 	SDL_Surface *msg_buffer[LOG_TYPE_COUNT][MAX_LOG_MESSAGES];
 	int log_count[LOG_TYPE_COUNT];
 	std::string tab_labels[LOG_TYPE_COUNT];
 	SDL_Rect tab_rect[LOG_TYPE_COUNT];
 	int paragraph_spacing;
-	
+
 public:
 	MenuLog();
 	~MenuLog();
@@ -69,7 +69,7 @@ public:
 	void remove(int msg_index, int log_type);
 	void clear(int log_type);
 	void clear();
-	
+
 	bool visible;
 	SDL_Rect menu_area;
 

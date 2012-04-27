@@ -40,7 +40,7 @@ private:
 	SDL_Surface *bar_mp;
 	WidgetLabel *hphover;
 	WidgetLabel *mphover;
-	
+
 public:
 	MenuHPMP();
 	~MenuHPMP();

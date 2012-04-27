@@ -45,12 +45,12 @@ protected:
 	std::string text; // the text that has been typed into the box
 	unsigned int max_characters;
 	int cursor_frame;
-	
+
 	Point font_pos;
 
 public:
 	WidgetInput();
-	
+
 	void logic();
 	void render();
 	bool checkClick();

@@ -48,7 +48,7 @@ protected:
 	int anim_frames;
 	int anim_duration;
 	int current_frame;
-	
+
 public:
 	NPC(MapIso &_map, ItemManager &_items);
 	~NPC();
@@ -60,12 +60,12 @@ public:
 	int chooseDialogNode();
 	bool processDialog(int dialog_node, int& event_cursor);
 	virtual Renderable getRender();
-	
+
 	// general info
 	std::string name;
 	Point pos; // map position
 	int level; // used in determining item quality
-	
+
 	// public animation info
 	Point render_size;
 	Point render_offset;
@@ -79,15 +79,15 @@ public:
 	ItemStorage stock;
 	int stock_count;
 	int random_stock;
-	
+
 	// vocals
 	Mix_Chunk *vox_intro[NPC_MAX_VOX];
 	int vox_intro_count;
-	
+
 	// story and dialog options
 	Event_Component dialog[NPC_MAX_DIALOG][NPC_MAX_EVENTS];
 	int dialog_count;
-	
+
 };
 
 #endif

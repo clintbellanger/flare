@@ -35,7 +35,7 @@ WidgetLabel::WidgetLabel()
 	, justify(JUSTIFY_LEFT)
 	, valign(VALIGN_TOP)
 	, text_buffer(NULL) {
-	
+
 	bounds.x = bounds.y = 0;
 	bounds.w = bounds.h = 0;
 }
@@ -82,7 +82,7 @@ void WidgetLabel::set(int _x, int _y, int _justify, int _valign, const string& _
 		y_origin = _y;
 		changed = true;
 	}
-	
+
 	if (changed) {
 		applyOffsets();
 		refresh();
@@ -115,7 +115,7 @@ void WidgetLabel::applyOffsets() {
 	else if (valign == VALIGN_CENTER) {
 		bounds.y = y_origin - bounds.h/2;
 	}
-	
+
 }
 
 /**

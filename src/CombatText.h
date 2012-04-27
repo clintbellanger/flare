@@ -21,7 +21,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  *
  * The CombatText class displays floating damage numbers and miss messages
  * above the targets.
- * 
+ *
  */
 
 #ifndef COMBAT_TEXT_H
@@ -66,7 +66,7 @@ private:
     Point cam;
     Items combat_text;
     CombatText(){};
-    
+
     static CombatText* m_pInstance;
 
 };

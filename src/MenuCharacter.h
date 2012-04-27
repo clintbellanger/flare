@@ -81,7 +81,7 @@ struct CharStat : private Uncopyable {
 	WidgetLabel *value;
 	SDL_Rect hover;
 	TooltipData tip;
-	
+
 	void setHover(int x, int y, int w, int h) {
 		hover.x=x;
 		hover.y=y;
@@ -93,7 +93,7 @@ struct CharStat : private Uncopyable {
 struct CharProf {
 	SDL_Rect hover;
 	TooltipData tip;
-	
+
 	void setHover(int x, int y, int w, int h) {
 		hover.x=x;
 		hover.y=y;
@@ -109,7 +109,7 @@ private:
 	SDL_Surface *background;
 	SDL_Surface *proficiency;
 	SDL_Surface *upgrade;
-	WidgetButton *closeButton;	
+	WidgetButton *closeButton;
 	WidgetLabel *labelCharacter;
 	CharStat cstat[CSTAT_COUNT];
 	CharProf cprof[CPROF_COUNT];
@@ -117,7 +117,7 @@ private:
 	void displayProficiencies(int value, int y);
 	void loadGraphics();
 	int bonusColor(int stat);
-	
+
 public:
 	MenuCharacter(StatBlock &stats);
 	~MenuCharacter();

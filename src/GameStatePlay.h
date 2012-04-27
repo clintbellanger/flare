@@ -71,7 +71,7 @@ private:
 	int game_slot;
 
 	static GameStatePlay *instance;
-	
+
 	bool restrictPowerUse();
 	void checkEnemyFocus();
 	void checkLoot();
@@ -84,7 +84,7 @@ private:
 	void checkNotifications();
 	void checkNPCInteraction();
 
-	
+
 public:
 	GameStatePlay(int game_slot);
 	~GameStatePlay();

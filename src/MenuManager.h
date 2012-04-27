@@ -55,25 +55,25 @@ const int DRAG_SRC_VENDOR = 4;
 
 class MenuManager : private Uncopyable {
 private:
-	
+
 	SDL_Surface *icons;
 
 	PowerManager &powers;
 	StatBlock &stats;
 	CampaignManager &camp;
 	ItemManager &items;
-	
+
 	TooltipData tip_buf;
 
 	bool key_lock;
-	
+
 	bool dragging;
 	ItemStack drag_stack;
 	int drag_power;
 	int drag_src;
 
 	bool done;
-	
+
 public:
 	MenuCharacter chr;
 	MenuInventory inv;
@@ -89,14 +89,14 @@ public:
 	MenuVendor vendor;
 	MenuTalker talker;
 	MenuExit exit;
-	
+
 	bool pause;
 	bool menus_open;
-	ItemStack drop_stack;	
+	ItemStack drop_stack;
 
 	Mix_Chunk *sfx_open;
 	Mix_Chunk *sfx_close;
-	
+
 public:
 	MenuManager(PowerManager &powers, StatBlock &stats, CampaignManager &camp, ItemManager &items);
 	~MenuManager();

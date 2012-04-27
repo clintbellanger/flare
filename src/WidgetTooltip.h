@@ -40,7 +40,7 @@ struct TooltipData /* : private Uncopyable */ { // WARNING: copied in ItemManage
 	int colors[TOOLTIP_MAX_LINES];
 	int num_lines;
 	SDL_Surface *tip_buffer;
-	
+
 	TooltipData() {
 		num_lines = 0;
 		tip_buffer = NULL;
@@ -49,11 +49,11 @@ struct TooltipData /* : private Uncopyable */ { // WARNING: copied in ItemManage
 			colors[i] = FONT_WHITE;
 		}
 	}
-	
+
 	~TooltipData() {
 		SDL_FreeSurface(tip_buffer);
 	}
-	
+
 };
 
 class WidgetTooltip {

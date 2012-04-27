@@ -34,7 +34,7 @@ void MenuItemStorage::render() {
 	for (int i=0; i<slot_number; i++) {
 		if (storage[i].item > 0) {
 			items->renderIcon(storage[i], area.x + (i % nb_cols * icon_size), area.y + (i / nb_cols * icon_size), icon_size);
-		}	
+		}
 	}
 }
 
@@ -60,7 +60,7 @@ TooltipData MenuItemStorage::checkTooltip(const Point &mouse, const StatBlock &s
 ItemStack MenuItemStorage::click(const InputState &input) {
 	ItemStack item;
 	drag_prev_slot = slotOver(input.mouse);
-	if( drag_prev_slot > -1) { 
+	if( drag_prev_slot > -1) {
 		item = storage[drag_prev_slot];
 		if( input.pressing[SHIFT]) {
 			item.quantity = 1;

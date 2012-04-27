@@ -136,7 +136,7 @@ struct Event_Component {
 	int x;
 	int y;
 	int z;
-	
+
 	Event_Component() : type(), s(), x(0), y(0), z(0) {}
 };
 

@@ -72,7 +72,7 @@ FPoint calcVector(Point pos, int direction, int dist) {
 
 	float dist_straight = (float)dist;
 	float dist_diag = ((float)dist) * (float)(0.7071); //  1/sqrt(2)
-	
+
 	switch (direction) {
 		case 0:
 			p.x -= dist_diag;
@@ -121,12 +121,12 @@ void zsort(Renderable r[], int rnum) {
 	int zpos[1024];
 	int ztemp;
 	Renderable rtemp;
-	
+
 	// calculate zpos
 	for (int i=0; i<rnum; i++) {
 		zpos[i] = r[i].map_pos.x/2 + r[i].map_pos.y/2;
 	}
-	
+
 	// sort
 	// TODO: better sort algo
 	for (int i=0; i<rnum; i++) {
@@ -141,7 +141,7 @@ void zsort(Renderable r[], int rnum) {
 			}
 		}
 	}
-	
+
 }
 
 /**
@@ -155,8 +155,8 @@ void sort_by_tile(Renderable r[], int rnum) {
 	int zpos[1024];
 	int ztemp;
 	Renderable rtemp;
-	
-	// prep	
+
+	// prep
 	for (int i=0; i<rnum; i++) {
 		// calculate zpos
 		zpos[i] = r[i].map_pos.x/2 + r[i].map_pos.y/2;
@@ -164,11 +164,11 @@ void sort_by_tile(Renderable r[], int rnum) {
 		r[i].tile.x = r[i].map_pos.x >> TILE_SHIFT;
 		r[i].tile.y = r[i].map_pos.y >> TILE_SHIFT;
 	}
-	
+
 	// sort
 	for (int i=0; i<rnum; i++) {
 		for (int j=0; j<rnum-1; j++) {
-		
+
 			// check tile y
 			if (r[j].tile.y > r[j+1].tile.y) {
 				ztemp = zpos[j];
@@ -179,7 +179,7 @@ void sort_by_tile(Renderable r[], int rnum) {
 				r[j+1] = rtemp;
 			}
 			else if (r[j].tile.y == r[j+1].tile.y) {
-			
+
 				// check tile x
 				if (r[j].tile.x > r[j+1].tile.x) {
 					ztemp = zpos[j];
@@ -190,7 +190,7 @@ void sort_by_tile(Renderable r[], int rnum) {
 					r[j+1] = rtemp;
 				}
 				else if (r[j].tile.x == r[j+1].tile.x) {
-				
+
 					// check zpos
 					if (zpos[j] > zpos[j+1]) {
 						ztemp = zpos[j];
@@ -198,14 +198,14 @@ void sort_by_tile(Renderable r[], int rnum) {
 						zpos[j+1] = ztemp;
 						rtemp = r[j];
 						r[j] = r[j+1];
-						r[j+1] = rtemp;			
+						r[j+1] = rtemp;
 					}
 				}
 			}
-			
-		}	
+
+		}
 	}
-	
+
 }
 
 /**
@@ -270,15 +270,15 @@ SDL_Surface* createSurface(int width, int height) {
     amask = 0xff000000;
 #endif
 
-	if (HWSURFACE) 
+	if (HWSURFACE)
 		surface = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA, width, height, 32, rmask, gmask, bmask, amask);
 	else
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, width, height, 32, rmask, gmask, bmask, amask);	
-	
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, width, height, 32, rmask, gmask, bmask, amask);
+
     if(surface == NULL) {
         fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
     }
-	
+
 	// optimize
 	SDL_Surface *cleanup = surface;
 	surface = SDL_DisplayFormatAlpha(surface);

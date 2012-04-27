@@ -17,7 +17,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 /**
  * GameStateLoad
- * 
+ *
  * Display the current save-game slots
  * Allow the player to continue a previous game
  * Allow the player to start a new game
@@ -74,34 +74,34 @@ private:
 	SDL_Surface *portrait;
 	SDL_Surface *sprites[GAME_SLOT_MAX];
 	StatBlock stats[GAME_SLOT_MAX];
-	int equipped[GAME_SLOT_MAX][3];	
+	int equipped[GAME_SLOT_MAX][3];
 	SDL_Rect slot_pos[GAME_SLOT_MAX];
 	std::string current_map[GAME_SLOT_MAX];
 
 	bool loading_requested;
 	bool loading;
 	bool loaded;
-	
+
 	Point name_pos;
 	Point level_pos;
 	Point map_pos;
 	Point sprites_pos;
-	
+
 	// animation info
 	int current_frame;
 	int frame_ticker;
-	
+
 public:
 	GameStateLoad();
 	~GameStateLoad();
 
 	void logic();
 	void logicLoading();
-	void render();	
+	void render();
 	void readGameSlot(int slot);
 	void readGameSlots();
 	void loadPreview(int slot);
-	
+
 	bool load_game;
 	int selected_slot;
 };

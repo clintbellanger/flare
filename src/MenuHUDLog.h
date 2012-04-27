@@ -45,8 +45,8 @@ private:
 
 	int log_count;
 	int paragraph_spacing;
-	
-	
+
+
 public:
 
 	MenuHUDLog();
@@ -56,7 +56,7 @@ public:
 	void add(const std::string& s);
 	void remove(int msg_index);
 	void clear();
-	
+
 	Point list_area;
 };
 

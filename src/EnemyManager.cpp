@@ -47,7 +47,7 @@ void EnemyManager::loadGraphics(const string& type_id) {
 
 	// TODO: throw an error if a map tries to use too many monsters
 	if (gfx_count == max_gfx) return;
-	
+
 	// first check to make sure the sprite isn't already loaded
 	for (int i=0; i<gfx_count; i++) {
 		if (gfx_prefixes[i] == type_id) {
@@ -60,13 +60,13 @@ void EnemyManager::loadGraphics(const string& type_id) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
 		SDL_Quit();
 	}
-	SDL_SetColorKey( sprites[gfx_count], SDL_SRCCOLORKEY, SDL_MapRGB(sprites[gfx_count]->format, 255, 0, 255) ); 
+	SDL_SetColorKey( sprites[gfx_count], SDL_SRCCOLORKEY, SDL_MapRGB(sprites[gfx_count]->format, 255, 0, 255) );
 
 	// optimize
 	SDL_Surface *cleanup = sprites[gfx_count];
 	sprites[gfx_count] = SDL_DisplayFormatAlpha(sprites[gfx_count]);
-	SDL_FreeSurface(cleanup);	
-	
+	SDL_FreeSurface(cleanup);
+
 	gfx_prefixes[gfx_count] = type_id;
 	gfx_count++;
 
@@ -97,7 +97,7 @@ void EnemyManager::loadSounds(const string& type_id) {
         sound_die[sfx_count] = NULL;
         sound_critdie[sfx_count] = NULL;
     }
-    
+
     sfx_prefixes[sfx_count] = type_id;
     sfx_count++;
 }
@@ -107,15 +107,15 @@ void EnemyManager::loadSounds(const string& type_id) {
  * The map will have loaded Entity blocks into an array; retrieve the Enemies and init them
  */
 void EnemyManager::handleNewMap () {
-	
+
 	Map_Enemy me;
-	
+
 	// delete existing enemies
 	for (int i=0; i<enemy_count; i++) {
 		delete(enemies[i]);
 	}
 	enemy_count = 0;
-	
+
 	// free shared resources
 	for (int j=0; j<gfx_count; j++) {
 		SDL_FreeSurface(sprites[j]);
@@ -134,17 +134,17 @@ void EnemyManager::handleNewMap () {
     }
 	gfx_count = 0;
 	sfx_count = 0;
-	
+
 	// load new enemies
 	while (!map.enemies.empty()) {
 		me = map.enemies.front();
 		map.enemies.pop();
-		
+
 		enemies[enemy_count] = new Enemy(powers, map);
-		
+
 		// factory
 		enemies[enemy_count]->eb = new BehaviorStandard(enemies[enemy_count]);
-		
+
 		enemies[enemy_count]->stats.waypoints = me.waypoints;
 		enemies[enemy_count]->stats.pos.x = me.pos.x;
 		enemies[enemy_count]->stats.pos.y = me.pos.y;
@@ -168,9 +168,9 @@ void EnemyManager::handleNewMap () {
  * Check PowerManager for any new queued enemies
  */
 void EnemyManager::handleSpawn() {
-	
+
 	EnemySpawn espawn;
-	
+
 	while (!powers.enemies.empty()) {
 		espawn = powers.enemies.front();
 		powers.enemies.pop();
@@ -192,10 +192,10 @@ void EnemyManager::handleSpawn() {
 		}
 		loadGraphics(enemies[enemy_count]->stats.gfx_prefix);
 		loadSounds(enemies[enemy_count]->stats.sfx_prefix);
-		
+
 		// special animation state for spawning enemies
 		enemies[enemy_count]->stats.cur_state = ENEMY_SPAWN;
-		enemy_count++;	
+		enemy_count++;
 	}
 }
 
@@ -256,12 +256,12 @@ Enemy* EnemyManager::enemyFocus(const Point &mouse, const Point &cam, bool alive
 			continue;
 		}
 		p = map_to_screen(enemies[i]->stats.pos.x, enemies[i]->stats.pos.y, cam.x, cam.y);
-	
+
 		r.w = enemies[i]->getRender().src.w;
 		r.h = enemies[i]->getRender().src.h;
 		r.x = p.x - enemies[i]->getRender().offset.x;
 		r.y = p.y - enemies[i]->getRender().offset.y;
-		
+
 		if (isWithin(r, mouse)) {
 			Enemy *enemy = enemies[i];
 			return enemy;
@@ -286,7 +286,7 @@ void EnemyManager::checkEnemiesforXP(StatBlock &stats) {
  * getRender()
  * Map objects need to be drawn in Z order, so we allow a parent object (GameEngine)
  * to collect all mobile sprites each frame.
- * 
+ *
  * This wrapper function is necessary because EnemyManager holds shared sprites for identical-looking enemies
  */
 Renderable EnemyManager::getRender(int enemyIndex) {
@@ -295,14 +295,14 @@ Renderable EnemyManager::getRender(int enemyIndex) {
 		if (gfx_prefixes[i] == enemies[enemyIndex]->stats.gfx_prefix)
 			r.sprite = sprites[i];
 	}
-	return r;	
+	return r;
 }
 
 EnemyManager::~EnemyManager() {
 	for (int i=0; i<enemy_count; i++) {
 		delete enemies[i];
 	}
-	
+
 	for (int i=0; i<gfx_count; i++) {
 		SDL_FreeSurface(sprites[i]);
 	}

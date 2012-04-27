@@ -35,7 +35,7 @@ using namespace std;
 
 MenuExperience::MenuExperience() {
 	loadGraphics();
-	
+
 	// move these settings to a config file
 	hud_position.x = 0;
 	hud_position.y = 32;
@@ -58,7 +58,7 @@ void MenuExperience::loadGraphics() {
 
 	background = IMG_Load(mods->locate("images/menus/menu_xp.png").c_str());
 	bar = IMG_Load(mods->locate("images/menus/bar_xp.png").c_str());
-	
+
 	if(!background || !bar) {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
 		Mix_CloseAudio();
@@ -68,8 +68,8 @@ void MenuExperience::loadGraphics() {
 	// optimize
 	SDL_Surface *cleanup = background;
 	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
+	SDL_FreeSurface(cleanup);
+
 	cleanup = bar;
 	bar = SDL_DisplayFormatAlpha(bar);
 	SDL_FreeSurface(cleanup);
@@ -87,7 +87,7 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 
 	// don't display anything if max level
 	if (stats.level < 1 || stats.level == MAX_CHARACTER_LEVEL) return;
-	
+
 	// lay down the background image first
 	src.x = 0;
 	src.y = 0;
@@ -96,7 +96,7 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 	dest.x = hud_position.x + background_offset.x;
 	dest.y = hud_position.y + background_offset.y;
 	SDL_BlitSurface(background, &src, screen, &dest);
-	
+
 	// calculate the length of the xp bar
 	// when at a new level, 0% progress
 	src.x = 0;
@@ -108,13 +108,13 @@ void MenuExperience::render(const StatBlock &stats, const Point &mouse) {
 	src.h = bar_size.y;
 	dest.x = hud_position.x + bar_offset.x;
 	dest.y = hud_position.y + bar_offset.y;
-		
+
 	// draw xp bar
 	SDL_BlitSurface(bar, &src, screen, &dest);
 
 
 	string text_label;
-	
+
 	// if mouseover, draw text
 	if (isWithin(hud_position, mouse)) {
 

@@ -46,9 +46,9 @@ private:
 
 	SDL_Surface *buttons;
 	Mix_Chunk *click;
-	
+
 	WidgetLabel wlabel;
-	
+
 public:
 	WidgetButton(const std::string& _fileName);
 	~WidgetButton();

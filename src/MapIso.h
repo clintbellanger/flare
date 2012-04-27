@@ -94,13 +94,13 @@ private:
 	// map events can play random soundfx
 	Mix_Chunk *sfx;
 	std::string sfx_filename;
-	
+
 	void executeEvent(int eid);
 	void removeEvent(int eid);
 	void playSFX(std::string filename);
 	void push_enemy_group(Map_Group g);
 	bool isActive(int eventid);
-		
+
 	// map events
 	Map_Event events[256];
 	int event_count;
@@ -137,7 +137,7 @@ public:
 	std::string music_filename;
 	bool new_music;
 	TileSet tset;
-	
+
 	unsigned short background[256][256];
 	unsigned short object[256][256];
 	unsigned short collision[256][256];
@@ -149,12 +149,12 @@ public:
 	Map_Group new_group;
 	bool enemy_awaiting_queue;
 	bool group_awaiting_queue;
-	
+
 	// npc load handling
 	std::queue<Map_NPC> npcs;
 	Map_NPC new_npc;
 	bool npc_awaiting_queue;
-	
+
 	// event-created loot or items
 	std::queue<Event_Component> loot;
 
@@ -164,10 +164,10 @@ public:
 	std::string teleport_mapname;
 	std::string respawn_map;
 	Point respawn_point;
-	
+
 	// message handling
 	std::string log_msg;
-	
+
 	// shaky cam
 	int shaky_cam_ticks;
 };

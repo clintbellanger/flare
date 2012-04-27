@@ -64,7 +64,7 @@ private:
 
 	SDL_Surface *background;
 	WidgetButton *closeButton;
-	
+
 public:
 	MenuInventory(ItemManager &items, StatBlock &stats, PowerManager &powers);
 	~MenuInventory();
@@ -87,7 +87,7 @@ public:
 	int getItemCountCarried(const Item &item) const;
 	bool isItemEquipped(const Item &item) const;
 	bool requirementsMet(const Item &item) const;
-	
+
 	void applyEquipment(ItemStack *equipped);
 
 	const Item *getMainHand() const		{return inventory[EQUIPMENT][SLOT_MAIN].item;}
@@ -109,7 +109,7 @@ public:
 	// so we only update the hero sprites when non-artifact changes occur.
 	bool changed_equipment;
 	bool changed_artifact;
-	
+
 	std::string log_msg;
 
 };

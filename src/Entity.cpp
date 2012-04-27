@@ -45,7 +45,7 @@ bool Entity::move() {
 
 	int speed_diagonal = stats.dspeed;
 	int speed_straight = stats.speed;
-	
+
 	if (stats.slow_duration > 0) {
 		speed_diagonal /= 2;
 		speed_straight /= 2;
@@ -54,7 +54,7 @@ bool Entity::move() {
 		speed_diagonal *= 2;
 		speed_straight *= 2;
 	}
-	
+
 	switch (stats.direction) {
 		case 0:
 			return map.collider.move(stats.pos.x, stats.pos.y, -1, 1, speed_diagonal);
@@ -89,7 +89,7 @@ int Entity::face(int mapx, int mapy) {
 		if (dy > 0) return 3;
 		else return 7;
 	}
-	
+
 	float slope = ((float)dy)/((float)dx);
 	if (0.5 <= slope && slope <= 2.0) {
 		if (dy > 0) return 4;
@@ -109,7 +109,7 @@ int Entity::face(int mapx, int mapy) {
 	}
 	return stats.direction;
 }
-  
+
 /**
  * Load the entity's animation from animation definition file
  */
@@ -141,32 +141,32 @@ void Entity::loadAnimations(const string& filename) {
 	do {
 		// create the animation if finished parsing a section
 		if (parser.new_section) {
-			animations.push_back(new Animation(name, render_size, render_offset,  position, frames, duration, type, active_frame));
+			animations.push_back(new Animation(name, render_size, render_offset, position, frames, duration, type, active_frame));
 		}
 
 		if (parser.key == "position") {
 			if (isInt(parser.val)) {
 				position = atoi(parser.val.c_str());
 			}
-		}	
+		}
 		else if (parser.key == "frames") {
 			if (isInt(parser.val)) {
 				frames = atoi(parser.val.c_str());
 			}
-		}	
+		}
 		else if (parser.key == "duration") {
 			if (isInt(parser.val)) {
 				int ms_per_frame = atoi(parser.val.c_str());
-				
+
 				duration = (int)round((float)ms_per_frame / (1000.0 / (float)FRAMES_PER_SEC));
 
 				// adjust duration according to the entity's animation speed
 				duration = (duration * 100) / stats.animationSpeed;
-				
+
 				// TEMP: if an animation is too fast, display one frame per fps anyway
 				if (duration < 1) duration=1;
 			}
-		}	
+		}
 		else if (parser.key == "type") {
 			type = parser.val;
 		}
@@ -174,17 +174,17 @@ void Entity::loadAnimations(const string& filename) {
 			if (isInt(parser.val)) {
 				render_size.x = atoi(parser.val.c_str());
 			}
-		}	
+		}
 		else if (parser.key == "render_size_y") {
 			if (isInt(parser.val)) {
 				render_size.y = atoi(parser.val.c_str());
 			}
-		}	
+		}
 		else if (parser.key == "render_offset_x") {
 			if (isInt(parser.val)) {
 				render_offset.x = atoi(parser.val.c_str());
 			}
-		}	
+		}
 		else if (parser.key == "render_offset_y") {
 			if (isInt(parser.val)) {
 				render_offset.y = atoi(parser.val.c_str());
@@ -240,7 +240,7 @@ Entity::~Entity () {
 	for (vector<Animation*>::const_iterator it = animations.begin(); it != animations.end(); it++)
 	{
 		delete *it;
-	} 
+	}
 	animations.clear();
 }
 

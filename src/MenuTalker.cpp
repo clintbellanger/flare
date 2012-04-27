@@ -39,7 +39,7 @@ MenuTalker::MenuTalker(CampaignManager &_camp)
 	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
 	closeButton->pos.x = VIEW_W_HALF + 288;
 	closeButton->pos.y = VIEW_H_HALF + 112;
-	
+
 	visible = false;
 
 	// step through NPC dialog nodes
@@ -58,12 +58,12 @@ void MenuTalker::loadGraphics() {
 		fprintf(stderr, "Couldn't load image dialog_box.png: %s\n", IMG_GetError());
 		SDL_Quit();
 	}
-	
+
 	// optimize
 	SDL_Surface *cleanup = background;
 	background = SDL_DisplayFormatAlpha(background);
-	SDL_FreeSurface(cleanup);	
-	
+	SDL_FreeSurface(cleanup);
+
 }
 
 void MenuTalker::chooseDialogNode() {
@@ -79,10 +79,10 @@ void MenuTalker::chooseDialogNode() {
 void MenuTalker::logic() {
 
 	if (!visible || npc==NULL) return;
-	
+
 	advanceButton->enabled = false;
 	closeButton->enabled = false;
-	
+
 	// determine active button
 	if (event_cursor < NPC_MAX_EVENTS-1) {
 		if (npc->dialog[dialog_node][event_cursor+1].type != "") {
@@ -95,7 +95,7 @@ void MenuTalker::logic() {
 	else {
 		closeButton->enabled = true;
 	}
-	
+
 	bool more;
 
 	if (advanceButton->checkClick() || closeButton->checkClick()) {
@@ -130,7 +130,7 @@ void MenuTalker::logic() {
 void MenuTalker::createBuffer() {
 
 	string line;
-	
+
 	// speaker name
 	string etype = npc->dialog[dialog_node][event_cursor].type;
 	if (etype == "him" || etype == "her") {
@@ -139,24 +139,24 @@ void MenuTalker::createBuffer() {
 	else if (etype == "you") {
 		line = hero_name + ": ";
 	}
-	
+
 	line = line + npc->dialog[dialog_node][event_cursor].s;
-	
+
 	// render text to back buffer
 	SDL_FreeSurface(msg_buffer);
 	msg_buffer = createSurface(576,96);
 	font->render(line, 16, 16, JUSTIFY_LEFT, msg_buffer, 544, FONT_WHITE);
-	
+
 }
 
 void MenuTalker::render() {
 	if (!visible) return;
 	SDL_Rect src;
 	SDL_Rect dest;
-	
+
 	int offset_x = (VIEW_W - 640)/2;
 	int offset_y = (VIEW_H - 416)/2;
-	
+
 	// dialog box
 	src.x = 0;
 	src.y = 0;
@@ -165,7 +165,7 @@ void MenuTalker::render() {
 	src.w = dest.w = 640;
 	src.h = dest.h = 96;
 	SDL_BlitSurface(background, &src, screen, &dest);
-	
+
 	// show active portrait
 	string etype = npc->dialog[dialog_node][event_cursor].type;
 	if (etype == "him" || etype == "her") {
@@ -174,7 +174,7 @@ void MenuTalker::render() {
 			src.h = dest.h = 320;
 			dest.x = offset_x + 32;
 			dest.y = offset_y;
-			SDL_BlitSurface(npc->portrait, &src, screen, &dest);	
+			SDL_BlitSurface(npc->portrait, &src, screen, &dest);
 		}
 	}
 	else if (etype == "you") {
@@ -183,10 +183,10 @@ void MenuTalker::render() {
 			src.h = dest.h = 320;
 			dest.x = offset_x + 288;
 			dest.y = offset_y;
-			SDL_BlitSurface(portrait, &src, screen, &dest);			
+			SDL_BlitSurface(portrait, &src, screen, &dest);
 		}
 	}
-	
+
 	// text overlay
 	dest.x = offset_x+32;
 	dest.y = offset_y+320;
@@ -208,11 +208,11 @@ void MenuTalker::render() {
 
 void MenuTalker::setHero(const string& name, const string& portrait_filename) {
 	hero_name = name;
-	
+
 	portrait = IMG_Load(mods->locate("images/portraits/" + portrait_filename + ".png").c_str());
 	if(!portrait) {
 		fprintf(stderr, "Couldn't load portrait: %s\n", IMG_GetError());
-		
+
 		// keep playing, just don't show this portrait
 	}
 	else {

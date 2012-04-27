@@ -20,7 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  *
  * TileSet storage and file loading
  */
- 
+
 #ifndef TILE_SET_H
 #define TILE_SET_H
 
@@ -54,7 +54,7 @@ public:
 	TileSet();
 	~TileSet();
 	void load(const std::string& filename);
-	
+
 	Tile_Def tiles[TILE_SET_MAX_TILES];
 	SDL_Surface *sprites;
 };

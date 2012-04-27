@@ -36,12 +36,12 @@ class QuestLog {
 private:
 	CampaignManager &camp;
 	MenuLog &log;
-	
+
 	Event_Component quests[MAX_QUESTS][MAX_QUEST_EVENTS];
 	int quest_count;
     bool newQuestNotification;
     bool resetQuestNotification;
-	
+
 public:
 	QuestLog(CampaignManager &_camp, MenuLog &_log);
 	void loadAll();

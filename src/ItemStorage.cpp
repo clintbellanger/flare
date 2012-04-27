@@ -202,7 +202,7 @@ bool ItemStorage::full() const {
 	}
 	return true;
 }
- 
+
 /**
  * Get the number of the specified item carried (not equipped)
  */

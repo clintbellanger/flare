@@ -45,7 +45,7 @@ const int FONT_BLACK = 5;
 
 /**
  * class FontEngine
- * 
+ *
  * Handles rendering a bitmap font.
  */
 
@@ -66,7 +66,7 @@ public:
 
 	int getLineHeight() { return line_height; }
 	int getFontHeight() { return font_height; }
-	
+
 	int calc_width(std::string text);
 	Point calc_size(std::string text_with_newlines, int width);
 

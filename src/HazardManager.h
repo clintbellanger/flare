@@ -20,7 +20,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  *
  * Holds the collection of hazards (active attacks, spells, etc) and handles group operations
  */
- 
+
 #ifndef HAZARD_MANAGER_H
 #define HAZARD_MANAGER_H
 
@@ -46,7 +46,7 @@ public:
 	void checkNewHazards();
 	void handleNewMap(MapCollision *_collider);
 	Renderable getRender(int haz_id);
-	
+
 	int hazard_count;
 	Hazard *h[256];
 };

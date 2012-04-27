@@ -55,7 +55,7 @@ GameStatePlay::GameStatePlay(int _game_slot)
 
 	, npc_id(-1)
 	, game_slot(_game_slot) {
-	
+
 	// GameEngine scope variables
 
 	// construct gameplay objects
@@ -85,7 +85,7 @@ void GameStatePlay::resetGame() {
 	menu.log.clear();
 	quests.createQuestList();
 	menu.hudlog.clear();
-	
+
 	// Finalize new character settings
 	menu.talker.setHero(pc.stats.name, pc.stats.portrait);
 	pc.loadSounds();
@@ -100,15 +100,15 @@ void GameStatePlay::checkEnemyFocus() {
 	// determine enemies mouseover
 	// only check alive enemies for targeting
 	enemy = enemies.enemyFocus(inp->mouse, map.cam, true);
-	
+
 	if (enemy != NULL) {
-	
+
 		// if there's a living creature in focus, display its stats
 		menu.enemy.enemy = enemy;
 		menu.enemy.timeout = MENU_ENEMY_TIMEOUT;
 	}
 	else {
-		
+
 		// if there's no living creature in focus, look for a dead one instead
 		Enemy *temp_enemy = enemies.enemyFocus(inp->mouse, map.cam, false);
 		if (temp_enemy != NULL) {
@@ -139,7 +139,7 @@ void GameStatePlay::checkLoot() {
 	if (inp->pressing[MAIN1] && !inp->lock[MAIN1] && pc.stats.alive) {
 		int gold;
 		ItemStack pickup(loot.checkPickup(inp->mouse, map.cam, pc.stats.pos, gold, menu.inv.full()));
-		
+
 		if (pickup.item) {
 			inp->lock[MAIN1] = true;
 			menu.inv.add(pickup);
@@ -160,7 +160,7 @@ void GameStatePlay::checkLoot() {
 
 void GameStatePlay::checkTeleport() {
 	if (map.teleportation || pc.stats.teleportation) {
-		
+
 		if (map.teleportation) {
 			map.cam.x = pc.stats.pos.x = map.teleport_destination.x;
 			map.cam.y = pc.stats.pos.y = map.teleport_destination.y;
@@ -169,7 +169,7 @@ void GameStatePlay::checkTeleport() {
 			map.cam.x = pc.stats.pos.x = pc.stats.teleport_destination.x;
 			map.cam.y = pc.stats.pos.y = pc.stats.teleport_destination.y;
 		}
-		
+
 		// process intermap teleport
 		if (map.teleportation && map.teleport_mapname != "") {
 			map.load(map.teleport_mapname);
@@ -182,19 +182,19 @@ void GameStatePlay::checkTeleport() {
 			menu.vendor.npc = NULL;
 			menu.vendor.visible = false;
 			npc_id = -1;
-			
+
 			// store this as the new respawn point
 			map.respawn_map = map.teleport_mapname;
 			map.respawn_point.x = pc.stats.pos.x;
 			map.respawn_point.y = pc.stats.pos.y;
-			
+
 			// auto-save
 			saveGame();
 		}
 
 		map.teleportation = false;
 		pc.stats.teleportation = false; // teleport spell
-		
+
 	}
 }
 
@@ -216,7 +216,7 @@ void GameStatePlay::checkCancel() {
 		saveGame();
 		Mix_HaltMusic();
 		setExitRequested(true);
-	}	
+	}
 }
 
 /**
@@ -237,14 +237,14 @@ void GameStatePlay::checkLog() {
 		menu.hudlog.add(pc.log_msg);
 		pc.log_msg = "";
 	}
-	
+
 	// Campaign events can create messages (e.g. quest rewards)
 	if (camp.log_msg != "") {
 		menu.log.add(camp.log_msg, LOG_TYPE_MESSAGES);
 		menu.hudlog.add(camp.log_msg);
 		camp.log_msg = "";
 	}
-	
+
 	// MenuInventory has hints to help the player use items properly
 	if (menu.inv.log_msg != "") {
 		menu.hudlog.add(menu.inv.log_msg);
@@ -259,22 +259,22 @@ void GameStatePlay::checkEquipmentChange() {
 		pc.loadGraphics(equip[0].item ? equip[0].item->gfx : empty_str,
 						equip[1].item ? equip[1].item->gfx : empty_str,
 						equip[2].item ? equip[2].item->gfx : empty_str);
-						 
+
 		pc.loadStepFX(equip[1].item ? equip[1].item->stepfx : empty_str);
-		
+
 		menu.inv.changed_equipment = false;
 	}
 }
 
 void GameStatePlay::checkLootDrop() {
-	
+
 	// if the player has dropped an item from the inventory
 	if (menu.drop_stack.item) {
 		loot.addLoot(menu.drop_stack, pc.stats.pos);
 		menu.drop_stack.item = NULL;
 		menu.drop_stack.quantity = 0;
 	}
-	
+
 	// if the player has dropped a quest rward because inventory full
 	if (camp.drop_stack.item) {
 		loot.addLoot(camp.drop_stack, pc.stats.pos);
@@ -327,29 +327,29 @@ void GameStatePlay::checkNPCInteraction() {
 	int npc_click = -1;
 	int max_interact_distance = UNITS_PER_TILE * 4;
 	int interact_distance = max_interact_distance+1;
-	
+
 	// check for clicking on an NPC
 	if (inp->pressing[MAIN1] && !inp->lock[MAIN1]) {
 		npc_click = npcs.checkNPCClick(inp->mouse, map.cam);
 		if (npc_click != -1) npc_id = npc_click;
 	}
-	
+
 	// check distance to this npc
 	if (npc_id != -1) {
 		interact_distance = (int)pc.stats.pos.dist(npcs.npcs[npc_id]->pos);
 	}
-	
+
 	// if close enough to the NPC, open the appropriate interaction screen
 	if (npc_click != -1 && interact_distance < max_interact_distance && pc.stats.alive) {
 		inp->lock[MAIN1] = true;
-		
+
 		if (npcs.npcs[npc_id]->vendor) {
 			menu.vendor.npc = npcs.npcs[npc_id];
 			menu.vendor.setInventory();
 			menu.closeAll(false);
 			menu.vendor.visible = true;
 			menu.inv.visible = true;
-			
+
 			if (!npcs.npcs[npc_id]->playSound(NPC_VOX_INTRO))
 				Mix_PlayChannel(-1, menu.sfx_open, 0);
 		}
@@ -358,11 +358,11 @@ void GameStatePlay::checkNPCInteraction() {
 			menu.talker.chooseDialogNode();
 			menu.closeAll(false);
 			menu.talker.visible = true;
-			
+
 			npcs.npcs[npc_id]->playSound(NPC_VOX_INTRO);
-        }		
+        }
 	}
-	
+
 	// check for walking away from an NPC
 	if (npc_id != -1) {
 		if (interact_distance > max_interact_distance || !pc.stats.alive) {
@@ -386,29 +386,29 @@ void GameStatePlay::logic() {
 
 	// check menus first (top layer gets mouse click priority)
 	menu.logic();
-	
+
 	if (!menu.pause) {
-	
-		// these actions only occur when the game isn't paused		
+
+		// these actions only occur when the game isn't paused
 		checkLoot();
 		checkEnemyFocus();
 		checkNPCInteraction();
 		map.checkEventClick();
-		
+
 		pc.logic(menu.act.checkAction(inp->mouse), restrictPowerUse());
-		
+
 		// transfer hero data to enemies, for AI use
 		enemies.hero_pos = pc.stats.pos;
 		enemies.hero_alive = pc.stats.alive;
-		
+
 		enemies.logic();
 		hazards.logic();
 		loot.logic();
 		enemies.checkEnemiesforXP(pc.stats);
 		npcs.logic();
-		
+
 	}
-	
+
 	// these actions occur whether the game is paused or not.
     checkNotifications();
 	checkLootDrop();
@@ -420,7 +420,7 @@ void GameStatePlay::logic() {
 
 	map.logic();
 	quests.logic();
-	
+
 }
 
 
@@ -433,7 +433,7 @@ void GameStatePlay::render() {
 	renderableCount = 0;
 
 	r[renderableCount++] = pc.getRender(); // Avatar
-	
+
 	for (int i=0; i<enemies.enemy_count; i++) { // Enemies
 		r[renderableCount++] = enemies.getRender(i);
 		if (enemies.enemies[i]->stats.shield_hp > 0) {
@@ -445,17 +445,17 @@ void GameStatePlay::render() {
 	for (int i=0; i<npcs.npc_count; i++) { // NPCs
 		r[renderableCount++] = npcs.npcs[i]->getRender();
 	}
-	
+
 	for (int i=0; i<loot.loot_count; i++) { // Loot
 		r[renderableCount++] = loot.getRender(i);
 	}
-	
+
 	for (int i=0; i<hazards.hazard_count; i++) { // Hazards
 		if (hazards.h[i]->rendered && hazards.h[i]->delay_frames == 0) {
 			r[renderableCount++] = hazards.getRender(i);
 		}
 	}
-	
+
 	// get additional hero overlays
 	if (pc.stats.shield_hp > 0) {
 		r[renderableCount] = pc.stats.getEffectRender(STAT_EFFECT_SHIELD);
@@ -465,20 +465,20 @@ void GameStatePlay::render() {
 		r[renderableCount] = pc.stats.getEffectRender(STAT_EFFECT_VENGEANCE);
 		r[renderableCount++].sprite = powers.runes;
 	}
-		
+
 	sort_by_tile(r,renderableCount);
 
 	// render the static map layers plus the renderables
 	map.render(r, renderableCount);
-	
+
 	// display the name of the map in the upper-right hand corner
 	label_mapname.set(VIEW_W-2, 2, JUSTIFY_RIGHT, VALIGN_TOP, map.title, FONT_WHITE);
 	label_mapname.render();
-	
+
 	// mouseover tooltips
 	loot.renderTooltips(map.cam);
 	npcs.renderTooltips(map.cam, inp->mouse);
-	
+
 	menu.hudlog.render();
 	menu.mini.renderIso(&map.collider, pc.stats.pos, map.w, map.h);
 	menu.render();

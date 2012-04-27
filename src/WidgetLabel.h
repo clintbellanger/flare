@@ -53,7 +53,7 @@ private:
 public:
 	WidgetLabel();
 	~WidgetLabel();
-	
+
 	void render();
 
 	void set(int x, int y, int justify, int valign, const string& text, int color);

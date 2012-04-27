@@ -32,12 +32,12 @@ private:
 	void checkPower();
 	void checkMove();
 	void updateState();
-	
+
 	// targeting vars
 	bool los;
 	int dist;
 	Point pursue_pos;
-	
+
 public:
 	BehaviorStandard(Enemy *_e);
 	void logic();

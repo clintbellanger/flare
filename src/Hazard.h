@@ -45,7 +45,7 @@ private:
 	MapCollision *collider;
 	// Keeps track of entities already hit
 	std::vector<Entity*> entitiesCollided;
-	  
+
 public:
 	Hazard();
 
@@ -54,9 +54,9 @@ public:
 	SDL_Surface *sprites;
 	void setCollision(MapCollision *_collider);
 	void logic();
-	
+
 	bool hasEntity(Entity*);
-	
+
 	void addEntity(Entity*);
 
 	int dmg_min;
@@ -64,7 +64,7 @@ public:
 	int crit_chance;
 	int accuracy;
 	int source_type;
-	
+
 	FPoint pos;
 	FPoint speed;
 	int base_speed;
@@ -85,16 +85,16 @@ public:
 	bool floor; // rendererable goes on the floor layer
 	int delay_frames;
 	bool complete_animation; // if not multitarget but hitting a creature, still complete the animation?
-	
+
 	// these work in conjunction
 	// if the attack is not multitarget, set active=false
 	// only process active hazards for collision
 	bool multitarget;
 	bool active;
-	
+
 	bool remove_now;
 	bool hit_wall;
-	
+
 	// after effects of various powers
 	int stun_duration;
 	int immobilize_duration;
@@ -104,17 +104,17 @@ public:
 	int forced_move_duration;
 	int hp_steal;
 	int mp_steal;
-	
+
 	bool trait_armor_penetration;
 	int trait_crits_impaired;
 	int trait_elemental;
-	
+
 	// pre/post power effects
 	int post_power;
 	int wall_power;
-	
+
 	bool equipment_modified;
-	
+
 };
 
 #endif

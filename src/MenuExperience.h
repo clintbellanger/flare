@@ -41,14 +41,14 @@ public:
 	~MenuExperience();
 	void loadGraphics();
 	void render(const StatBlock &stats, const Point &mouse);
-	
+
 	// variables to make the experience bar display configurable
-	
+
 	// hud_position is the bounding box for the entire menu.
 	// This is useful for checking mouseover.
 	// Also, changing hud_position (x,y) should move the frame contents properly
 	SDL_Rect hud_position;
-	
+
 	Point background_offset; // offset from hud_position (x,y)
 	Point background_size;
 	Point bar_offset; // offset from hud_position (x,y)

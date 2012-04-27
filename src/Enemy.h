@@ -56,23 +56,23 @@ public:
 	void doRewards();
 
 	virtual Renderable getRender();
-	
-	Hazard *haz;	
+
+	Hazard *haz;
 	EnemyBehavior *eb;
 	PowerManager &powers;
 
 	// sound effects flags
 	bool sfx_phys;
 	bool sfx_ment;
-	
+
 	bool sfx_hit;
 	bool sfx_die;
 	bool sfx_critdie;
-	
+
 	// other flags
 	bool loot_drop;
 	bool reward_xp;
-	
+
 	// common behavior vars
 	//int dist;
 	//int prev_direction;

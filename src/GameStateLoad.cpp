@@ -41,7 +41,7 @@ GameStateLoad::GameStateLoad()
 	loading_requested = false;
 	loading = false;
 	loaded = false;
-	
+
 	label_loading = new WidgetLabel();
 	label_slots = new WidgetLabel();
 
@@ -66,26 +66,26 @@ GameStateLoad::GameStateLoad()
 	button_alternate.pos.x = (VIEW_W - 640)/2 + 480 - button_alternate.pos.w/2;
 	button_alternate.pos.y = (VIEW_H - 480)/2 + 415;
 	button_alternate.refresh();
-	
+
 	load_game = false;
-	
+
 	for (int i=0; i<GAME_SLOT_MAX; i++) {
 		sprites[i] = NULL;
 		current_map[i] = "";
 	}
-	
+
 	loadGraphics();
 	readGameSlots();
-	
+
 	for (int i=0; i<GAME_SLOT_MAX; i++) {
 		slot_pos[i].x = (VIEW_W - 640)/2;
 		slot_pos[i].y = (VIEW_H - 480)/2 + (i * 96) + 32;
 		slot_pos[i].w = 288;
 		slot_pos[i].h = 96;
 	}
-	
+
 	selected_slot = -1;
-	
+
 	// label positions within each slot
 	name_pos.x = 16;
 	name_pos.y = 16;
@@ -98,7 +98,7 @@ GameStateLoad::GameStateLoad()
 
 	sprites_pos.x = 178;
 	sprites_pos.y = -24;
-	
+
 	// temp
 	current_frame = 0;
 	frame_ticker = 0;
@@ -108,7 +108,7 @@ void GameStateLoad::loadGraphics() {
 	background = NULL;
 	selection = NULL;
 	portrait_border = NULL;
-	
+
 	background = IMG_Load(mods->locate("images/menus/game_slots.png").c_str());
 	selection = IMG_Load(mods->locate("images/menus/game_slot_select.png").c_str());
 	portrait_border = IMG_Load(mods->locate("images/menus/portrait_border.png").c_str());
@@ -116,34 +116,34 @@ void GameStateLoad::loadGraphics() {
 		fprintf(stderr, "Couldn't load image: %s\n", IMG_GetError());
 		SDL_Quit();
 	}
-	
-	SDL_SetColorKey( selection, SDL_SRCCOLORKEY, SDL_MapRGB(selection->format, 255, 0, 255) ); 
-	SDL_SetColorKey( portrait_border, SDL_SRCCOLORKEY, SDL_MapRGB(portrait_border->format, 255, 0, 255) ); 
-	
+
+	SDL_SetColorKey( selection, SDL_SRCCOLORKEY, SDL_MapRGB(selection->format, 255, 0, 255) );
+	SDL_SetColorKey( portrait_border, SDL_SRCCOLORKEY, SDL_MapRGB(portrait_border->format, 255, 0, 255) );
+
 	// optimize
 	SDL_Surface *cleanup = background;
 	background = SDL_DisplayFormatAlpha(background);
 	SDL_FreeSurface(cleanup);
-	
+
 	cleanup = selection;
 	selection = SDL_DisplayFormatAlpha(selection);
 	SDL_FreeSurface(cleanup);
-	
+
 	cleanup = portrait_border;
 	portrait_border = SDL_DisplayFormatAlpha(portrait_border);
 	SDL_FreeSurface(cleanup);
-	
+
 }
 
 void GameStateLoad::loadPortrait(int slot) {
 	SDL_FreeSurface(portrait);
 	portrait = NULL;
-	
+
 	if (stats[slot].name == "") return;
-	
+
 	portrait = IMG_Load(mods->locate("images/portraits/" + stats[slot].portrait + ".png").c_str());
 	if (!portrait) return;
-	
+
 	// optimize
 	SDL_Surface *cleanup = portrait;
 	portrait = SDL_DisplayFormatAlpha(portrait);
@@ -160,12 +160,12 @@ string GameStateLoad::getMapName(const string& map_filename) {
 	FileParser infile;
 	if (!infile.open(mods->locate("maps/" + map_filename))) return "";
 	string map_name = "";
-	
+
 	while (map_name == "" && infile.next()) {
 		if (infile.key == "title")
 			map_name = msg->get(infile.val);
 	}
-	
+
 	infile.close();
 	return map_name;
 }
@@ -174,7 +174,7 @@ void GameStateLoad::readGameSlot(int slot) {
 
 	stringstream filename;
 	FileParser infile;
-	
+
 	// abort if not a valid slot number
 	if (slot < 0 || slot >= GAME_SLOT_MAX) return;
 
@@ -182,9 +182,9 @@ void GameStateLoad::readGameSlot(int slot) {
 	filename << "save" << (slot+1) << ".txt";
 
 	if (!infile.open(PATH_USER + filename.str())) return;
-	
+
 	while (infile.next()) {
-	
+
 		// load (key=value) pairs
 		if (infile.key == "name")
 			stats[slot].name = infile.val;
@@ -211,7 +211,7 @@ void GameStateLoad::readGameSlot(int slot) {
 		}
 	}
 	infile.close();
-	
+
 	stats[slot].recalc();
 	loadPreview(slot);
 
@@ -229,41 +229,41 @@ void GameStateLoad::loadPreview(int slot) {
 	SDL_Surface *gfx_head = NULL;
 	SDL_Rect src;
 	SDL_Rect dest;
-	
+
 	if (equipped[slot][0] != 0)	img_main = items.getItem(equipped[slot][0]).gfx;
 	if (equipped[slot][1] != 0)	img_body = items.getItem(equipped[slot][1]).gfx;
 	else img_body = "clothes";
 	if (equipped[slot][2] != 0)	img_off = items.getItem(equipped[slot][2]).gfx;
-	
-	if (sprites[slot]) SDL_FreeSurface(sprites[slot]);	
+
+	if (sprites[slot]) SDL_FreeSurface(sprites[slot]);
 	sprites[slot] = IMG_Load(mods->locate("images/avatar/preview_background.png").c_str());
-	SDL_SetColorKey(sprites[slot], SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255)); 
+	SDL_SetColorKey(sprites[slot], SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255));
 
 	// optimize
 	SDL_Surface *cleanup = sprites[slot];
 	sprites[slot] = SDL_DisplayFormatAlpha(sprites[slot]);
 	SDL_FreeSurface(cleanup);
-	
+
 	// composite the hero graphic
 	if (img_body != "") gfx_body = IMG_Load(mods->locate("images/avatar/" + stats[slot].base + "/" + img_body + ".png").c_str());
 	if (img_main != "") gfx_main = IMG_Load(mods->locate("images/avatar/" + stats[slot].base + "/" + img_main + ".png").c_str());
 	if (img_off != "") gfx_off = IMG_Load(mods->locate("images/avatar/" + stats[slot].base + "/" + img_off + ".png").c_str());
 	gfx_head = IMG_Load(mods->locate("images/avatar/" + stats[slot].base + "/" + stats[slot].head + ".png").c_str());
-	
-	if (gfx_body) SDL_SetColorKey(gfx_body, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255)); 
-	if (gfx_main) SDL_SetColorKey(gfx_main, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255)); 
-	if (gfx_off) SDL_SetColorKey(gfx_off, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255)); 
-	if (gfx_head) SDL_SetColorKey(gfx_head, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255)); 
-	
+
+	if (gfx_body) SDL_SetColorKey(gfx_body, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255));
+	if (gfx_main) SDL_SetColorKey(gfx_main, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255));
+	if (gfx_off) SDL_SetColorKey(gfx_off, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255));
+	if (gfx_head) SDL_SetColorKey(gfx_head, SDL_SRCCOLORKEY, SDL_MapRGB(screen->format, 255, 0, 255));
+
 	src.w = dest.w = 512; // for this menu we only need the stance animation
 	src.h = dest.h = 128; // for this menu we only need one direction
 	src.x = dest.x = 0;
 	src.y = 768; // for this meny we only need facing down
 	dest.y = 0;
-	
+
 	if (gfx_body) SDL_BlitSurface(gfx_body, &src, sprites[slot], &dest);
 	if (gfx_main) SDL_BlitSurface(gfx_main, &src, sprites[slot], &dest);
-	if (gfx_head) SDL_BlitSurface(gfx_head, &src, sprites[slot], &dest);	
+	if (gfx_head) SDL_BlitSurface(gfx_head, &src, sprites[slot], &dest);
 	if (gfx_off) SDL_BlitSurface(gfx_off, &src, sprites[slot], &dest);
 
 	if (gfx_body) SDL_FreeSurface(gfx_body);
@@ -286,7 +286,7 @@ void GameStateLoad::logic() {
 	if (button_exit.checkClick()) {
 		setRequestedGameState(new GameStateTitle());
 	}
-	
+
 	if(loading_requested) {
 		loading = true;
 		loading_requested = false;
@@ -321,13 +321,13 @@ void GameStateLoad::logic() {
 			readGameSlot(selected_slot);
 			loadPreview(selected_slot);
 			loadPortrait(selected_slot);
-			
+
 			button_alternate.enabled = false;
 			button_alternate.refresh();
-			
+
 			button_action.label = msg->get("New Game");
 			button_action.refresh();
-			
+
 			confirm->visible = false;
 			confirm->confirmClicked = false;
 		}
@@ -339,7 +339,7 @@ void GameStateLoad::logic() {
 				selected_slot = i;
 				inp->lock[MAIN1] = true;
 				loadPortrait(selected_slot);
-				
+
 				button_action.enabled = true;
 				if (stats[selected_slot].name == "") {
 					button_action.label = msg->get("New Game");
@@ -351,7 +351,7 @@ void GameStateLoad::logic() {
 				}
 				button_action.refresh();
 				button_alternate.refresh();
-				
+
 			}
 		}
 	}
@@ -384,15 +384,15 @@ void GameStateLoad::render() {
 	dest.x = slot_pos[0].x;
 	dest.y = slot_pos[0].y;
 	SDL_BlitSurface(background, &src, screen, &dest);
-	
+
 	// display selection
 	if (selected_slot >= 0) {
 		src.w = 288;
 		src.h = 96;
 		src.x = src.y = 0;
-		SDL_BlitSurface(selection, &src, screen, &slot_pos[selected_slot]);	
+		SDL_BlitSurface(selection, &src, screen, &slot_pos[selected_slot]);
 	}
-	
+
 
 	// portrait
 	if (selected_slot >= 0 && portrait != NULL) {
@@ -404,7 +404,7 @@ void GameStateLoad::render() {
 		SDL_BlitSurface(portrait, &src, screen, &dest);
 		SDL_BlitSurface(portrait_border, &src, screen, &dest);
 	}
-	
+
 	Point label;
 	stringstream ss;
 
@@ -421,7 +421,7 @@ void GameStateLoad::render() {
 		label_loading->set(label.x, label.y, JUSTIFY_CENTER, VALIGN_TOP, label_loading->get(), FONT_WHITE);
 		label_loading->render();
 	}
-	
+
 	// display text
 	for (int slot=0; slot<GAME_SLOT_MAX; slot++) {
 		if (stats[slot].name != "") {

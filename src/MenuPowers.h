@@ -43,7 +43,7 @@ private:
 	SDL_Surface *powers_step;
 	SDL_Surface *powers_unlock;
 	WidgetButton *closeButton;
-	
+
 	WidgetLabel label_powers;
 	WidgetLabel label_p1;
 	WidgetLabel label_p2;
@@ -57,7 +57,7 @@ private:
 	WidgetLabel stat_pd;
 	WidgetLabel stat_mo;
 	WidgetLabel stat_md;
-	
+
 	void loadGraphics();
 	void displayBuild(int value, int x);
 
@@ -69,7 +69,7 @@ public:
 	TooltipData checkTooltip(const Point &mouse);
 	bool requirementsMet(int power_index);
 	int click(const Point &mouse);
-	
+
 	bool visible;
 	SDL_Rect slots[20]; // the location of power slots
 

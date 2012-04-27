@@ -38,7 +38,7 @@ QuestLog::QuestLog(CampaignManager &_camp, MenuLog &_log)
 	, quest_count(0)
 	, newQuestNotification(false)
 	, resetQuestNotification(false) {
-	
+
 	loadAll();
 }
 
@@ -70,14 +70,14 @@ void QuestLog::loadAll() {
 void QuestLog::loadIndex(const std::string& filename) {
 	ifstream infile;
 	string line;
-	
+
 	infile.open(filename.c_str(), ios::in);
-	
+
 	if (infile.is_open()) {
 		while (!infile.eof()) {
 			line = getLine(infile);
 			if (line.length() > 0) {
-			
+
 				// each line contains a quest file name
 				load(line);
 			}
@@ -96,7 +96,7 @@ void QuestLog::load(const std::string& filename) {
 
 	FileParser infile;
 	int event_count = 0;
-	
+
 	if (infile.open(mods->locate("quests/" + filename))) {
 		while (infile.next()) {
 			if (infile.new_section) {
@@ -105,11 +105,11 @@ void QuestLog::load(const std::string& filename) {
 					event_count = 0;
 				}
 			}
-			
+
 			quests[quest_count-1][event_count].type = infile.key;
 			quests[quest_count-1][event_count].s = msg->get(infile.val);
 			event_count++;
-			
+
 		}
 		infile.close();
 	}
@@ -131,7 +131,7 @@ void QuestLog::createQuestList() {
 
 	for (int i=0; i<quest_count; i++) {
 		for (int j=0; j<MAX_QUEST_EVENTS; j++) {
-			
+
 			// check requirements
 			// break (skip to next dialog node) if any requirement fails
 			// if we reach an event that is not a requirement, succeed
@@ -152,5 +152,5 @@ void QuestLog::createQuestList() {
 			}
 		}
 	}
-	
+
 }

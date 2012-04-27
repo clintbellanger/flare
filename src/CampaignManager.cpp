@@ -147,7 +147,7 @@ void CampaignManager::rewardItem(const ItemStack &istack) {
 			addMsg(msg->get("You receive %s.", istack.item->name));
 		if (istack.quantity > 1)
 			addMsg(msg->get("You receive %s x%d.", istack.quantity, istack.item->name));
-		
+
 		items->playSound(*istack.item);
 	}
 }
