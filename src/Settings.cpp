@@ -64,19 +64,9 @@ string PATH_DATA = "";
 string FILE_SETTINGS    = "settings.txt";
 string FILE_KEYBINDINGS = "keybindings.txt";
 
-// Tile Settings
-int UNITS_PER_TILE = 64;
-int TILE_SHIFT = 6; // for fast bitshift divides
-int UNITS_PER_PIXEL_X = 2;
-int UNITS_PER_PIXEL_Y = 4;
-int TILE_W = 64;
-int TILE_H = 32;
-int TILE_W_HALF = TILE_W/2;
-int TILE_H_HALF = TILE_H/2;
 
 // Video Settings
 bool FULLSCREEN;
-int FRAMES_PER_SEC = 30;
 int VIEW_W;
 int VIEW_H;
 int VIEW_W_HALF = VIEW_W/2;

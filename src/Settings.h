@@ -24,6 +24,8 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include <string>
 
+/* TODO: This should be encapsulated in a class rather than being global variables & functions. */
+
 // Path info
 extern std::string PATH_CONF; // user-configurable settings files
 extern std::string PATH_USER; // important per-user data (saves)
@@ -37,7 +39,7 @@ extern std::string FILE_KEYBINDINGS;  // Name of the key bindings file (e.g. "ke
 extern int MUSIC_VOLUME;
 extern int SOUND_VOLUME;
 extern bool FULLSCREEN;
-extern int FRAMES_PER_SEC;
+static const int FRAMES_PER_SEC = 30;
 extern int VIEW_W;
 extern int VIEW_H;
 extern int VIEW_W_HALF;
@@ -57,14 +59,14 @@ extern bool COMBAT_TEXT;
 extern bool MENUS_PAUSE;
 
 // Tile Settings
-extern int UNITS_PER_TILE;
-extern int TILE_SHIFT;
-extern int UNITS_PER_PIXEL_X;
-extern int UNITS_PER_PIXEL_Y;
-extern int TILE_W;
-extern int TILE_H;
-extern int TILE_W_HALF;
-extern int TILE_H_HALF;
+static const int UNITS_PER_TILE = 64;
+static const int TILE_SHIFT = 6; // for fast bitshift divides
+static const int UNITS_PER_PIXEL_X = 2;
+static const int UNITS_PER_PIXEL_Y = 4;
+static const int TILE_W = 64;
+static const int TILE_H = 32;
+static const int TILE_W_HALF = TILE_W/2;
+static const int TILE_H_HALF = TILE_H/2;
 
 // Language Settings
 extern std::string LANGUAGE;
