@@ -38,7 +38,6 @@ WidgetLabel::WidgetLabel()
 	
 	bounds.x = bounds.y = 0;
 	bounds.w = bounds.h = 0;
-	
 }
 
 /**
@@ -135,14 +134,14 @@ void WidgetLabel::set(const string& _text) {
  * This function refreshes the buffer.
  */
 void WidgetLabel::refresh() {
-
 	SDL_FreeSurface(text_buffer);
 	text_buffer = createSurface(bounds.w, bounds.h);
 	font->renderShadowed(text, 0, 0, JUSTIFY_LEFT, text_buffer, color);
-	
 }
 
 
 WidgetLabel::~WidgetLabel() {
-	SDL_FreeSurface(text_buffer);
+	if (text_buffer) {
+		SDL_FreeSurface(text_buffer);
+	}
 }

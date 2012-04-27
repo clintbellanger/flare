@@ -47,18 +47,19 @@ private:
 	int y_origin;
 	int justify;
 	int valign;
+	SDL_Rect bounds;
 	SDL_Surface *text_buffer;
 
 public:
 	WidgetLabel();
 	~WidgetLabel();
-	void render();
 	
+	void render();
 
 	void set(int x, int y, int justify, int valign, const string& text, int color);
 	void set(const string& text);
 	const string &get() const 			{return text;}
-	SDL_Rect bounds;	
+	const SDL_Rect &getBounds() const	{return bounds;}
 };
 
 #endif
