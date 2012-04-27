@@ -27,6 +27,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "CombatText.h"
 #include <iostream>
 #include <sstream>
+#include <cassert>
+
+Combat_Text_Item::Combat_Text_Item(int _lifespan, const Point &_pos, const string &_text, int _displaytype)
+	: label()
+	, lifespan(_lifespan)
+	, pos(_pos)
+	, text(_text)
+	, displaytype(_displaytype) {
+}
 
 // Global static pointer used to ensure a single instance of the class.
 CombatText* CombatText::m_pInstance = NULL;  
@@ -45,55 +54,51 @@ void CombatText::setCam(const Point &location) {
 void CombatText::addMessage(const string &message, const Point &location, int displaytype) {
     if (COMBAT_TEXT) {
 	    Point p = map_to_screen(location.x - UNITS_PER_TILE, location.y - UNITS_PER_TILE, cam.x, cam.y);
-        Combat_Text_Item *c = new Combat_Text_Item();
-        WidgetLabel *label = new WidgetLabel();
-        c->pos = p;
-        c->label = label;
-        c->text = message;
-        c->lifespan = 30;
-        c->displaytype = displaytype;
-        combat_text.push_back(*c);
-        delete c;
+        combat_text.push_back(new Combat_Text_Item(30, p, message, displaytype));
     }
 }
 
 void CombatText::addMessage(int num, const Point &location, int displaytype) {
     if (COMBAT_TEXT) {
 	    Point p = map_to_screen(location.x - UNITS_PER_TILE, location.y - UNITS_PER_TILE, cam.x, cam.y);
-        Combat_Text_Item *c = new Combat_Text_Item();
-        WidgetLabel *label = new WidgetLabel();
-        c->pos = p;
-        c->label = label;
-        
         std::stringstream ss;
         ss << num;
-        c->text = ss.str();
-        
-        c->lifespan = 30;
-        c->displaytype = displaytype;
-        combat_text.push_back(*c);
-        delete c;
+        combat_text.push_back(new Combat_Text_Item(30, p, ss.str(), displaytype));
     }
 }
 
 void CombatText::render() {
-	for(std::vector<Combat_Text_Item>::iterator it = combat_text.begin(); it != combat_text.end(); it++) {
-        it->lifespan--;
-        it->pos.y--;
-        int type = it->displaytype;
-        if (type == DISPLAY_DAMAGE)
-            it->label->set(it->pos.x, it->pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, it->text, FONT_WHITE);
-        else if (type == DISPLAY_CRIT || type == DISPLAY_MISS)
-            it->label->set(it->pos.x, it->pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, it->text, FONT_RED);
-        else if (type == DISPLAY_HEAL)
-            it->label->set(it->pos.x, it->pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, it->text, FONT_GREEN);
-        else if (type == DISPLAY_SHIELD)
-            it->label->set(it->pos.x, it->pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, it->text, FONT_BLUE);
-        if (it->lifespan > 0)
-		    it->label->render();
+	for(Items::iterator it = combat_text.begin(); it != combat_text.end(); ++it) {
+		Combat_Text_Item &cti = **it;
+
+		/* FIXME: display lifetime & scrolling up screen dependent upon frame rate */
+		--cti.lifespan;
+		--cti.pos.y;
+        if (cti.lifespan > 0) {
+			switch (cti.displaytype) {
+			case DISPLAY_DAMAGE:
+				cti.label.set(cti.pos.x, cti.pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, cti.text, FONT_WHITE);
+				break;
+			case DISPLAY_CRIT:
+			case DISPLAY_MISS:
+				cti.label.set(cti.pos.x, cti.pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, cti.text, FONT_RED);
+				break;
+			case DISPLAY_HEAL:
+				cti.label.set(cti.pos.x, cti.pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, cti.text, FONT_GREEN);
+				break;
+			case DISPLAY_SHIELD:
+				cti.label.set(cti.pos.x, cti.pos.y, JUSTIFY_CENTER, VALIGN_BOTTOM, cti.text, FONT_BLUE);
+				break;
+			default:
+ 				assert(0);
+			}
+		    cti.label.render();
+		} else {
+		}
     }
     // delete expired messages
-    while (combat_text.size() > 0 && combat_text.begin()->lifespan <= 0) {
+    while (combat_text.size() > 0 && combat_text.front()->lifespan <= 0) {
+		delete combat_text.front();
         combat_text.erase(combat_text.begin());
     }
 }

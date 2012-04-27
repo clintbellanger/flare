@@ -29,7 +29,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #include "WidgetLabel.h"
 #include "Settings.h"
-#include <vector>
+#include <list>
 #include <string>
 
 #define DISPLAY_DAMAGE 0
@@ -38,16 +38,24 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #define DISPLAY_MISS 3
 #define DISPLAY_SHIELD 4
 
-struct Combat_Text_Item {
-	WidgetLabel *label;
+class Combat_Text_Item : private Uncopyable {
+	friend class CombatText;
+
+private:
+	WidgetLabel label;
     int lifespan;
     Point pos;
-    std::string text;
+    string text;
     int displaytype;
+
+public:
+	Combat_Text_Item(int lifespan, const Point &pos, const string &text, int displaytype);
 };
 
 class CombatText : private Uncopyable {
 public:
+	typedef std::list<Combat_Text_Item *> Items;
+
     static CombatText* Instance();
     void render();
     void addMessage(const string &message, const Point &location, int displaytype);
@@ -56,7 +64,7 @@ public:
 
 private:
     Point cam;
-    std::vector<Combat_Text_Item> combat_text;
+    Items combat_text;
     CombatText(){};
     
     static CombatText* m_pInstance;
