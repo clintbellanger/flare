@@ -144,6 +144,20 @@ void MenuCharacter::loadGraphics() {
 
 }
 
+void MenuCharacter::initProfTips() {
+	stringstream ss;
+
+	for (unsigned i = 0; i < CPROF_COUNT; ++i) {
+		unsigned requiredStat = (i % 4 + 2);
+
+		cprof[i].tip.clear();
+		cprof[i].tip.addLine(msg->get(charProfDesc[i]) + msg->get(" Proficiency"));
+		ss.str("");
+		ss << msg->get("Requires ") << msg->get(statNames[i / 4]) << " " << requiredStat;
+		cprof[i].tip.addLine(ss.str(), stats.getStat(i / 4) < requiredStat ? FONT_RED : FONT_WHITE);
+	}
+}
+
 /**
  * Rebuild all stat values and tooltip info
  */
@@ -242,162 +256,67 @@ void MenuCharacter::refreshStats() {
 
 
 	// update tool tips
-	cstat[CSTAT_NAME].tip.num_lines = 0;
-	cstat[CSTAT_NAME].tip.lines[cstat[CSTAT_NAME].tip.num_lines++] = msg->get(stats.character_class);
+	cstat[CSTAT_NAME].tip.clear();
+	cstat[CSTAT_NAME].tip.addLine(msg->get(stats.character_class));
 
-	cstat[CSTAT_LEVEL].tip.num_lines = 0;
-	cstat[CSTAT_LEVEL].tip.lines[cstat[CSTAT_LEVEL].tip.num_lines++] = msg->get("XP: %d", stats.xp);
+	cstat[CSTAT_LEVEL].tip.clear();
+	cstat[CSTAT_LEVEL].tip.addLine(msg->get("XP: %d", stats.xp));
 	if (stats.level < MAX_CHARACTER_LEVEL) {
-		cstat[CSTAT_LEVEL].tip.lines[cstat[CSTAT_LEVEL].tip.num_lines++] = msg->get("Next: %d", stats.xp_table[stats.level]);
+		cstat[CSTAT_LEVEL].tip.addLine(msg->get("Next: %d", stats.xp_table[stats.level]));
 	}
 
-	cstat[CSTAT_PHYSICAL].tip.num_lines = 0;
-	cstat[CSTAT_PHYSICAL].tip.lines[cstat[CSTAT_PHYSICAL].tip.num_lines++] = msg->get("Physical (P) increases melee weapon proficiency and total HP.");
-	cstat[CSTAT_PHYSICAL].tip.lines[cstat[CSTAT_PHYSICAL].tip.num_lines++] = msg->get("base (%d), bonus (%d)", stats.physical_character, stats.physical_additional);
+	cstat[CSTAT_PHYSICAL].tip.clear();
+	cstat[CSTAT_PHYSICAL].tip.addLine(msg->get("Physical (P) increases melee weapon proficiency and total HP."));
+	cstat[CSTAT_PHYSICAL].tip.addLine(msg->get("base (%d), bonus (%d)", stats.physical_character, stats.physical_additional));
 
-	cstat[CSTAT_MENTAL].tip.num_lines = 0;
-	cstat[CSTAT_MENTAL].tip.lines[cstat[CSTAT_MENTAL].tip.num_lines++] = msg->get("Mental (M) increases mental weapon proficiency and total MP.");
-	cstat[CSTAT_MENTAL].tip.lines[cstat[CSTAT_MENTAL].tip.num_lines++] = msg->get("base (%d), bonus (%d)", stats.mental_character, stats.mental_additional);
+	cstat[CSTAT_MENTAL].tip.clear();
+	cstat[CSTAT_MENTAL].tip.addLine(msg->get("Mental (M) increases mental weapon proficiency and total MP."));
+	cstat[CSTAT_MENTAL].tip.addLine(msg->get("base (%d), bonus (%d)", stats.mental_character, stats.mental_additional));
 
-	cstat[CSTAT_OFFENSE].tip.num_lines = 0;
-	cstat[CSTAT_OFFENSE].tip.lines[cstat[CSTAT_OFFENSE].tip.num_lines++] = msg->get("Offense (O) increases ranged weapon proficiency and accuracy.");
-	cstat[CSTAT_OFFENSE].tip.lines[cstat[CSTAT_OFFENSE].tip.num_lines++] = msg->get("base (%d), bonus (%d)", stats.offense_character, stats.offense_additional);
+	cstat[CSTAT_OFFENSE].tip.clear();
+	cstat[CSTAT_OFFENSE].tip.addLine(msg->get("Offense (O) increases ranged weapon proficiency and accuracy."));
+	cstat[CSTAT_OFFENSE].tip.addLine(msg->get("base (%d), bonus (%d)", stats.offense_character, stats.offense_additional));
 
-	cstat[CSTAT_DEFENSE].tip.num_lines = 0;
-	cstat[CSTAT_DEFENSE].tip.lines[cstat[CSTAT_DEFENSE].tip.num_lines++] = msg->get("Defense (D) increases armor proficiency and avoidance.");
-	cstat[CSTAT_DEFENSE].tip.lines[cstat[CSTAT_DEFENSE].tip.num_lines++] = msg->get("base (%d), bonus (%d)", stats.defense_character, stats.defense_additional);
+	cstat[CSTAT_DEFENSE].tip.clear();
+	cstat[CSTAT_DEFENSE].tip.addLine(msg->get("Defense (D) increases armor proficiency and avoidance."));
+	cstat[CSTAT_DEFENSE].tip.addLine(msg->get("base (%d), bonus (%d)", stats.defense_character, stats.defense_additional));
 
-	cstat[CSTAT_HP].tip.num_lines = 0;
-	cstat[CSTAT_HP].tip.lines[cstat[CSTAT_HP].tip.num_lines++] = msg->get("Each point of Physical grants +8 HP");
-	cstat[CSTAT_HP].tip.lines[cstat[CSTAT_HP].tip.num_lines++] = msg->get("Each level grants +2 HP");
+	cstat[CSTAT_HP].tip.clear();
+	cstat[CSTAT_HP].tip.addLine(msg->get("Each point of Physical grants +8 HP"));
+	cstat[CSTAT_HP].tip.addLine(msg->get("Each level grants +2 HP"));
 
-	cstat[CSTAT_HPREGEN].tip.num_lines = 0;
-	cstat[CSTAT_HPREGEN].tip.lines[cstat[CSTAT_HPREGEN].tip.num_lines++] = msg->get("Ticks of HP regen per minute");
-	cstat[CSTAT_HPREGEN].tip.lines[cstat[CSTAT_HPREGEN].tip.num_lines++] = msg->get("Each point of Physical grants +4 HP regen");
-	cstat[CSTAT_HPREGEN].tip.lines[cstat[CSTAT_HPREGEN].tip.num_lines++] = msg->get("Each level grants +1 HP regen");
+	cstat[CSTAT_HPREGEN].tip.clear();
+	cstat[CSTAT_HPREGEN].tip.addLine(msg->get("Ticks of HP regen per minute"));
+	cstat[CSTAT_HPREGEN].tip.addLine(msg->get("Each point of Physical grants +4 HP regen"));
+	cstat[CSTAT_HPREGEN].tip.addLine(msg->get("Each level grants +1 HP regen"));
 
-	cstat[CSTAT_MP].tip.num_lines = 0;
-	cstat[CSTAT_MP].tip.lines[cstat[CSTAT_MP].tip.num_lines++] = msg->get("Each point of Mental grants +8 MP");
-	cstat[CSTAT_MP].tip.lines[cstat[CSTAT_MP].tip.num_lines++] = msg->get("Each level grants +2 MP");
+	cstat[CSTAT_MP].tip.clear();
+	cstat[CSTAT_MP].tip.addLine(msg->get("Each point of Mental grants +8 MP"));
+	cstat[CSTAT_MP].tip.addLine(msg->get("Each level grants +2 MP"));
 
-	cstat[CSTAT_MPREGEN].tip.num_lines = 0;
-	cstat[CSTAT_MPREGEN].tip.lines[cstat[CSTAT_MPREGEN].tip.num_lines++] = msg->get("Ticks of MP regen per minute");
-	cstat[CSTAT_MPREGEN].tip.lines[cstat[CSTAT_MPREGEN].tip.num_lines++] = msg->get("Each point of Mental grants +4 MP regen");
-	cstat[CSTAT_MPREGEN].tip.lines[cstat[CSTAT_MPREGEN].tip.num_lines++] = msg->get("Each level grants +1 MP regen");
+	cstat[CSTAT_MPREGEN].tip.clear();
+	cstat[CSTAT_MPREGEN].tip.addLine(msg->get("Ticks of MP regen per minute"));
+	cstat[CSTAT_MPREGEN].tip.addLine(msg->get("Each point of Mental grants +4 MP regen"));
+	cstat[CSTAT_MPREGEN].tip.addLine(msg->get("Each level grants +1 MP regen"));
 
-	cstat[CSTAT_ACCURACYV1].tip.num_lines = 0;
-	cstat[CSTAT_ACCURACYV1].tip.lines[cstat[CSTAT_ACCURACYV1].tip.num_lines++] = msg->get("Each point of Offense grants +5 accuracy");
-	cstat[CSTAT_ACCURACYV1].tip.lines[cstat[CSTAT_ACCURACYV1].tip.num_lines++] = msg->get("Each level grants +1 accuracy");
+	cstat[CSTAT_ACCURACYV1].tip.clear();
+	cstat[CSTAT_ACCURACYV1].tip.addLine(msg->get("Each point of Offense grants +5 accuracy"));
+	cstat[CSTAT_ACCURACYV1].tip.addLine(msg->get("Each level grants +1 accuracy"));
 
-	cstat[CSTAT_ACCURACYV5].tip.num_lines = 0;
-	cstat[CSTAT_ACCURACYV5].tip.lines[cstat[CSTAT_ACCURACYV5].tip.num_lines++] = msg->get("Each point of Offense grants +5 accuracy");
-	cstat[CSTAT_ACCURACYV5].tip.lines[cstat[CSTAT_ACCURACYV5].tip.num_lines++] = msg->get("Each level grants +1 accuracy");
+	cstat[CSTAT_ACCURACYV5].tip.clear();
+	cstat[CSTAT_ACCURACYV5].tip.addLine(msg->get("Each point of Offense grants +5 accuracy"));
+	cstat[CSTAT_ACCURACYV5].tip.addLine(msg->get("Each level grants +1 accuracy"));
 
-	cstat[CSTAT_AVOIDANCEV1].tip.num_lines = 0;
-	cstat[CSTAT_AVOIDANCEV1].tip.lines[cstat[CSTAT_AVOIDANCEV1].tip.num_lines++] = msg->get("Each point of Defense grants +5 avoidance");
-	cstat[CSTAT_AVOIDANCEV1].tip.lines[cstat[CSTAT_AVOIDANCEV1].tip.num_lines++] = msg->get("Each level grants +1 avoidance");
+	cstat[CSTAT_AVOIDANCEV1].tip.clear();
+	cstat[CSTAT_AVOIDANCEV1].tip.addLine(msg->get("Each point of Defense grants +5 avoidance"));
+	cstat[CSTAT_AVOIDANCEV1].tip.addLine(msg->get("Each level grants +1 avoidance"));
 
-	cstat[CSTAT_AVOIDANCEV5].tip.num_lines = 0;
-	cstat[CSTAT_AVOIDANCEV5].tip.lines[cstat[CSTAT_AVOIDANCEV5].tip.num_lines++] = msg->get("Each point of Defense grants +5 avoidance");
-	cstat[CSTAT_AVOIDANCEV5].tip.lines[cstat[CSTAT_AVOIDANCEV5].tip.num_lines++] = msg->get("Each level grants +1 avoidance");
+	cstat[CSTAT_AVOIDANCEV5].tip.clear();
+	cstat[CSTAT_AVOIDANCEV5].tip.addLine(msg->get("Each point of Defense grants +5 avoidance"));
+	cstat[CSTAT_AVOIDANCEV5].tip.addLine(msg->get("Each level grants +1 avoidance"));
 
 	// proficiency tooltips
-	cprof[CPROF_P2].tip.num_lines = 0;
-	cprof[CPROF_P2].tip.lines[cprof[CPROF_P2].tip.num_lines++] = msg->get("Dagger Proficiency");
-	if (stats.get_physical() < 2) cprof[CPROF_P2].tip.colors[cprof[CPROF_P2].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_P2].tip.colors[cprof[CPROF_P2].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_P2].tip.lines[cprof[CPROF_P2].tip.num_lines++] = msg->get("Requires Physical %d", 2);
-
-	cprof[CPROF_P3].tip.num_lines = 0;
-	cprof[CPROF_P3].tip.lines[cprof[CPROF_P3].tip.num_lines++] = msg->get("Shortsword Proficiency");
-	if (stats.get_physical() < 3) cprof[CPROF_P3].tip.colors[cprof[CPROF_P3].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_P3].tip.colors[cprof[CPROF_P3].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_P3].tip.lines[cprof[CPROF_P3].tip.num_lines++] = msg->get("Requires Physical %d", 3);
-
-	cprof[CPROF_P4].tip.num_lines = 0;
-	cprof[CPROF_P4].tip.lines[cprof[CPROF_P4].tip.num_lines++] = msg->get("Longsword Proficiency");
-	if (stats.get_physical() < 4) cprof[CPROF_P4].tip.colors[cprof[CPROF_P4].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_P4].tip.colors[cprof[CPROF_P4].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_P4].tip.lines[cprof[CPROF_P4].tip.num_lines++] = msg->get("Requires Physical %d", 4);
-
-	cprof[CPROF_P5].tip.num_lines = 0;
-	cprof[CPROF_P5].tip.lines[cprof[CPROF_P5].tip.num_lines++] = msg->get("Greatsword Proficiency");
-	if (stats.get_physical() < 5) cprof[CPROF_P5].tip.colors[cprof[CPROF_P5].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_P5].tip.colors[cprof[CPROF_P5].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_P5].tip.lines[cprof[CPROF_P5].tip.num_lines++] = msg->get("Requires Physical %d", 5);
-
-	cprof[CPROF_M2].tip.num_lines = 0;
-	cprof[CPROF_M2].tip.lines[cprof[CPROF_M2].tip.num_lines++] = msg->get("Wand Proficiency");
-	if (stats.get_mental() < 2) cprof[CPROF_M2].tip.colors[cprof[CPROF_M2].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_M2].tip.colors[cprof[CPROF_M2].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_M2].tip.lines[cprof[CPROF_M2].tip.num_lines++] = msg->get("Requires Mental %d", 2);
-
-	cprof[CPROF_M3].tip.num_lines = 0;
-	cprof[CPROF_M3].tip.lines[cprof[CPROF_M3].tip.num_lines++] = msg->get("Rod Proficiency");
-	if (stats.get_mental() < 3) cprof[CPROF_M3].tip.colors[cprof[CPROF_M3].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_M3].tip.colors[cprof[CPROF_M3].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_M3].tip.lines[cprof[CPROF_M3].tip.num_lines++] = msg->get("Requires Mental %d", 3);
-
-	cprof[CPROF_M4].tip.num_lines = 0;
-	cprof[CPROF_M4].tip.lines[cprof[CPROF_M4].tip.num_lines++] = msg->get("Staff Proficiency");
-	if (stats.get_mental() < 4) cprof[CPROF_M4].tip.colors[cprof[CPROF_M4].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_M4].tip.colors[cprof[CPROF_M4].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_M4].tip.lines[cprof[CPROF_M4].tip.num_lines++] = msg->get("Requires Mental %d", 4);
-
-	cprof[CPROF_M5].tip.num_lines = 0;
-	cprof[CPROF_M5].tip.lines[cprof[CPROF_M5].tip.num_lines++] = msg->get("Greatstaff Proficiency");
-	if (stats.get_mental() < 5) cprof[CPROF_M5].tip.colors[cprof[CPROF_M5].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_M5].tip.colors[cprof[CPROF_M5].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_M5].tip.lines[cprof[CPROF_M5].tip.num_lines++] = msg->get("Requires Mental %d", 5);
-
-	cprof[CPROF_O2].tip.num_lines = 0;
-	cprof[CPROF_O2].tip.lines[cprof[CPROF_O2].tip.num_lines++] = msg->get("Slingshot Proficiency");
-	if (stats.get_offense() < 2) cprof[CPROF_O2].tip.colors[cprof[CPROF_O2].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_O2].tip.colors[cprof[CPROF_O2].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_O2].tip.lines[cprof[CPROF_O2].tip.num_lines++] = msg->get("Requires Offense %d", 2);
-
-	cprof[CPROF_O3].tip.num_lines = 0;
-	cprof[CPROF_O3].tip.lines[cprof[CPROF_O3].tip.num_lines++] = msg->get("Shortbow Proficiency");
-	if (stats.get_offense() < 3) cprof[CPROF_O3].tip.colors[cprof[CPROF_O3].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_O3].tip.colors[cprof[CPROF_O3].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_O3].tip.lines[cprof[CPROF_O3].tip.num_lines++] = msg->get("Requires Offense %d", 3);
-
-	cprof[CPROF_O4].tip.num_lines = 0;
-	cprof[CPROF_O4].tip.lines[cprof[CPROF_O4].tip.num_lines++] = msg->get("Longbow Proficiency");
-	if (stats.get_offense() < 4) cprof[CPROF_O4].tip.colors[cprof[CPROF_O4].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_O4].tip.colors[cprof[CPROF_O4].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_O4].tip.lines[cprof[CPROF_O4].tip.num_lines++] = msg->get("Requires Offense %d", 4);
-
-	cprof[CPROF_O5].tip.num_lines = 0;
-	cprof[CPROF_O5].tip.lines[cprof[CPROF_O5].tip.num_lines++] = msg->get("Greatbow Proficiency");
-	if (stats.get_offense() < 5) cprof[CPROF_O5].tip.colors[cprof[CPROF_O5].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_O5].tip.colors[cprof[CPROF_O5].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_O5].tip.lines[cprof[CPROF_O5].tip.num_lines++] = msg->get("Requires Offense %d", 5);
-
-	cprof[CPROF_D2].tip.num_lines = 0;
-	cprof[CPROF_D2].tip.lines[cprof[CPROF_D2].tip.num_lines++] = msg->get("Light Armor Proficiency");
-	if (stats.get_defense() < 2) cprof[CPROF_D2].tip.colors[cprof[CPROF_D2].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_D2].tip.colors[cprof[CPROF_D2].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_D2].tip.lines[cprof[CPROF_D2].tip.num_lines++] = msg->get("Requires Defense %d", 2);
-
-	cprof[CPROF_D3].tip.num_lines = 0;
-	cprof[CPROF_D3].tip.lines[cprof[CPROF_D3].tip.num_lines++] = msg->get("Light Shield Proficiency");
-	if (stats.get_defense() < 3) cprof[CPROF_D3].tip.colors[cprof[CPROF_D3].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_D3].tip.colors[cprof[CPROF_D3].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_D3].tip.lines[cprof[CPROF_D3].tip.num_lines++] = msg->get("Requires Defense %d", 3);
-
-	cprof[CPROF_D4].tip.num_lines = 0;
-	cprof[CPROF_D4].tip.lines[cprof[CPROF_D4].tip.num_lines++] = msg->get("Heavy Armor Proficiency");
-	if (stats.get_defense() < 4) cprof[CPROF_D4].tip.colors[cprof[CPROF_D4].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_D4].tip.colors[cprof[CPROF_D4].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_D4].tip.lines[cprof[CPROF_D4].tip.num_lines++] = msg->get("Requires Defense %d", 4);
-
-	cprof[CPROF_D5].tip.num_lines = 0;
-	cprof[CPROF_D5].tip.lines[cprof[CPROF_D5].tip.num_lines++] = msg->get("Heavy Shield Proficiency");
-	if (stats.get_defense() < 5) cprof[CPROF_D5].tip.colors[cprof[CPROF_D5].tip.num_lines] = FONT_RED;
-	else cprof[CPROF_D5].tip.colors[cprof[CPROF_D5].tip.num_lines] = FONT_WHITE;
-	cprof[CPROF_D5].tip.lines[cprof[CPROF_D5].tip.num_lines++] = msg->get("Requires Defense %d", 5);
-
+	initProfTips();
 }
 
 
@@ -527,21 +446,18 @@ void MenuCharacter::displayProficiencies(int value, int y) {
 /**
  * Display various mouseovers tooltips depending on cursor location
  */
-TooltipData MenuCharacter::checkTooltip() {
-
+WidgetTooltip *MenuCharacter::checkTooltip() {
 	for (int i=0; i<CSTAT_COUNT; i++) {
-		if (isWithin(cstat[i].hover, inp->mouse) && cstat[i].tip.num_lines > 0)
-			return cstat[i].tip;
+		if (isWithin(cstat[i].hover, inp->mouse) && !cstat[i].tip.isEmpty())
+			return &cstat[i].tip;
 	}
 
 	for (int i=0; i<CPROF_COUNT; i++) {
-		if (isWithin(cprof[i].hover, inp->mouse) && cprof[i].tip.num_lines > 0)
-			return cprof[i].tip;
+		if (isWithin(cprof[i].hover, inp->mouse) && !cprof[i].tip.isEmpty())
+			return &cprof[i].tip;
 	}
 
-	TooltipData tip;
-	tip.num_lines = 0;
-	return tip;
+	return NULL;
 }
 
 /**

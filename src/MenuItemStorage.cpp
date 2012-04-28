@@ -47,14 +47,14 @@ int MenuItemStorage::slotOver(const Point &mouse) const {
 	}
 }
 
-TooltipData MenuItemStorage::checkTooltip(const Point &mouse, const StatBlock &stats, bool vendor_view) {
-	TooltipData tip;
-	int slot = slotOver( mouse);
+void MenuItemStorage::checkTooltip(WidgetTooltip &tip, const Point &mouse, const StatBlock &stats, bool vendor_view) {
+	int slot = slotOver(mouse);
 
-	if (slot > -1 && storage[slot].item > 0) {
-		return items->getTooltip( *storage[slot].item, stats, vendor_view);
+	// FIXME: this will re-calculate the tooltip on every frame, which shouldn't be necissary
+	tip.clear();
+	if (slot > -1 && storage[slot].item) {
+		storage[slot].item->initTooltipFull(tip, stats, vendor_view);
 	}
-	return tip;
 }
 
 ItemStack MenuItemStorage::click(const InputState &input) {

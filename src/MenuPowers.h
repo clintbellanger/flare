@@ -66,7 +66,7 @@ public:
 	~MenuPowers();
 	void logic();
 	void render();
-	TooltipData checkTooltip(const Point &mouse);
+	void checkTooltip(WidgetTooltip &tip, const Point &mouse);
 	bool requirementsMet(int power_index);
 	int click(const Point &mouse);
 

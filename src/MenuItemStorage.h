@@ -37,7 +37,7 @@ public:
 	// rendering
 	void render();
 	int slotOver(const Point &mouse) const;
-	TooltipData checkTooltip(const Point &mouse, const StatBlock &stats, bool vendor_view);
+	void checkTooltip(WidgetTooltip &tip, const Point &mouse, const StatBlock &stats, bool vendor_view);
 	ItemStack click(const InputState &input);
 	void itemReturn(const ItemStack &stack);
 

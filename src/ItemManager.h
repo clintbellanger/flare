@@ -76,7 +76,10 @@ const int ITEM_QUALITY_EPIC = 3;
 const int ITEM_MAX_BONUSES = 8;
 
 struct Item : private Uncopyable {
-	std::string name;          // item name displayed on long and short tool tips
+	static const float vendor_ratio;
+	static const float vendor_gem_ratio;
+
+	string name;          // item name displayed on long and short tool tips
 	int id;
 	int level;            // rough estimate of quality, used in the loot algorithm
 	int quality;          // low, normal, high, epic; corresponds to item name color
@@ -89,23 +92,24 @@ struct Item : private Uncopyable {
 	int abs_max;          // maximum absorb amount (armors and shields only)
 	int req_stat;         // physical, mental, offense, defense
 	int req_val;          // 1-5 (used with req_stat)
-	std::string *bonus_stat;   // stat to increase/decrease e.g. hp, accuracy, speed
+	string *bonus_stat;   // stat to increase/decrease e.g. hp, accuracy, speed
 	int *bonus_val;       // amount to increase (used with bonus_stat)
 	int sfx;              // the item sound when it hits the floor or inventory, etc
-	std::string gfx;           // the sprite layer shown when this item is equipped
-	std::string loot;          // the flying loot animation for this item
+	string gfx;           // the sprite layer shown when this item is equipped
+	string loot;          // the flying loot animation for this item
 	int power;            // this item can be dragged to the action bar and used as a power
 	int power_mod;        // alter powers when this item is equipped (e.g. shoot arrows from bows)
-	std::string power_desc;    // shows up in green text on the tooltip
+	string power_desc;    // shows up in green text on the tooltip
 	int price;            // if price = 0 the item cannot be sold
 	int max_quantity;     // max count per stack
 	int rand_loot;        // max amount appearing in a loot stack
 	int rand_vendor;      // max amount appearing in a vendor stack
-	std::string pickup_status; // when this item is picked up, set a campaign state (usually for quest items)
-	std::string stepfx;        // sound effect played when walking (armors only)
+	string pickup_status; // when this item is picked up, set a campaign state (usually for quest items)
+	string stepfx;        // sound effect played when walking (armors only)
 
 	Item() {
 		name = "";
+		id = 0;
 		level = 0;
 		quality = ITEM_QUALITY_NORMAL;
 		icon32 = 0;
@@ -130,6 +134,15 @@ struct Item : private Uncopyable {
 		pickup_status = "";
 		stepfx = "";
 	}
+
+	void initTooltipName(WidgetTooltip &tip, unsigned quantity) const;
+	void initTooltipFull(WidgetTooltip &tip, const StatBlock &stats, bool vendor_view) const;
+
+	int getSellPrice() const {
+		float ratio = type == ITEM_TYPE_GEM ? vendor_gem_ratio : vendor_ratio;
+		float this_price = (static_cast<float>(price) + 0.5) / ratio; // cheap positive-only round
+		return std::max(this_price, 1.f);
+	}
 };
 
 struct ItemStack {
@@ -149,8 +162,6 @@ private:
 	Mix_Chunk *sfx[12];
 
 	Item *items;
-	float vendor_ratio;
-	float vendor_gem_ratio;
 
 public:
 	ItemManager();
@@ -162,17 +173,10 @@ public:
 	void renderIcon(ItemStack stack, int x, int y, int size);
 	void playSound(const Item &item);
 	void playCoinsSound();
-	TooltipData getTooltip(const Item &item, const StatBlock &stats, bool vendor_view);
-	TooltipData getShortTooltip(ItemStack item);
 
 	const Item &getItem(int id) const {
 		assert(id < MAX_ITEM_ID);
 		return items[id];
-	}
-
-	int getSellPrice(const Item &item) const {
-		float ratio = item.type == ITEM_TYPE_GEM ? vendor_gem_ratio : vendor_ratio;
-		return (static_cast<float>(item.price) + 0.5) / ratio; // cheap positive-only round
 	}
 };
 

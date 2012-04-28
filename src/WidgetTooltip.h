@@ -22,51 +22,53 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef WIDGET_TOOLTIP_H
 #define WIDGET_TOOLTIP_H
 
+#include <SDL.h>
+#include <SDL_image.h>
+#include <vector>
+
 #include "FontEngine.h"
 #include "Utils.h"
 #include "Settings.h"
 
-#include <SDL.h>
-#include <SDL_image.h>
-
+using std::vector;
 
 const int STYLE_FLOAT = 0;
 const int STYLE_TOPLABEL = 1;
 
-const int TOOLTIP_MAX_LINES = 16;
+class WidgetTooltip : private Uncopyable {
+public:
+	struct Line {
+		string text;
+		int color;
+		Line(const string &_text, int _color) : text(_text), color(_color) {}
+	};
+	typedef vector<Line> Lines;
 
-struct TooltipData /* : private Uncopyable */ { // WARNING: copied in ItemManager::getShortTooltip()
-	std::string lines[TOOLTIP_MAX_LINES];
-	int colors[TOOLTIP_MAX_LINES];
-	int num_lines;
-	SDL_Surface *tip_buffer;
 
-	TooltipData() {
-		num_lines = 0;
-		tip_buffer = NULL;
-		for (int i=0; i<TOOLTIP_MAX_LINES; i++) {
-			lines[i] = "";
-			colors[i] = FONT_WHITE;
-		}
-	}
-
-	~TooltipData() {
-		SDL_FreeSurface(tip_buffer);
-	}
-
-};
-
-class WidgetTooltip {
 private:
-	int offset;
-	int width;
-	int margin;
+	Lines lines;
+	mutable bool dirty;
+	mutable SDL_Surface *surface;
+
+	// TODO: Put these values in an engine config file
+	static const int offset	= 12;	/**< distance between cursor and tooltip */
+	static const int width	= 160;	/**< max width of tooltips (wrap text) */
+	static const int margin	= 4;	/**< outer margin between tooltip text and the edge of the tooltip background */
+
 public:
 	WidgetTooltip();
-	Point calcPosition(int style, Point pos, Point size);
-	void render(TooltipData &tip, Point pos, int style);
-	void clear(TooltipData &tip);
-	void createBuffer(TooltipData &tip);
+	~WidgetTooltip();
+
+	const Lines &getLines() const	{return const_cast<const Lines&>(lines);}
+	bool isEmpty() const			{return lines.empty();}
+	void clear();
+	void addLine(const string &text, int color = FONT_WHITE);
+	Point calcPosition(int style, const Point &pos) const;
+	void render(const Point &pos, int style) const;
+
+
+private:
+	void initSurface() const;
 };
 
 #endif

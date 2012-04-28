@@ -99,7 +99,7 @@ bool MENUS_PAUSE = false;
  * PATH_USER is for user-specific data (e.g. save games)
  * PATH_DATA is for common game data (e.g. images, music)
  */
- 
+
 #ifdef _WIN32
 // Windows paths
 void setPaths() {
@@ -108,11 +108,11 @@ void setPaths() {
 	PATH_CONF = "config";
 	PATH_USER = "saves";
 	PATH_DATA = "";
-	
+
 	// TODO: place config and save data in the user's home, windows style
 	createDir(PATH_CONF);
 	createDir(PATH_USER);
-	
+
 	PATH_CONF = PATH_CONF + "/";
 	PATH_USER = PATH_USER + "/";
 }
@@ -127,10 +127,10 @@ void setPaths() {
 void setPaths() {
 
 	string engine_folder = "flare";
-	
+
 	// attempting to follow this spec:
 	// http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
-	
+
 	// set config path (settings, keybindings)
 	// $XDG_CONFIG_HOME/flare/
 	if (getenv("XDG_CONFIG_HOME") != NULL) {
@@ -142,12 +142,12 @@ void setPaths() {
 		PATH_CONF = (string)getenv("HOME") + "/.config/";
 		createDir(PATH_CONF);
 		PATH_CONF += engine_folder + "/";
-		createDir(PATH_CONF);		
+		createDir(PATH_CONF);
 	}
 	// ./config/
 	else {
 		PATH_CONF = "./config/";
-		createDir(PATH_CONF);		
+		createDir(PATH_CONF);
 	}
 
 	// set user path (save games)
@@ -168,9 +168,9 @@ void setPaths() {
 	// ./saves/
 	else {
 		PATH_USER = "./saves/";
-		createDir(PATH_USER);	
+		createDir(PATH_USER);
 	}
-	
+
 	// data folder
 	// while PATH_CONF and PATH_USER are created if not found,
 	// PATH_DATA must already have the game data for the game to work.
@@ -199,18 +199,18 @@ void setPaths() {
 	PATH_DATA = DATA_INSTALL_DIR "/";
 	if (dirExists(PATH_DATA)) return; // NOTE: early exit
 #endif
-	
+
 	// check /usr/local/share/flare/ and /usr/share/flare/ next
 	PATH_DATA = "/usr/local/share/" + engine_folder + "/";
 	if (dirExists(PATH_DATA)) return; // NOTE: early exit
-	
+
 	PATH_DATA = "/usr/share/" + engine_folder + "/";
 	if (dirExists(PATH_DATA)) return; // NOTE: early exit
-	
+
 	// check "games" variants of these
 	PATH_DATA = "/usr/local/share/games/" + engine_folder + "/";
 	if (dirExists(PATH_DATA)) return; // NOTE: early exit
-	
+
 	PATH_DATA = "/usr/share/games/" + engine_folder + "/";
 	if (dirExists(PATH_DATA)) return; // NOTE: early exit
 
@@ -274,7 +274,7 @@ bool saveSettings() {
 	outfile.open((PATH_CONF + FILE_SETTINGS).c_str(), ios::out);
 
 	if (outfile.is_open()) {
-	
+
 		for (int i = 0; i < config_size; i++) {
 
 			// write additional newline before the next section

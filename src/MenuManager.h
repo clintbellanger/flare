@@ -63,7 +63,7 @@ private:
 	CampaignManager &camp;
 	ItemManager &items;
 
-	TooltipData tip_buf;
+	WidgetTooltip tip;
 
 	bool key_lock;
 
@@ -82,7 +82,6 @@ public:
 	MenuHUDLog hudlog;
 	MenuActionBar act;
 	MenuHPMP hpmp;
-	WidgetTooltip tip;
 	MenuMiniMap mini;
 	MenuExperience xp;
 	MenuEnemy enemy;

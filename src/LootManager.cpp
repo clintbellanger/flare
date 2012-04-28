@@ -28,14 +28,98 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
+LootDef::LootDef(const ItemStack &_stack, int _gold, const Point &_pos)
+	: stack(_stack)
+	, gold(_gold)
+	, pos(_pos)
+	, frame(0)
+	, tip() {
+	initTip();
+}
+
+void LootDef::initTip() {
+	tip.clear();
+
+	if (stack.item) {
+		stack.item->initTooltipName(tip, stack.quantity);
+	} else {
+		tip.addLine(msg->get("%d Gold", gold));
+	}
+}
+
+void LootDef::animate(ItemManager &items) {
+	// animate flying loot
+	if (frame < max_frame)
+		frame++;
+
+	if (frame == max_frame - 1) {
+		if (stack.item)
+			items.playSound(*stack.item);
+		else
+			items.playCoinsSound();
+	}
+}
+
+void LootDef::renderTooltip(const Point &xcam, const Point &ycam) {
+	stringstream ss;
+	Point dest(
+		VIEW_W_HALF + (pos.x / UNITS_PER_PIXEL_X - xcam.x) - (pos.y / UNITS_PER_PIXEL_X - xcam.y),
+		VIEW_H_HALF + (pos.x / UNITS_PER_PIXEL_Y - ycam.x) + (pos.y / UNITS_PER_PIXEL_Y - ycam.y) + (TILE_H / 2)
+	);
+
+	// adjust dest.y so that the tooltip floats above the item
+	dest.y -= tooltip_margin;
+
+	tip.render(dest, STYLE_TOPLABEL);
+}
+
+
+
+void LootManager::getRenders(Renderables &dest) {
+	for (LootList::const_iterator it = lootList.begin(); it != lootList.end(); ++it) {
+		const LootDef &loot = **it;
+
+		Renderable r;
+		r.map_pos = loot.pos;
+		r.src.x = (loot.frame / LootDef::anim_loot_duration) * 64;
+		r.src.y = 0;
+		r.src.w = 64;
+		r.src.h = 128;
+		r.offset = Point(32, 112);
+		r.object_layer = true;
+		r.tile = Point(0, 0);
+		// Right now the animation settings (number of frames, speed, frame size)
+		// are hard coded.  At least move these to consts in the header.
+		if (loot.stack.item) {
+			// item
+			for (int i=0; i<animation_count; i++) {
+				if (loot.stack.item->loot == animation_id[i])
+					r.sprite = flying_loot[i];
+			}
+		}
+		else if (loot.gold > 0) {
+			// gold
+			if (loot.gold <= 9)
+				r.sprite = flying_gold[0];
+			else if (loot.gold <= 25)
+				r.sprite = flying_gold[1];
+			else
+				r.sprite = flying_gold[2];
+		}
+
+		dest.push_back(r);
+	}
+}
+
+
+
+
 
 LootManager::LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_map)
 	: items(_items)
 	, enemies(_enemies)	// we need to be able to read loot state when creatures die
 	, map(_map)			// we need to be able to read loot that drops from map containers
-	, tip() {
-
-	tooltip_margin = 32; // pixels between loot drop center and label
+{
 
 	loot_count = 0;
 	animation_count = 0;
@@ -46,7 +130,7 @@ LootManager::LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_m
 	}
 
 	loot_flip = NULL;
-
+#if 0
 	// reset current map loot
 	for (int i=0; i<256; i++) {
 		LootDef &sloot = loot[i];
@@ -57,6 +141,7 @@ LootManager::LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_m
 		sloot.stack.quantity = 0;
 		sloot.gold = 0;
 	}
+#endif
 
 	// reset loot table
 	for (int lvl=0; lvl<15; lvl++) {
@@ -72,8 +157,6 @@ LootManager::LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_m
         loot_flip = Mix_LoadWAV(mods->locate("soundfx/flying_loot.ogg").c_str());
 	full_msg = false;
 
-	anim_loot_frames = 6;
-	anim_loot_duration = 3;
 
 }
 
@@ -176,89 +259,34 @@ void LootManager::calcTables() {
 	}
 }
 
-void LootManager::handleNewMap() {
-	for (int i=0; i<loot_count; i++) {
-		tip.clear(loot[i].tip);
+void LootManager::clear() {
+	while (!lootList.empty()) {
+		delete lootList.front();
+		lootList.pop_front();
 	}
-	loot_count = 0;
 }
 
 void LootManager::logic() {
-	int max_frame = anim_loot_frames * anim_loot_duration - 1;
-
-	for (int i=0; i<loot_count; i++) {
-		LootDef &l = loot[i];
-
-		// animate flying loot
-		if (l.frame < max_frame)
-			l.frame++;
-
-		if (l.frame == max_frame-1) {
-			if (l.stack.item)
-				items.playSound(*l.stack.item);
-			else
-				items.playCoinsSound();
-		}
+	for (LootList::iterator i = lootList.begin(); i != lootList.end(); ++i) {
+		(*i)->animate(items);
 	}
-
 	checkEnemiesForLoot();
 	checkMapForLoot();
 }
 
 /**
- * If an item is flying, it hasn't completed its "flying loot" animation.
- * Only allow loot to be picked up if it is grounded.
- */
-bool LootManager::isFlying(int loot_index) {
-	int max_frame = anim_loot_frames * anim_loot_duration - 1;
-	if (loot[loot_index].frame == max_frame) return false;
-	return true;
-}
-
-/**
  * Show all tooltips for loot on the floor
  */
-void LootManager::renderTooltips(Point cam) {
+void LootManager::renderTooltips(const Point &cam) {
 
-	Point xcam;
-	Point ycam;
-	xcam.x = cam.x/UNITS_PER_PIXEL_X;
-	xcam.y = cam.y/UNITS_PER_PIXEL_X;
-	ycam.x = cam.x/UNITS_PER_PIXEL_Y;
-	ycam.y = cam.y/UNITS_PER_PIXEL_Y;
+	Point xcam (cam / UNITS_PER_PIXEL_X);
+	Point ycam (cam / UNITS_PER_PIXEL_Y);
 
-	Point dest;
-	stringstream ss;
-
-	int max_frame = anim_loot_frames * anim_loot_duration - 1;
-
-	for (int i = 0; i < loot_count; i++) {
-		if (loot[i].frame == max_frame) {
-
-
-			dest.x = VIEW_W_HALF + (loot[i].pos.x/UNITS_PER_PIXEL_X - xcam.x) - (loot[i].pos.y/UNITS_PER_PIXEL_X - xcam.y);
-			dest.y = VIEW_H_HALF + (loot[i].pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (loot[i].pos.y/UNITS_PER_PIXEL_Y - ycam.y) + (TILE_H/2);
-
-			// adjust dest.y so that the tooltip floats above the item
-			dest.y -= tooltip_margin;
-
-			// create tooltip data if needed
-			if (loot[i].tip.tip_buffer == NULL) {
-
-				if (loot[i].stack.item) {
-					loot[i].tip = items.getShortTooltip(loot[i].stack);
-				}
-				else {
-					loot[i].tip.num_lines = 1;
-					loot[i].tip.colors[0] = FONT_WHITE;
-					ss << msg->get("%d Gold", loot[i].gold);
-					loot[i].tip.lines[0] = ss.str();
-					ss.str("");
-				}
-			}
-
-			tip.render(loot[i].tip, dest, STYLE_TOPLABEL);
+	for (LootList::iterator i = lootList.begin(); i != lootList.end(); ++i) {
+		if (!(*i)->isFlying()) {
+			(*i)->renderTooltip(xcam, ycam);
 		}
+
 	}
 
 
@@ -375,52 +403,18 @@ const Item *LootManager::randomItem(int base_level) {
 		int roll = rand() % loot_table_count[level];
 		return &items.getItem(loot_table[level][roll]);
 	}
-	return 0;
+	return NULL;
 }
 
-void LootManager::addLoot(ItemStack stack, Point pos) {
+void LootManager::addLoot(const ItemStack &stack, const Point &pos) {
 	// TODO: z-sort insert?
-	loot[loot_count].stack = stack;
-	loot[loot_count].pos.x = pos.x;
-	loot[loot_count].pos.y = pos.y;
-	loot[loot_count].frame = 0;
-	loot[loot_count].gold = 0;
-	loot_count++;
+	lootList.push_back(new LootDef(stack, 0, pos));
 	if (loot_flip) Mix_PlayChannel(-1, loot_flip, 0);
 }
 
-void LootManager::addGold(int count, Point pos) {
-	loot[loot_count].stack.item = NULL;
-	loot[loot_count].stack.quantity = 0;
-	loot[loot_count].pos.x = pos.x;
-	loot[loot_count].pos.y = pos.y;
-	loot[loot_count].frame = 0;
-	loot[loot_count].gold = count;
-	loot_count++;
+void LootManager::addGold(int gold, const Point &pos) {
+	lootList.push_back(new LootDef(ItemStack(), gold, pos));
 	if (loot_flip) Mix_PlayChannel(-1, loot_flip, 0);
-}
-
-
-/**
- * Remove one loot from the array, preserving sort order
- */
-void LootManager::removeLoot(int index) {
-
-	LootDef &sloot = loot[index];
-	// deallocate the tooltip of the loot being removed
-	tip.clear(sloot.tip);
-
-	loot[--loot_count] = sloot;
-
-	// the last tooltip buffer pointer has been copied up one index.
-	// NULL the last pointer without deallocating. Otherwise the same
-	// address might be deallocated twice, causing a memory access error
-	loot[loot_count].tip.tip_buffer = NULL;
-
-	// TODO: This requires too much knowledge of the underworkings of
-	// TooltipData. Is there a way to hide this complexity, be memory safe,
-	// and be efficient with the drawing buffer?
-
 }
 
 /**
@@ -433,18 +427,17 @@ ItemStack LootManager::checkPickup(const Point &mouse, const Point &cam, const P
 	SDL_Rect r;
 	ItemStack loot_stack;
 	gold = 0;
-	loot_stack.item = NULL;
-	loot_stack.quantity = 0;
 
 	// I'm starting at the end of the loot list so that more recently-dropped
 	// loot is picked up first.  If a player drops several loot in the same
 	// location, picking it back up will work like a stack.
-	for (int i=loot_count-1; i>=0; i--) {
+	for (LootList::reverse_iterator i = lootList.rbegin(), end = lootList.rend(); i != end; ++i) {
+		LootDef &loot = **i;
 
 		// loot close enough to pickup?
-		if (abs(hero_pos.x - loot[i].pos.x) < LOOT_RANGE && abs(hero_pos.y - loot[i].pos.y) < LOOT_RANGE && !isFlying(i)) {
+		if (loot.pos.dist(hero_pos) < LOOT_RANGE && !loot.isFlying()) {
 
-			p = map_to_screen(loot[i].pos.x, loot[i].pos.y, cam.x, cam.y);
+			p = map_to_screen(loot.pos, cam);
 
 			r.w = 32;
 			r.h = 48;
@@ -452,67 +445,30 @@ ItemStack LootManager::checkPickup(const Point &mouse, const Point &cam, const P
 			r.y = p.y - 32;
 
 			// clicked in pickup hotspot?
-			if (mouse.x > r.x && mouse.x < r.x+r.w &&
-				mouse.y > r.y && mouse.y < r.y+r.h) {
+			if (mouse.x > r.x && mouse.x < r.x + r.w &&
+				mouse.y > r.y && mouse.y < r.y + r.h) {
 
-				if (loot[i].stack.item) {
+				if (loot.stack.item) {
 					if (!inv_full) {
-						loot_stack = loot[i].stack;
-						removeLoot(i);
-						return loot_stack;
+						loot_stack = loot.stack;
 					}
 					else {
 						full_msg = true;
+						return ItemStack();
 					}
 				}
-				else if (loot[i].gold > 0) {
-					gold = loot[i].gold;
-					removeLoot(i);
-
-					return loot_stack;
+				else if (loot.gold > 0) {
+					gold = loot.gold;
 				}
+				else {
+					continue;
+				}
+				lootList.erase(--(i.base())); // sorry this looks funky
+				return loot_stack;
 			}
 		}
 	}
-	return loot_stack;
-}
-
-Renderable LootManager::getRender(int index) {
-
-	const LootDef &sloot = loot[index];
-	Renderable r;
-	r.map_pos = sloot.pos;
-
-
-	// Right now the animation settings (number of frames, speed, frame size)
-	// are hard coded.  At least move these to consts in the header.
-
-	r.src.x = (sloot.frame / anim_loot_duration) * 64;
-	r.src.y = 0;
-	r.src.w = 64;
-	r.src.h = 128;
-	r.offset.x = 32;
-	r.offset.y = 112;
-	r.object_layer = true;
-
-	if (sloot.stack.item) {
-		// item
-		for (int i=0; i<animation_count; i++) {
-			if (sloot.stack.item->loot == animation_id[i])
-				r.sprite = flying_loot[i];
-		}
-	}
-	else if (sloot.gold > 0) {
-		// gold
-		if (sloot.gold <= 9)
-			r.sprite = flying_gold[0];
-		else if (sloot.gold <= 25)
-			r.sprite = flying_gold[1];
-		else
-			r.sprite = flying_gold[2];
-	}
-
-	return r;
+	return ItemStack();
 }
 
 LootManager::~LootManager() {
@@ -526,7 +482,5 @@ LootManager::~LootManager() {
 	if (loot_flip) Mix_FreeChunk(loot_flip);
 
 	// clear loot tooltips to free buffer memory
-	for (int i=0; i<loot_count; i++) {
-		tip.clear(loot[i].tip);
-	}
+	clear();
 }

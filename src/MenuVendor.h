@@ -62,7 +62,7 @@ public:
 	ItemStack click(const InputState &input);
 	void itemReturn(ItemStack stack);
 	void add(ItemStack stack);
-	TooltipData checkTooltip(const Point &mouse);
+	void checkTooltip(WidgetTooltip &tip, const Point &mouse);
 	bool full();
 	void setInventory();
 	void saveInventory();

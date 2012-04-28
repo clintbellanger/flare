@@ -36,51 +36,74 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <string>
 #include <sstream>
 
-const int CSTAT_NAME = 0;
-const int CSTAT_LEVEL = 1;
-const int CSTAT_PHYSICAL = 2;
-const int CSTAT_HP = 3;
-const int CSTAT_HPREGEN = 4;
-const int CSTAT_MENTAL = 5;
-const int CSTAT_MP = 6;
-const int CSTAT_MPREGEN = 7;
-const int CSTAT_OFFENSE = 8;
-const int CSTAT_ACCURACYV1 = 9;
-const int CSTAT_ACCURACYV5 = 10;
-const int CSTAT_DEFENSE = 11;
-const int CSTAT_AVOIDANCEV1 = 12;
-const int CSTAT_AVOIDANCEV5 = 13;
-const int CSTAT_DMGMAIN = 14;
-const int CSTAT_DMGRANGED = 15;
-const int CSTAT_CRIT = 16;
-const int CSTAT_ABSORB = 17;
-const int CSTAT_FIRERESIST = 18;
-const int CSTAT_ICERESIST = 19;
-const int CSTAT_COUNT = 20;
+enum CharStats {
+	CSTAT_NAME,
+	CSTAT_LEVEL,
+	CSTAT_PHYSICAL,
+	CSTAT_HP,
+	CSTAT_HPREGEN,
+	CSTAT_MENTAL,
+	CSTAT_MP,
+	CSTAT_MPREGEN,
+	CSTAT_OFFENSE,
+	CSTAT_ACCURACYV1,
+	CSTAT_ACCURACYV5,
+	CSTAT_DEFENSE,
+	CSTAT_AVOIDANCEV1,
+	CSTAT_AVOIDANCEV5,
+	CSTAT_DMGMAIN,
+	CSTAT_DMGRANGED,
+	CSTAT_CRIT,
+	CSTAT_ABSORB,
+	CSTAT_FIRERESIST,
+	CSTAT_ICERESIST,
+	CSTAT_COUNT
+};
 
-const int CPROF_P2 = 0;
-const int CPROF_P3 = 1;
-const int CPROF_P4 = 2;
-const int CPROF_P5 = 3;
-const int CPROF_M2 = 4;
-const int CPROF_M3 = 5;
-const int CPROF_M4 = 6;
-const int CPROF_M5 = 7;
-const int CPROF_O2 = 8;
-const int CPROF_O3 = 9;
-const int CPROF_O4 = 10;
-const int CPROF_O5 = 11;
-const int CPROF_D2 = 12;
-const int CPROF_D3 = 13;
-const int CPROF_D4 = 14;
-const int CPROF_D5 = 15;
-const int CPROF_COUNT = 16;
+enum CharProficiencies {
+	CPROF_P2,
+	CPROF_P3,
+	CPROF_P4,
+	CPROF_P5,
+	CPROF_M2,
+	CPROF_M3,
+	CPROF_M4,
+	CPROF_M5,
+	CPROF_O2,
+	CPROF_O3,
+	CPROF_O4,
+	CPROF_O5,
+	CPROF_D2,
+	CPROF_D3,
+	CPROF_D4,
+	CPROF_D5,
+	CPROF_COUNT
+};
+
+static const char *charProfDesc[CPROF_COUNT] = {
+	"Dagger",
+	"Shortsword",
+	"Longsword",
+	"Greatsword",
+	"Wand",
+	"Rod",
+	"Staff",
+	"Greatstaff",
+	"Slingshot",
+	"Shortbow",
+	"Longbow",
+	"Greatbow",
+	"Light Armor",
+	"Light Shield",
+	"Heavy Armor",
+	"Heavy Shield"
+};
 
 struct CharStat : private Uncopyable {
 	WidgetLabel *label;
 	WidgetLabel *value;
 	SDL_Rect hover;
-	TooltipData tip;
+	WidgetTooltip tip;
 
 	void setHover(int x, int y, int w, int h) {
 		hover.x=x;
@@ -92,7 +115,7 @@ struct CharStat : private Uncopyable {
 
 struct CharProf {
 	SDL_Rect hover;
-	TooltipData tip;
+	WidgetTooltip tip;
 
 	void setHover(int x, int y, int w, int h) {
 		hover.x=x;
@@ -104,6 +127,7 @@ struct CharProf {
 
 class MenuCharacter : private Uncopyable {
 private:
+
 	StatBlock &stats;
 
 	SDL_Surface *background;
@@ -114,6 +138,7 @@ private:
 	CharStat cstat[CSTAT_COUNT];
 	CharProf cprof[CPROF_COUNT];
 
+	void initProfTips();
 	void displayProficiencies(int value, int y);
 	void loadGraphics();
 	int bonusColor(int stat);
@@ -124,7 +149,7 @@ public:
 	void logic();
 	void render();
 	void refreshStats();
-	TooltipData checkTooltip();
+	WidgetTooltip *checkTooltip();
 	bool checkUpgrade();
 
 	bool visible;

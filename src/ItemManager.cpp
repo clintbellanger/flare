@@ -30,6 +30,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 using namespace std;
 
+const float Item::vendor_ratio = 4.f; // this means scrap/vendor pays 1/4th price to buy items from hero
+const float Item::vendor_gem_ratio = 2.f; // but pays 1/2 price for gems
+
 
 ItemManager::ItemManager() {
 
@@ -43,9 +46,6 @@ ItemManager::ItemManager() {
 			items[i].bonus_val[j] = 0;
 		}
 	}
-
-	vendor_ratio = 4.f; // this means scrap/vendor pays 1/4th price to buy items from hero
-	vendor_gem_ratio = 2.f; // but pays 1/2 price for gems
 
 	loadAll();
 	loadSounds();
@@ -312,33 +312,27 @@ void ItemManager::playCoinsSound() {
         Mix_PlayChannel(-1, sfx[SFX_COINS], 0);
 }
 
-TooltipData ItemManager::getShortTooltip(ItemStack stack) {
+void Item::initTooltipName(WidgetTooltip &tip, unsigned quantity) const {
+	int color;
 	stringstream ss;
-	TooltipData tip;
-
-	if (!stack.item) return tip;
 
 	// name
-	if( stack.quantity > 1) {
-		ss << stack.quantity << " " << stack.item->name;
+	if (quantity > 1) {
+		ss << quantity << " " << name;
 	} else {
-		ss << stack.item->name;
+		ss << name;
 	}
-	tip.lines[tip.num_lines++] = ss.str();
 
 	// color quality
-	if (stack.item->quality == ITEM_QUALITY_LOW) {
-		tip.colors[0] = FONT_GRAY;
-	}
-	else if (stack.item->quality == ITEM_QUALITY_HIGH) {
-		tip.colors[0] = FONT_GREEN;
-	}
-	else if (stack.item->quality == ITEM_QUALITY_EPIC) {
-		tip.colors[0] = FONT_BLUE;
+	switch (quality) {
+		case ITEM_QUALITY_LOW:	color = FONT_GRAY; break;
+		case ITEM_QUALITY_HIGH:	color = FONT_GREEN; break;
+		case ITEM_QUALITY_EPIC:	color = FONT_BLUE; break;
 	}
 
-	return tip;
+	tip.addLine(ss.str(), color);
 }
+
 
 static string getRangeMsg(const char *str, int minval, int maxval) {
 	string fmt(str);
@@ -353,131 +347,87 @@ static string getRangeMsg(const char *str, int minval, int maxval) {
 /**
  * Create detailed tooltip showing all relevant item info
  */
-TooltipData ItemManager::getTooltip(const Item &item, const StatBlock &stats, bool vendor_view) {
-	TooltipData tip;
+void Item::initTooltipFull(WidgetTooltip &tip, const StatBlock &stats, bool vendor_view) const {
+	const char *fmt = "";
+	int color;
 
-	// there should always be an object when this function is called
-	//if (item == 0) return tip;
-
-	// name
-	tip.lines[tip.num_lines++] = item.name;
-
-	// color quality
-	if (item.quality == ITEM_QUALITY_LOW) {
-		tip.colors[0] = FONT_GRAY;
-	}
-	else if (item.quality == ITEM_QUALITY_HIGH) {
-		tip.colors[0] = FONT_GREEN;
-	}
-	else if (item.quality == ITEM_QUALITY_EPIC) {
-		tip.colors[0] = FONT_BLUE;
-	}
+	tip.clear();
+	initTooltipName(tip, 1);
 
 	// level
-	if (item.level != 0) {
-		tip.lines[tip.num_lines++] = msg->get("Level %d", item.level);
+	if (level != 0) {
+		tip.addLine(msg->get("Level %d", level));
 	}
 
 	// type
-	if (item.type != ITEM_TYPE_OTHER) {
-		if (item.type == ITEM_TYPE_MAIN)
-			tip.lines[tip.num_lines++] = msg->get("Main Hand");
-		else if (item.type == ITEM_TYPE_BODY)
-			tip.lines[tip.num_lines++] = msg->get("Body");
-		else if (item.type == ITEM_TYPE_OFF)
-			tip.lines[tip.num_lines++] = msg->get("Off Hand");
-		else if (item.type == ITEM_TYPE_ARTIFACT)
-			tip.lines[tip.num_lines++] = msg->get("Artifact");
-		else if (item.type == ITEM_TYPE_CONSUMABLE)
-			tip.lines[tip.num_lines++] = msg->get("Consumable");
-		else if (item.type == ITEM_TYPE_GEM)
-			tip.lines[tip.num_lines++] = msg->get("Gem");
-		else if (item.type == ITEM_TYPE_QUEST)
-			tip.lines[tip.num_lines++] = msg->get("Quest Item");
+	if (type != ITEM_TYPE_OTHER) {
+		switch (type) {
+			case ITEM_TYPE_MAIN:		fmt = "Main Hand";	break;
+			case ITEM_TYPE_BODY:		fmt = "Body";		break;
+			case ITEM_TYPE_OFF:			fmt = "Off Hand";	break;
+			case ITEM_TYPE_ARTIFACT:	fmt = "Artifact";	break;
+			case ITEM_TYPE_CONSUMABLE:	fmt = "Consumable";	break;
+			case ITEM_TYPE_GEM:			fmt = "Gem";		break;
+			case ITEM_TYPE_QUEST:		fmt = "Quest Item";	break;
+			default:					fmt = "Data error: unrecognized type";
+		}
+		tip.addLine(msg->get(fmt));
 	}
 
 	// damage
-	if (item.dmg_max > 0) {
-		const char *fmt = "";
-		switch (item.req_stat) {
+	if (dmg_max > 0) {
+		switch (req_stat) {
 			case REQUIRES_PHYS:	fmt = "Melee damage: %d";  break;
 			case REQUIRES_MENT:	fmt = "Mental damage: %d"; break;
 			case REQUIRES_OFF:	fmt = "Ranged damage: %d"; break;
 			default:			fmt = "Data error: has dmg_max, but not req_stat %d";
 		}
-		tip.lines[tip.num_lines++] = getRangeMsg(fmt, item.dmg_min, item.dmg_max);
+		tip.addLine(getRangeMsg(fmt, dmg_min, dmg_max));
 	}
 
 	// absorb
-	if (item.abs_max > 0) {
-		tip.lines[tip.num_lines++] = getRangeMsg("Absorb: %d", item.abs_min, item.abs_max);
+	if (abs_max > 0) {
+		tip.addLine(getRangeMsg("Absorb: %d", abs_min, abs_max));
 	}
 
 	// bonuses
-	int bonus_counter = 0;
+
 	string modifier;
-	while (item.bonus_stat[bonus_counter] != "") {
-		if (item.bonus_val[bonus_counter] > 0) {
-			modifier = msg->get("Increases %s by %d", item.bonus_val[bonus_counter], msg->get(item.bonus_stat[bonus_counter]));
-			tip.colors[tip.num_lines] = FONT_GREEN;
+	for(int i = 0; !bonus_stat[i].empty() && i != ITEM_MAX_BONUSES; ++i) {
+		if (bonus_val[i] > 0) {
+			fmt = "Increases %s by %d";
+			color = FONT_GREEN;
 		}
 		else {
-			modifier = msg->get("Decreases %s by %d", item.bonus_val[bonus_counter], msg->get(item.bonus_stat[bonus_counter]));
-			tip.colors[tip.num_lines] = FONT_RED;
+			fmt = "Decreases %s by %d";
+			color = FONT_RED;
 		}
-		tip.lines[tip.num_lines++] = modifier;
-		bonus_counter++;
-		if (bonus_counter == ITEM_MAX_BONUSES) break;
+		tip.addLine(msg->get(fmt, bonus_val[i], msg->get(bonus_stat[i])), color);
 	}
 
 	// power
-	if (item.power_desc != "") {
-		tip.colors[tip.num_lines] = FONT_GREEN;
-		tip.lines[tip.num_lines++] = item.power_desc;
+	if (power_desc != "") {
+		tip.addLine(power_desc, FONT_GREEN);
 	}
 
 	// requirement
-	if (item.req_val > 0) {
-		if (item.req_stat == REQUIRES_PHYS) {
-			if (stats.get_physical() < item.req_val) tip.colors[tip.num_lines] = FONT_RED;
-			tip.lines[tip.num_lines++] = msg->get("Requires Physical %d", item.req_val);
-		}
-		else if (item.req_stat == REQUIRES_MENT) {
-			if (stats.get_mental() < item.req_val) tip.colors[tip.num_lines] = FONT_RED;
-			tip.lines[tip.num_lines++] = msg->get("Requires Mental %d", item.req_val);
-		}
-		else if (item.req_stat == REQUIRES_OFF) {
-			if (stats.get_offense() < item.req_val) tip.colors[tip.num_lines] = FONT_RED;
-			tip.lines[tip.num_lines++] = msg->get("Requires Offense %d", item.req_val);
-		}
-		else if (item.req_stat == REQUIRES_DEF) {
-			if (stats.get_defense() < item.req_val) tip.colors[tip.num_lines] = FONT_RED;
-			tip.lines[tip.num_lines++] = msg->get("Requires Defense %d", item.req_val);
-		}
+	if (req_val > 0) {
+		stringstream ss;
+		ss << msg->get("Requires ") << statNames[req_stat] << " " << req_val;
+		tip.addLine(ss.str(), stats.getStat(req_stat) < req_val ? FONT_RED : FONT_WHITE);
 	}
 
 	// buy or sell price
-	if (item.price > 0) {
-
+	if (price > 0) {
+		const char *each = max_quantity > 1 ? " each" : "";
 		if (vendor_view) {
-			if (stats.gold < item.price) tip.colors[tip.num_lines] = FONT_RED;
-			if (item.max_quantity <= 1)
-				tip.lines[tip.num_lines++] = msg->get("Buy Price: %d gold", item.price);
-			else
-				tip.lines[tip.num_lines++] = msg->get("Buy Price: %d gold each", item.price);
+			tip.addLine(msg->get("Buy Price: %d gold", price) + each,
+						stats.gold < price ? FONT_RED : FONT_WHITE);
 		}
 		else {
-			int price_per_unit = item.price/vendor_ratio;
-			if (price_per_unit == 0) price_per_unit = 1;
-			if (item.max_quantity <= 1)
-				tip.lines[tip.num_lines++] = msg->get("Sell Price: %d gold", price_per_unit);
-			else
-				tip.lines[tip.num_lines++] = msg->get("Sell Price: %d gold each", price_per_unit);
+			tip.addLine(msg->get("Sell Price: %d gold", getSellPrice()) + each);
 		}
-
 	}
-
-	return tip;
 }
 
 ItemManager::~ItemManager() {

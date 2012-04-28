@@ -71,9 +71,10 @@ const int ENEMY_POWER = 16; // enemy performing a power. anim/sfx based on power
 
 const int MAX_CHARACTER_LEVEL = 32;
 
-class StatBlock {
-private:
 
+static const char *statNames[] = {"Physical", "Mental", "Offense", "Defense"};
+
+class StatBlock {
 public:
 	StatBlock();
 	~StatBlock();
@@ -117,6 +118,7 @@ public:
 	int get_defense()  const { return defense_character + defense_additional; }
 	int get_physical() const { return physical_character + physical_additional; }
 	int get_mental()   const { return mental_character + mental_additional; }
+	int getStat(unsigned i) const;
 
 	// derived stats ("disciplines")
 	int physoff;
@@ -125,6 +127,8 @@ public:
 	int mentdef;
 	int physment;
 	int offdef;
+	int getDiscpline(unsigned i) const;
+
 
 	// in Flare there are no distinct character classes.
 	// instead each class is given a descriptor based on their base stat builds

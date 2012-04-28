@@ -148,21 +148,19 @@ int MenuInventory::areaOver(const Point &mouse) {
  *
  * @param mouse The x,y screen coordinates of the mouse cursor
  */
-TooltipData MenuInventory::checkTooltip(const Point &mouse) {
+void MenuInventory::checkTooltip(WidgetTooltip &tip, const Point &mouse) {
 	int area;
-	TooltipData tip;
 
-	area = areaOver( mouse);
-	if( area > -1) {
-		tip = inventory[area].checkTooltip( mouse, stats, false);
+	area = areaOver(mouse);
+	if (area > -1) {
+		inventory[area].checkTooltip(tip, mouse, stats, false);
 	}
 	else if (mouse.x >= window_area.x + 224 && mouse.y >= window_area.y+96 && mouse.x < window_area.x+288 && mouse.y < window_area.y+128) {
 		// TODO: I think we should add a little "?" icon in a corner, and show this title on it.
-		tip.lines[tip.num_lines++] = msg->get("Use SHIFT to move only one item.");
-		tip.lines[tip.num_lines++] = msg->get("CTRL-click a carried item to sell it.");
+		tip.clear();
+		tip.addLine(msg->get("Use SHIFT to move only one item."));
+		tip.addLine(msg->get("CTRL-click a carried item to sell it."));
 	}
-
-	return tip;
 }
 
 /**
@@ -489,7 +487,7 @@ bool MenuInventory::sell(const ItemStack &stack) {
 	// items that have no price cannot be sold
 	if (stack.item->price == 0) return false;
 
-	int value_each = items.getSellPrice(*stack.item);
+	int value_each = stack.item->getSellPrice();
 	if (value_each == 0) value_each = 1;
 	int value = value_each * stack.quantity;
 	gold += value;

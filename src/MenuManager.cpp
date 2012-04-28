@@ -28,7 +28,7 @@ MenuManager::MenuManager(PowerManager &_powers, StatBlock &_stats, CampaignManag
 	, stats(_stats)
 	, camp(_camp)
 	, items(_items)
-	, tip_buf()
+	, tip()
 	, key_lock(false)
 	, dragging(false)
 	, drag_stack(NULL, 0)
@@ -42,7 +42,6 @@ MenuManager::MenuManager(PowerManager &_powers, StatBlock &_stats, CampaignManag
 	, hudlog()
 	, act(powers, stats, icons)
 	, hpmp()
-	, tip()
 	, mini()
 	, xp()
 	, enemy()
@@ -496,43 +495,53 @@ void MenuManager::render() {
 	enemy.render();
 	if (exit.visible) exit.render();
 
-	TooltipData tip_new;
+	const WidgetTooltip *chrTooltip = NULL;
+	bool renderTooltip = false;
 	int offset_x = (VIEW_W - 320);
 	int offset_y = (VIEW_H - 416)/2;
 
 	// Find tooltips depending on mouse position
 	if (inp->mouse.x < 320 && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (chr.visible) {
-			tip_new = chr.checkTooltip();
+			chrTooltip = chr.checkTooltip();
+			renderTooltip = true;
 		}
 		else if (vendor.visible) {
-			tip_new = vendor.checkTooltip(inp->mouse);
+			vendor.checkTooltip(tip, inp->mouse);
+			renderTooltip = true;
 		}
 	}
 	else if (inp->mouse.x >= offset_x && inp->mouse.y >= offset_y && inp->mouse.y <= offset_y+416) {
 		if (pow.visible) {
-			tip_new = pow.checkTooltip(inp->mouse);
+			pow.checkTooltip(tip, inp->mouse);
+			renderTooltip = true;
 		}
 		else if (inv.visible && !dragging) {
-			tip_new = inv.checkTooltip(inp->mouse);
+			inv.checkTooltip(tip, inp->mouse);
+			renderTooltip = true;
 		}
 	}
 	else if (inp->mouse.y >= VIEW_H-32) {
-		tip_new = act.checkTooltip(inp->mouse);
+		act.checkTooltip(tip, inp->mouse);
+			renderTooltip = true;
 	}
 
-	if (tip_new.num_lines > 0) {
+	if (chrTooltip && !chrTooltip->isEmpty()) {
+		// at least these tooltips are static
+		chrTooltip->render(inp->mouse, STYLE_FLOAT);
+	}
+	else if (!tip.isEmpty() && renderTooltip) {
 
 		// when we render a tooltip it buffers the rasterized text for performance.
 		// If this new tooltip is the same as the existing one, reuse.
 
 		// TODO: comparing the first line of a tooltip works in all existing cases,
 		// but may not hold true in the future.
-		if (tip_new.lines[0] != tip_buf.lines[0]) {
-			tip.clear(tip_buf);
-			tip_buf = tip_new;
-		}
-		tip.render(tip_buf, inp->mouse, STYLE_FLOAT);
+		// Actually, this isn't the case.  When you buy an item and your mouse is
+		// still hovering over it, it does not update the tooltip to display the
+		// sell price instead of the buy price. So these still are rasterized every
+		// frame. :( -- Daniel
+		tip.render(inp->mouse, STYLE_FLOAT);
 	}
 
 	// draw icon under cursor if dragging
@@ -579,8 +588,6 @@ void MenuManager::closeRight(bool play_sound) {
 }
 
 MenuManager::~MenuManager() {
-
-	tip.clear(tip_buf);
 
     if (sfx_open != NULL)
         Mix_FreeChunk(sfx_open);

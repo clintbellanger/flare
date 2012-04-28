@@ -29,10 +29,9 @@ using namespace std;
 
 NPCManager::NPCManager(MapIso &_map, LootManager &_loot, ItemManager &_items)
 	: map(_map)
-	, tip()
 	, loot(_loot)
 	, items(_items)
-	, tip_buf() {
+	, tip() {
 
 	npc_count = 0;
 	for (int i=0; i<MAX_NPC_COUNT; i++) {
@@ -126,13 +125,12 @@ void NPCManager::renderTooltips(const Point &cam, const Point &mouse) {
 			p.y -= tooltip_margin;
 
 			// use current tip or make a new one?
-			if (tip_buf.lines[0] != npcs[i]->name) {
-				tip.clear(tip_buf);
-				tip_buf.num_lines = 1;
-				tip_buf.lines[0] = npcs[i]->name;
+			if (tip.isEmpty() || tip.getLines()[0].text != npcs[i]->name) {
+				tip.clear();
+				tip.addLine(npcs[i]->name);
 			}
 
-			tip.render(tip_buf, p, STYLE_TOPLABEL);
+			tip.render(p, STYLE_TOPLABEL);
 
 			break; // display only one NPC tooltip at a time
 		}
@@ -143,6 +141,4 @@ NPCManager::~NPCManager() {
 	for (int i=0; i<npc_count; i++) {
 		delete npcs[i];
 	}
-
-	tip.clear(tip_buf);
 }

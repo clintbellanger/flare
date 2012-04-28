@@ -32,8 +32,6 @@ MapIso::MapIso(PowerManager &_powers, CampaignManager &_camp)
 	: powers(_powers)
 	, camp(_camp) {
 
-	tip = new WidgetTooltip();
-
 	// cam(x,y) is where on the map the camera is pointing
 	// units found in Settings.h (UNITS_PER_TILE)
 	cam.x = 0;
@@ -413,7 +411,7 @@ int MapIso::load(string filename) {
 						e->x = atoi(infile.nextValue().c_str());
 						e->y = atoi(infile.nextValue().c_str());
 						e->z = atoi(infile.nextValue().c_str());
-						
+
 						// add repeating mapmods
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -424,7 +422,7 @@ int MapIso::load(string filename) {
 							e->x = atoi(infile.nextValue().c_str());
 							e->y = atoi(infile.nextValue().c_str());
 							e->z = atoi(infile.nextValue().c_str());
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
@@ -436,7 +434,7 @@ int MapIso::load(string filename) {
 						e->x = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
 						e->y = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
 						e->z = atoi(infile.nextValue().c_str());
-						
+
 						// add repeating loot
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -447,7 +445,7 @@ int MapIso::load(string filename) {
 							e->x = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
 							e->y = atoi(infile.nextValue().c_str()) * UNITS_PER_TILE + UNITS_PER_TILE/2;
 							e->z = atoi(infile.nextValue().c_str());
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
@@ -459,7 +457,7 @@ int MapIso::load(string filename) {
 					}
 					else if (infile.key == "requires_status") {
 						e->s = infile.nextValue();
-						
+
 						// add repeating requires_status
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -467,13 +465,13 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->s = repeat_val;
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
 					else if (infile.key == "requires_not") {
 						e->s = infile.nextValue();
-						
+
 						// add repeating requires_not
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -481,13 +479,13 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->s = repeat_val;
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
 					else if (infile.key == "requires_item") {
 						e->x = atoi(infile.nextValue().c_str());
-						
+
 						// add repeating requires_item
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -495,13 +493,13 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->x = atoi(repeat_val.c_str());
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
 					else if (infile.key == "set_status") {
 						e->s = infile.nextValue();
-						
+
 						// add repeating set_status
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -509,13 +507,13 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->s = repeat_val;
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
 					else if (infile.key == "unset_status") {
 						e->s = infile.nextValue();
-						
+
 						// add repeating unset_status
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -523,13 +521,13 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->s = repeat_val;
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
 					else if (infile.key == "remove_item") {
 						e->x = atoi(infile.nextValue().c_str());
-						
+
 						// add repeating remove_item
 						string repeat_val = infile.nextValue();
 						while (repeat_val != "") {
@@ -537,7 +535,7 @@ int MapIso::load(string filename) {
 							e = &events[event_count-1].components[events[event_count-1].comp_num];
 							e->type = infile.key;
 							e->x = atoi(repeat_val.c_str());
-							
+
 							repeat_val = infile.nextValue();
 						}
 					}
@@ -786,7 +784,6 @@ bool MapIso::isActive(int eventid){
 void MapIso::checkTooltip() {
 	Point p;
 	SDL_Rect r;
-	Point tip_pos;
 	bool skip;
 
 	for (int i=0; i<event_count; i++) {
@@ -827,17 +824,15 @@ void MapIso::checkTooltip() {
 		*/
 
 		if (isWithin(r,inp->mouse) && events[i].tooltip != "") {
-
+			const WidgetTooltip::Lines &lines = tip.getLines();
 			// new tooltip?
-			if (tip_buf.lines[0] != events[i].tooltip) {
-				tip->clear(tip_buf);
-				tip_buf.num_lines = 1;
-				tip_buf.lines[0] = events[i].tooltip;
+			if (lines.size() != 1 || lines[0].text != events[i].tooltip) {
+				tip.clear();
+				tip.addLine(events[i].tooltip);
 			}
 
-			tip_pos.x = r.x + r.w/2;
-			tip_pos.y = r.y;
-			tip->render(tip_buf, tip_pos, STYLE_TOPLABEL);
+			Point tip_pos(r.x + r.w / 2, r.y);
+			tip.render(tip_pos, STYLE_TOPLABEL);
 		}
 	}
 }
@@ -955,8 +950,5 @@ MapIso::~MapIso() {
 		Mix_FreeMusic(music);
 	}
 	if (sfx) Mix_FreeChunk(sfx);
-
-	tip->clear(tip_buf);
-	delete tip;
 }
 

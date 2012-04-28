@@ -70,7 +70,7 @@ public:
 	~MenuInventory();
 	void logic();
 	void render();
-	TooltipData checkTooltip(const Point &mouse);
+	void checkTooltip(WidgetTooltip &tip, const Point &mouse);
 
 	ItemStack click(const InputState &input);
 	void itemReturn(const ItemStack &stack);

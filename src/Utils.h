@@ -159,6 +159,11 @@ void drawLine(SDL_Surface *screen, int x0, int y0, int x1, int y1, Uint32 color)
 void drawLine(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color);
 SDL_Surface* createSurface(int width, int height);
 
+inline Point map_to_screen(const Point &pos, const Point &cam) {
+	return map_to_screen(pos.x, pos.y, cam.x, cam.y);
+}
+
+
 /** Convert an SDL_Rect into a Vec2<int, float, true> (a.k.a. Point), omitting w & h */
 inline Point toPoint(const SDL_Rect &r) {
 	return Point(r.x, r.y);

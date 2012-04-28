@@ -479,3 +479,25 @@ bool StatBlock::canUsePower(const Power &power, unsigned powerid) const {
 		&& (unsigned)mentoff >= PowerManager::getRequiredStatValue(powerid, 2)
 		&& (unsigned)mentdef >= PowerManager::getRequiredStatValue(powerid, 3);
 }
+
+int StatBlock::getStat(unsigned i) const {
+	switch (i) {
+		case 0:	return get_physical();
+		case 1:	return get_mental();
+		case 2:	return get_offense();
+		case 3:	return get_defense();
+		default: assert(0); return -1;
+	}
+}
+
+int StatBlock::getDiscpline(unsigned i) const {
+	switch (i) {
+		case 0:	return physoff;
+		case 1:	return physdef;
+		case 2:	return mentoff;
+		case 3:	return mentdef;
+		case 4:	return physment;
+		case 5:	return offdef;
+		default: assert(0); return -1;
+	}
+}

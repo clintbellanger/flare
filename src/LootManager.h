@@ -35,16 +35,41 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL_mixer.h>
 
 #include <string>
+#include <list>
+
+using std::string;
 
 
-struct LootDef {
+class LootDef : Uncopyable {
+	friend class LootManager;
+public:
+	// animation vars
+	const static int anim_loot_frames = 6;
+	const static int anim_loot_duration = 3;
+	const static int max_frame = anim_loot_frames * anim_loot_duration - 1;
+	const static int tooltip_margin = 32; 	/**< pixels between loot drop center and label */
+
+private:
 	ItemStack stack;
-	int frame;
-	Point pos;
 	int gold;
-	TooltipData tip;
-};
+	Point pos;
+	int frame;
+	WidgetTooltip tip;
 
+public:
+	LootDef(const ItemStack &stack, int gold, const Point &pos);
+
+	/**
+	* If an item is flying, it hasn't completed its "flying loot" animation.
+	* Only allow loot to be picked up if it is grounded.
+	*/
+	bool isFlying() const				{return frame < max_frame;}
+	void animate(ItemManager &items);
+	void renderTooltip(const Point &xcam, const Point &ycam);
+
+private:
+	void initTip();
+};
 
 // this means that normal items are 10x more common than epic items
 // these numbers have to be balanced by various factors
@@ -57,12 +82,15 @@ const int RARITY_EPIC = 1;
 const int LOOT_RANGE = 3 * UNITS_PER_TILE;
 
 class LootManager : private Uncopyable {
+public:
+	typedef std::list<LootDef *> LootList;
+	//typedef const std::list<const LootDef *> ConstLootList;
+
 private:
 
 	ItemManager &items;
 	EnemyManager &enemies;
 	MapIso &map;
-	WidgetTooltip tip;
 
 	// functions
 	void loadGraphics();
@@ -81,39 +109,41 @@ private:
 	int frame_count; // the last frame is the "at-rest" floor loot graphic
 
 	// loot refers to ItemManager indices
-	LootDef loot[256]; // TODO: change to dynamic list without limits
+	LootList lootList;
 
 	// loot tables multiplied out
 	// currently loot can range from levels 0-20
 	int loot_table[21][1024]; // level, number.  the int is an item id
 	int loot_table_count[21]; // total number per level
 
-	// animation vars
-	int anim_loot_frames;
-	int anim_loot_duration;
+
 
 public:
 	LootManager(ItemManager &_items, EnemyManager &_enemies, MapIso &_map);
 	~LootManager();
 
-	void handleNewMap();
+	void handleNewMap()				{clear();}
 	void logic();
-	void renderTooltips(Point cam);
+	void renderTooltips(const Point &cam);
 	void checkEnemiesForLoot();
 	void checkMapForLoot();
-	bool isFlying(int loot_index);
 	void determineLoot(int base_level, Point pos);
 	const Item *randomItem(int base_level);
-	void addLoot(ItemStack stack, Point pos);
-	void addGold(int count, Point pos);
-	void removeLoot(int index);
+	void addLoot(const ItemStack &stack, const Point &pos);
+	void addGold(int count, const Point &pos);
 	ItemStack checkPickup(const Point &mouse, const Point &cam, const Point &hero_pos, int &gold, bool inv_full);
 
-	Renderable getRender(int index);
+	void getRenders(Renderables &dest);
 
 	int tooltip_margin;
 	int loot_count;
 	bool full_msg;
+
+	/** Return a const version of lootList (reinterpret_cast used to change underlying const-ness) */
+	//ConstLootList &getLootList() {return reinterpret_cast<ConstLootList &>(lootList);}
+
+private:
+	void clear();
 
 };
 

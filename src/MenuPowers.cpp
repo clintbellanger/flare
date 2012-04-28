@@ -97,21 +97,8 @@ void MenuPowers::loadGraphics() {
 bool MenuPowers::requirementsMet(int power_index) {
 	int required_val = (power_index / 4) * 2 + 1;
 	int required_stat = power_index % 4;
-	switch (required_stat) {
-		case 0:
-			return (stats.physoff >= required_val);
-			break;
-		case 1:
-			return (stats.physdef >= required_val);
-			break;
-		case 2:
-			return (stats.mentoff >= required_val);
-			break;
-		case 3:
-			return (stats.mentdef >= required_val);
-			break;
-	}
-	return false;
+
+	return stats.getDiscpline(required_stat) >= required_val;
 }
 
 /**
@@ -237,43 +224,42 @@ void MenuPowers::displayBuild(int value, int x) {
 /**
  * Show mouseover descriptions of disciplines and powers
  */
-TooltipData MenuPowers::checkTooltip(const Point &mouse) {
-
-	TooltipData tip;
+void MenuPowers::checkTooltip(WidgetTooltip &tip, const Point &mouse) {
 
 	int offset_x = (VIEW_W - 320);
 	int offset_y = (VIEW_H - 416)/2;
 
+	tip.clear();
 	if (mouse.y >= offset_y+32 && mouse.y <= offset_y+80) {
 		if (mouse.x >= offset_x+48 && mouse.x <= offset_x+80) {
-			tip.lines[tip.num_lines++] = msg->get("Physical + Offense grants melee and ranged attacks");
-			return tip;
+			tip.addLine(msg->get("Physical + Offense grants melee and ranged attacks"));
+			return;
 		}
 		if (mouse.x >= offset_x+112 && mouse.x <= offset_x+144) {
-			tip.lines[tip.num_lines++] = msg->get("Physical + Defense grants melee protection");
-			return tip;
+			tip.addLine(msg->get("Physical + Defense grants melee protection"));
+			return;
 		}
 		if (mouse.x >= offset_x+176 && mouse.x <= offset_x+208) {
-			tip.lines[tip.num_lines++] = msg->get("Mental + Offense grants elemental spell attacks");
-			return tip;
+			tip.addLine(msg->get("Mental + Offense grants elemental spell attacks"));
+			return;
 		}
 		if (mouse.x >= offset_x+240 && mouse.x <= offset_x+272) {
-			tip.lines[tip.num_lines++] = msg->get("Mental + Defense grants healing and magical protection");
-			return tip;
+			tip.addLine(msg->get("Mental + Defense grants healing and magical protection"));
+			return;
 		}
 	}
 	else {
 		for (int i=0; i<20; i++) {
 			if (isWithin(slots[i], mouse)) {
-				tip.lines[tip.num_lines++] = powers.powers[i].name;
-				tip.lines[tip.num_lines++] = powers.powers[i].description;
+				tip.addLine(powers.powers[i].name);
+				tip.addLine(powers.powers[i].description);
 
 				if (powers.powers[i].requires_physical_weapon)
-					tip.lines[tip.num_lines++] = msg->get("Requires a physical weapon");
+					tip.addLine(msg->get("Requires a physical weapon"));
 				else if (powers.powers[i].requires_mental_weapon)
-					tip.lines[tip.num_lines++] = msg->get("Requires a mental weapon");
+					tip.addLine(msg->get("Requires a mental weapon"));
 				else if (powers.powers[i].requires_offense_weapon)
-					tip.lines[tip.num_lines++] = msg->get("Requires an offense weapon");
+					tip.addLine(msg->get("Requires an offense weapon"));
 
 
 				// add requirement
@@ -281,31 +267,28 @@ TooltipData MenuPowers::checkTooltip(const Point &mouse) {
 				int required_stat = i % 4;
 				if (required_val > 1) {
 
-					if (!requirementsMet(i))
-						tip.colors[tip.num_lines] = FONT_RED;
+					int color = requirementsMet(i) ? FONT_WHITE : FONT_RED;
 
-					if (required_stat == 0) tip.lines[tip.num_lines++] = msg->get("Requires Physical Offense %d", required_val);
-					else if (required_stat == 1) tip.lines[tip.num_lines++] = msg->get("Requires Physical Defense %d", required_val);
-					else if (required_stat == 2) tip.lines[tip.num_lines++] = msg->get("Requires Mental Offense %d", required_val);
-					else tip.lines[tip.num_lines++] = msg->get("Requires Mental Defense %d", required_val);
+					if (required_stat == 0) tip.addLine(msg->get("Requires Physical Offense %d", required_val));
+					else if (required_stat == 1) tip.addLine(msg->get("Requires Physical Defense %d", required_val));
+					else if (required_stat == 2) tip.addLine(msg->get("Requires Mental Offense %d", required_val));
+					else tip.addLine(msg->get("Requires Mental Defense %d", required_val));
 
 				}
 
 				// add mana cost
 				if (powers.powers[i].requires_mp > 0) {
-					tip.lines[tip.num_lines++] = msg->get("Costs %d MP", powers.powers[i].requires_mp);
+					tip.addLine(msg->get("Costs %d MP", powers.powers[i].requires_mp));
 				}
 				// add cooldown time
 				if (powers.powers[i].cooldown > 0) {
-					tip.lines[tip.num_lines++] = msg->get("Cooldown: %d seconds", powers.powers[i].cooldown / 1000.0);
+					tip.addLine(msg->get("Cooldown: %d seconds", powers.powers[i].cooldown / 1000.0));
 				}
 
-				return tip;
+				return;
 			}
 		}
 	}
-
-	return tip;
 }
 
 MenuPowers::~MenuPowers() {

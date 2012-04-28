@@ -279,35 +279,36 @@ void MenuActionBar::renderItemCounts() {
 /**
  * On mouseover, show tooltip for buttons
  */
-TooltipData MenuActionBar::checkTooltip(const Point &mouse) {
-	TooltipData tip;
+void MenuActionBar::checkTooltip(WidgetTooltip &tip, const Point &mouse) {
+
+	// FIXME: will re-calculate every frame
+	tip.clear();
 
 	//int offset_x = (VIEW_W - 640)/2;
 	if (isWithin(menus[0], mouse)) {
-		tip.lines[tip.num_lines++] = msg->get("Character Menu (C)");
-		return tip;
+		tip.addLine(msg->get("Character Menu (C)"));
+		return;
 	}
 	if (isWithin(menus[1], mouse)) {
-		tip.lines[tip.num_lines++] = msg->get("Inventory Menu (I)");
-		return tip;
+		tip.addLine(msg->get("Inventory Menu (I)"));
+		return;
 	}
 	if (isWithin(menus[2], mouse)) {
-		tip.lines[tip.num_lines++] = msg->get("Power Menu (P)");
-		return tip;
+		tip.addLine(msg->get("Power Menu (P)"));
+		return;
 	}
 	if (isWithin(menus[3], mouse)) {
-		tip.lines[tip.num_lines++] = msg->get("Log Menu (L)");
-		return tip;
+		tip.addLine(msg->get("Log Menu (L)"));
+		return;
 	}
 	for (int i=0; i<12; i++) {
 		if (hotkeys[i] != -1) {
 			if (isWithin(slots[i], mouse)) {
-				tip.lines[tip.num_lines++] = powers.powers[hotkeys[i]].name;
+				tip.addLine(powers.powers[hotkeys[i]].name);
+				return;
 			}
 		}
 	}
-
-	return tip;
 }
 
 /**
