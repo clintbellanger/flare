@@ -46,8 +46,6 @@ GameStatePlay::GameStatePlay(int _game_slot)
 	, npcs(map, loot, items)
 	, quests(camp, menu.log)
 	, enemy(NULL)
-	, r()					// calls 1024 ctors
-	, renderableCount(0)
 
 	// display the name of the map in the upper-right hand corner
 	, label_mapname()
@@ -428,48 +426,49 @@ void GameStatePlay::logic() {
  * Render all graphics for a single frame
  */
 void GameStatePlay::render() {
+	Renderables r;
+	Renderable rend;
 
-	// Create a list of Renderables from all objects not already on the map.
-	renderableCount = 0;
-
-	r[renderableCount++] = pc.getRender(); // Avatar
+	r.push_back(pc.getRender()); // Avatar
 
 	for (int i=0; i<enemies.enemy_count; i++) { // Enemies
-		r[renderableCount++] = enemies.getRender(i);
+		r.push_back(enemies.getRender(i));
 		if (enemies.enemies[i]->stats.shield_hp > 0) {
-			r[renderableCount] = enemies.enemies[i]->stats.getEffectRender(STAT_EFFECT_SHIELD);
-			r[renderableCount++].sprite = powers.gfx[powers.powers[POWER_SHIELD].gfx_index]; // TODO: parameter
+			rend = enemies.enemies[i]->stats.getEffectRender(STAT_EFFECT_SHIELD);
+			rend.sprite = powers.gfx[powers.powers[POWER_SHIELD].gfx_index]; // TODO: parameter
+			r.push_back(rend);
 		}
 	}
 
 	for (int i=0; i<npcs.npc_count; i++) { // NPCs
-		r[renderableCount++] = npcs.npcs[i]->getRender();
+		r.push_back(npcs.npcs[i]->getRender());
 	}
 
-	for (int i=0; i<loot.loot_count; i++) { // Loot
-		r[renderableCount++] = loot.getRender(i);
-	}
+	 // Loot
+	loot.getRenders(r);
 
 	for (int i=0; i<hazards.hazard_count; i++) { // Hazards
 		if (hazards.h[i]->rendered && hazards.h[i]->delay_frames == 0) {
-			r[renderableCount++] = hazards.getRender(i);
+			r.push_back(hazards.getRender(i));
 		}
 	}
 
 	// get additional hero overlays
 	if (pc.stats.shield_hp > 0) {
-		r[renderableCount] = pc.stats.getEffectRender(STAT_EFFECT_SHIELD);
-		r[renderableCount++].sprite = powers.gfx[powers.powers[POWER_SHIELD].gfx_index]; // TODO: parameter
+		rend = pc.stats.getEffectRender(STAT_EFFECT_SHIELD);
+		rend.sprite = powers.gfx[powers.powers[POWER_SHIELD].gfx_index]; // TODO: parameter
+		r.push_back(rend);
 	}
 	if (pc.stats.vengeance_stacks > 0) {
-		r[renderableCount] = pc.stats.getEffectRender(STAT_EFFECT_VENGEANCE);
-		r[renderableCount++].sprite = powers.runes;
+		rend = pc.stats.getEffectRender(STAT_EFFECT_VENGEANCE);
+		rend.sprite = powers.runes;
+		r.push_back(rend);
 	}
 
-	sort_by_tile(r,renderableCount);
+	sort_by_tile(r);
 
 	// render the static map layers plus the renderables
-	map.render(r, renderableCount);
+	map.render(r);
 
 	// display the name of the map in the upper-right hand corner
 	label_mapname.set(VIEW_W-2, 2, JUSTIFY_RIGHT, VALIGN_TOP, map.title, FONT_WHITE);

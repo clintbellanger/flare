@@ -604,7 +604,7 @@ void MapIso::logic() {
 	if (shaky_cam_ticks > 0) shaky_cam_ticks--;
 }
 
-void MapIso::render(Renderable r[], int rnum) {
+void MapIso::render(Renderables &renderables) {
 
 	// r will become a list of renderables.  Everything not on the map already:
 	// - hero
@@ -662,20 +662,21 @@ void MapIso::render(Renderable r[], int rnum) {
 	}
 
 	// some renderables are drawn above the background and below the objects
-	for (int ri = 0; ri < rnum; ri++) {
-		if (!r[ri].object_layer) {
+	for (Renderables::iterator it = renderables.begin(); it != renderables.end(); ++it) {
+		Renderable &r = *it;
+		if (!r.object_layer) {
 
 			// draw renderable
-			dest.w = r[ri].src.w;
-			dest.h = r[ri].src.h;
-			dest.x = VIEW_W_HALF + (r[ri].map_pos.x/UNITS_PER_PIXEL_X - xcam.x) - (r[ri].map_pos.y/UNITS_PER_PIXEL_X - xcam.y) - r[ri].offset.x;
-			dest.y = VIEW_H_HALF + (r[ri].map_pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (r[ri].map_pos.y/UNITS_PER_PIXEL_Y - ycam.y) - r[ri].offset.y;
+			dest.w = r.src.w;
+			dest.h = r.src.h;
+			dest.x = VIEW_W_HALF + (r.map_pos.x/UNITS_PER_PIXEL_X - xcam.x) - (r.map_pos.y/UNITS_PER_PIXEL_X - xcam.y) - r.offset.x;
+			dest.y = VIEW_H_HALF + (r.map_pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (r.map_pos.y/UNITS_PER_PIXEL_Y - ycam.y) - r.offset.y;
 
-			SDL_BlitSurface(r[ri].sprite, &r[ri].src, screen, &dest);
+			SDL_BlitSurface(r.sprite, &r.src, screen, &dest);
 		}
 	}
 
-	int r_cursor = 0;
+	Renderables::iterator it = renderables.begin();
 
 	// todo: trim by screen rect
 	// object layer
@@ -699,18 +700,20 @@ void MapIso::render(Renderable r[], int rnum) {
 			}
 
 			// some renderable entities go in this layer
-			while (r_cursor < rnum && r[r_cursor].tile.x == i && r[r_cursor].tile.y == j) {
-				if (r[r_cursor].object_layer) {
-					// draw renderable
-					dest.w = r[r_cursor].src.w;
-					dest.h = r[r_cursor].src.h;
-					dest.x = VIEW_W_HALF + (r[r_cursor].map_pos.x/UNITS_PER_PIXEL_X - xcam.x) - (r[r_cursor].map_pos.y/UNITS_PER_PIXEL_X - xcam.y) - r[r_cursor].offset.x;
-					dest.y = VIEW_H_HALF + (r[r_cursor].map_pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (r[r_cursor].map_pos.y/UNITS_PER_PIXEL_Y - ycam.y) - r[r_cursor].offset.y;
-
-					SDL_BlitSurface(r[r_cursor].sprite, &r[r_cursor].src, screen, &dest);
+			for (; it != renderables.end(); ++it) {
+				Renderable &r = *it;
+				if (r.tile.x != i || r.tile.y != j) {
+					break;
 				}
+				if (r.object_layer) {
+					// draw renderable
+					dest.w = r.src.w;
+					dest.h = r.src.h;
+					dest.x = VIEW_W_HALF + (r.map_pos.x/UNITS_PER_PIXEL_X - xcam.x) - (r.map_pos.y/UNITS_PER_PIXEL_X - xcam.y) - r.offset.x;
+					dest.y = VIEW_H_HALF + (r.map_pos.x/UNITS_PER_PIXEL_Y - ycam.x) + (r.map_pos.y/UNITS_PER_PIXEL_Y - ycam.y) - r.offset.y;
 
-				r_cursor++;
+					SDL_BlitSurface(r.sprite, &r.src, screen, &dest);
+				}
 
 			}
 		}

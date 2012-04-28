@@ -46,6 +46,9 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdexcept>
+#include <vector>
+
+using std::vector;
 
 class GameStatePlay : public GameState {
 private:
@@ -61,8 +64,6 @@ private:
 	NPCManager npcs;
 	QuestLog quests;
 	Enemy *enemy;
-	Renderable r[1024];
-	int renderableCount;
 
 	WidgetLabel label_mapname;
 	WidgetLabel label_fps;

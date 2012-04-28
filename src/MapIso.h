@@ -119,7 +119,7 @@ public:
 	int load(std::string filename);
 	void loadMusic();
 	void logic();
-	void render(Renderable r[], int rnum);
+	void render(Renderables &r);
 	void checkEvents(Point loc);
 	void checkEventClick();
 	void clearEvents();

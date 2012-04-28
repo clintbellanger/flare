@@ -24,11 +24,13 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "Settings.h"
-#include <SDL.h>
-#include <SDL_image.h>
 #include <string>
 #include <cmath>
+#include <vector>
+#include <SDL.h>
+#include <SDL_image.h>
+
+#include "Settings.h"
 
 using std::string;
 
@@ -123,12 +125,13 @@ private:
 // message passing struct for various sprites rendered map inline
 struct Renderable /*: private Uncopyable */{ // WARNING: copied in Animation::getCurrentFrame()
 	Point map_pos;
-	SDL_Surface *sprite;
 	SDL_Rect src;
 	Point offset;
 	bool object_layer;
 	Point tile;
+	SDL_Surface *sprite;
 };
+typedef std::vector<Renderable> Renderables;
 
 struct Event_Component {
 	std::string type;
@@ -149,8 +152,8 @@ Point map_to_collision(Point p);
 Point collision_to_map(Point p);
 FPoint calcVector(Point pos, int direction, int dist);
 bool isWithin(const SDL_Rect &r, const Point &target);
-void zsort(Renderable r[], int rnum);
-void sort_by_tile(Renderable r[], int rnum);
+void zsort(Renderables &r);
+void sort_by_tile(Renderables &r);
 void drawPixel(SDL_Surface *screen, int x, int y, Uint32 color);
 void drawLine(SDL_Surface *screen, int x0, int y0, int x1, int y1, Uint32 color);
 void drawLine(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color);

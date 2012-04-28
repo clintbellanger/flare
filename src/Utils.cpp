@@ -116,21 +116,21 @@ bool isWithin(const SDL_Rect &r, const Point &target) {
 /**
  * Sort back-to-front in isometric view
  */
-void zsort(Renderable r[], int rnum) {
+void zsort(Renderables &r) {
 
-	int zpos[1024];
-	int ztemp;
+	unsigned zpos[1024];
+	unsigned ztemp;
 	Renderable rtemp;
 
 	// calculate zpos
-	for (int i=0; i<rnum; i++) {
+	for (unsigned i = 0; i < r.size(); i++) {
 		zpos[i] = r[i].map_pos.x/2 + r[i].map_pos.y/2;
 	}
 
 	// sort
 	// TODO: better sort algo
-	for (int i=0; i<rnum; i++) {
-		for (int j=0; j<rnum-1; j++) {
+	for (unsigned i = 0; i < r.size(); i++) {
+		for (unsigned j = 0; j < r.size() - 1; j++) {
 			if (zpos[j] > zpos[j+1]) {
 				ztemp = zpos[j];
 				zpos[j] = zpos[j+1];
@@ -148,16 +148,16 @@ void zsort(Renderable r[], int rnum) {
  * Sort in the same order as the tiles are drawn
  * Depends upon the map implementation
  */
-void sort_by_tile(Renderable r[], int rnum) {
+void sort_by_tile(Renderables &r) {
 
 	// For MapIso the sort order is:
 	// tile column first, then tile row.  Within each tile, z-order
-	int zpos[1024];
-	int ztemp;
+	unsigned zpos[1024];
+	unsigned ztemp;
 	Renderable rtemp;
 
 	// prep
-	for (int i=0; i<rnum; i++) {
+	for (unsigned i = 0; i < r.size(); i++) {
 		// calculate zpos
 		zpos[i] = r[i].map_pos.x/2 + r[i].map_pos.y/2;
 		// calculate tile
@@ -166,8 +166,8 @@ void sort_by_tile(Renderable r[], int rnum) {
 	}
 
 	// sort
-	for (int i=0; i<rnum; i++) {
-		for (int j=0; j<rnum-1; j++) {
+	for (unsigned i = 0; i < r.size(); i++) {
+		for (unsigned j = 0; j < r.size() - 1; j++) {
 
 			// check tile y
 			if (r[j].tile.y > r[j+1].tile.y) {
