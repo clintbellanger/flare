@@ -59,6 +59,9 @@ MapIso::MapIso(CampaignManager *_camp) {
 	log_msg = "";
 	shaky_cam_ticks = 0;
 
+	// Sets the number of tiles to travel away from the player when rendering
+	// We add 4 here to make sure we don't clip too much regardless of map type
+	// Perhaps we don't need to add 4 for ortho maps?
 	if (VIEW_W >= VIEW_H) {
 		render_size = VIEW_W/UNITS_PER_TILE+4;
 	} else {
@@ -631,6 +634,8 @@ void MapIso::render(Renderable r[], int rnum) {
 	short unsigned int i;
 	short unsigned int j;
 
+	// This rect is used to determine which tiles are on the screen
+	// This is currently only used for the background layer
 	SDL_Rect src;
 	src.x = (hero_tile.x/2)-render_size;
 	src.y = (hero_tile.y/2)-render_size;
@@ -695,6 +700,7 @@ void MapIso::render(Renderable r[], int rnum) {
 	int r_cursor = 0;
 
 	// todo: trim by screen rect
+	// we can't trim here like with the background layer, as it causes rendering glitches
 	// object layer
 	for (j=0; j<h; j++) {
 		for (i=0; i<w; i++) {
