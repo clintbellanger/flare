@@ -58,6 +58,12 @@ MapIso::MapIso(CampaignManager *_camp) {
 	music = NULL;
 	log_msg = "";
 	shaky_cam_ticks = 0;
+
+	if (VIEW_W >= VIEW_H) {
+		render_size = VIEW_W/UNITS_PER_TILE+4;
+	} else {
+		render_size = VIEW_H/UNITS_PER_TILE+4;
+	}
 }
 
 
@@ -624,7 +630,17 @@ void MapIso::render(Renderable r[], int rnum) {
 
 	short unsigned int i;
 	short unsigned int j;
-	//SDL_Rect src;
+
+	SDL_Rect src;
+	src.x = (hero_tile.x/2)-render_size;
+	src.y = (hero_tile.y/2)-render_size;
+	src.w = (hero_tile.x/2)+render_size;
+	src.h = (hero_tile.y/2)+render_size;
+	if (src.x < 0) src.x = 0;
+	if (src.y < 0) src.y = 0;
+	if (src.w > w) src.w = w;
+	if (src.h > h) src.h = h;
+
 	SDL_Rect dest;
 	int current_tile;
 
@@ -639,10 +655,9 @@ void MapIso::render(Renderable r[], int rnum) {
 		shakycam.y = cam.y + (rand() % 16 - 8) /UNITS_PER_PIXEL_Y;
 	}
 
-	// todo: trim by screen rect
 	// background
-	for (j=0; j<h; j++) {
-		for (i=0; i<w; i++) {
+	for (j=src.y; j<src.h; j++) {
+		for (i=src.x; i<src.w; i++) {
 
 			current_tile = background[i][j];
 

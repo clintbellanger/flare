@@ -103,6 +103,9 @@ private:
 	Map_Event events[256];
 	int event_count;
 
+	// render limit
+	unsigned int render_size;
+
 public:
 	CampaignManager *camp;
 	PowerManager *powers;
