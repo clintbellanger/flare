@@ -77,6 +77,7 @@ void drawPixel(SDL_Surface *screen, int x, int y, Uint32 color);
 void drawLine(SDL_Surface *screen, int x0, int y0, int x1, int y1, Uint32 color);
 void drawLine(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color);
 SDL_Surface* createSurface(int width, int height);
+void BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
 
 /**
  * As implemented here:
