@@ -132,10 +132,7 @@ void WidgetButton::render(SDL_Surface *target) {
 	else
 		src.y = BUTTON_GFX_NORMAL * pos.h;
 	
-	// create a temporary rect so we don't modify pos
-	SDL_Rect offset = pos;
-
-	SDL_BlitSurface(buttons, &src, target, &offset);
+	BlitSurface(buttons, &src, target, &pos);
 
 	wlabel.render(target);
 }

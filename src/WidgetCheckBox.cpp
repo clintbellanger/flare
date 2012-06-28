@@ -119,6 +119,6 @@ void WidgetCheckBox::render (SDL_Surface *target)
 	src.h = pos.h;
 	src.w = pos.w;
 
-	SDL_BlitSurface(cb, &src, target, &pos);
+	BlitSurface(cb, &src, target, &pos);
 }
 

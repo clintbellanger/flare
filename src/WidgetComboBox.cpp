@@ -157,7 +157,7 @@ void WidgetComboBox::render(SDL_Surface *target) {
 	else
 		src.y = COMBOBOX_GFX_NORMAL * pos.h;
 
-	SDL_BlitSurface(comboboxs, &src, target, &pos);
+	BlitSurface(comboboxs, &src, target, &pos);
 
 	wlabel.render(target);
 
@@ -177,7 +177,7 @@ void WidgetComboBox::render(SDL_Surface *target) {
 				src.y = 0;
 
 			refresh();
-			SDL_BlitSurface(comboboxs, &src, target, &rows[i]);
+			BlitSurface(comboboxs, &src, target, &rows[i]);
 			vlabels[i].render(target);
 		}
 	}

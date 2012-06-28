@@ -324,4 +324,13 @@ SDL_Surface* createSurface(int width, int height) {
 	return surface;
 }
 
+/**
+ * Allows for blitting without accidental changing of dstrect
+ */
+void BlitSurface (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
+	SDL_Rect offset;
+	offset.x = dstrect->x;
+	offset.y = dstrect->y;
 
+	SDL_BlitSurface(src,srcrect,dst,&offset);
+}

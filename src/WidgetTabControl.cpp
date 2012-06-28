@@ -194,9 +194,9 @@ void WidgetTabControl::renderTab(int number, SDL_Surface *target)
   src.h = tabs[i].h;
 
   if (i == activeTab)
-    SDL_BlitSurface(activeTabSurface, &src, target, &dest);
+    BlitSurface(activeTabSurface, &src, target, &dest);
   else
-    SDL_BlitSurface(inactiveTabSurface, &src, target, &dest);
+    BlitSurface(inactiveTabSurface, &src, target, &dest);
 
   // Draw tab’s right edge.
   src.x = 128 - tabPadding.x;
@@ -204,9 +204,9 @@ void WidgetTabControl::renderTab(int number, SDL_Surface *target)
   dest.x = tabs[i].x + tabs[i].w - tabPadding.x;
 
   if (i == activeTab)
-    SDL_BlitSurface(activeTabSurface, &src, target, &dest);
+    BlitSurface(activeTabSurface, &src, target, &dest);
   else
-    SDL_BlitSurface(inactiveTabSurface, &src, target, &dest);
+    BlitSurface(inactiveTabSurface, &src, target, &dest);
 
   // Set tab’s label font color.
   int fontColor;

@@ -153,7 +153,7 @@ void WidgetSlider::render (SDL_Surface *target)
 	knob.h = pos_knob.h;
 	knob.w = pos_knob.w;
 
-	SDL_BlitSurface(sl, &base, target, &pos);
-	SDL_BlitSurface(sl, &knob, target, &pos_knob);
+	BlitSurface(sl, &base, target, &pos);
+	BlitSurface(sl, &knob, target, &pos_knob);
 }
 

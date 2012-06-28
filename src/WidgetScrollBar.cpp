@@ -166,9 +166,9 @@ void WidgetScrollBar::render(SDL_Surface *target) {
 	else
 		src_down.y = pos_down.h*2;
 
-	SDL_BlitSurface(scrollbars, &src_up, target, &pos_up);
-	SDL_BlitSurface(scrollbars, &src_down, target, &pos_down);
-	SDL_BlitSurface(scrollbars, &src_knob, target, &pos_knob);
+	BlitSurface(scrollbars, &src_up, target, &pos_up);
+	BlitSurface(scrollbars, &src_down, target, &pos_down);
+	BlitSurface(scrollbars, &src_knob, target, &pos_knob);
 }
 
 /**
