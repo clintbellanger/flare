@@ -320,7 +320,7 @@ void WidgetListBox::render(SDL_Surface *target) {
 		else
 			src.y = pos.h;
 
-		SDL_BlitSurface(listboxs, &src, target, &rows[i]);
+		BlitSurface(listboxs, &src, target, &rows[i]);
 		if (i<list_amount) {
 			vlabels[i].render(target);
 		}

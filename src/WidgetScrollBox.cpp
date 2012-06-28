@@ -94,7 +94,7 @@ void WidgetScrollBox::render(SDL_Surface *target) {
 	src.w = contents->w;
 	src.h = pos.h;
 
-	SDL_BlitSurface(contents, &src, target, &pos);
+	BlitSurface(contents, &src, target, &pos);
     scrollbar->render(target);
 }
 

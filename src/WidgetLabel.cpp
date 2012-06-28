@@ -55,7 +55,7 @@ void WidgetLabel::render(SDL_Surface *target) {
 	dest.h = bounds.h;
 
 	if (text_buffer != NULL) {
-		SDL_BlitSurface(text_buffer, NULL, target, &dest);
+		BlitSurface(text_buffer, NULL, target, &dest);
 	}
 }
 

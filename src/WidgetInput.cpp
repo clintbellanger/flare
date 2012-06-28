@@ -129,7 +129,7 @@ void WidgetInput::render(SDL_Surface *target) {
 	else
 		src.y = pos.h;
 
-	SDL_BlitSurface(background, &src, target, &pos);
+	BlitSurface(background, &src, target, &pos);
 
 	if (!inFocus) {
 		font->render(text, font_pos.x, font_pos.y, JUSTIFY_LEFT, target, FONT_WHITE);
