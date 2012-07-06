@@ -192,7 +192,37 @@ void zsort(Renderable r[], int rnum) {
  * Depends upon the map implementation
  */
 
-int zcompare(const void * elem1, const void * elem2) {
+int zcompare_iso(const void * elem1, const void * elem2) {
+	const Renderable *r1 = static_cast<const Renderable*>(elem1);
+	const Renderable *r2 = static_cast<const Renderable*>(elem2);
+	if (r1->tile.y + r1->tile.x > r2->tile.y + r2->tile.x)
+		return 1;
+	else if (r1->tile.y + r1->tile.x == r2->tile.y + r2->tile.x) {
+		if (r1->tile.x > r2->tile.x)
+			return 1;
+		else
+			if (r1->tile.x == r2->tile.x)
+				if (r1->map_pos.x + r1->map_pos.y > r2->map_pos.x + r2->map_pos.y)
+					return 1;
+	}
+	return 0;
+}
+
+void sort_by_tile_iso(Renderable r[], int rnum) {
+
+	// For MapIso the sort order is:
+	// tile column first, then tile row.  Within each tile, z-order
+
+	// prep
+	for (int i=0; i<rnum; i++) {
+		// calculate tile
+		r[i].tile.x = r[i].map_pos.x >> TILE_SHIFT;
+		r[i].tile.y = r[i].map_pos.y >> TILE_SHIFT;
+	}
+	qsort(r, rnum, sizeof(Renderable), zcompare_iso);
+}
+
+int zcompare_ortho(const void * elem1, const void * elem2) {
 	const Renderable *r1 = static_cast<const Renderable*>(elem1);
 	const Renderable *r2 = static_cast<const Renderable*>(elem2);
 	if (r1->tile.y > r2->tile.y)
@@ -207,7 +237,7 @@ int zcompare(const void * elem1, const void * elem2) {
 	return 0;
 }
 
-void sort_by_tile(Renderable r[], int rnum) {
+void sort_by_tile_ortho(Renderable r[], int rnum) {
 
 	// For MapIso the sort order is:
 	// tile column first, then tile row.  Within each tile, z-order
@@ -218,9 +248,9 @@ void sort_by_tile(Renderable r[], int rnum) {
 		r[i].tile.x = r[i].map_pos.x >> TILE_SHIFT;
 		r[i].tile.y = r[i].map_pos.y >> TILE_SHIFT;
 	}
-
-	qsort(r, rnum, sizeof(Renderable), zcompare);
+	qsort(r, rnum, sizeof(Renderable), zcompare_ortho);
 }
+
 
 
 /*
