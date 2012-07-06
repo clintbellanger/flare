@@ -637,10 +637,13 @@ void MapIso::logic() {
 
 
 void MapIso::render(Renderable r[], int rnum) {
-    if (TILESET_ORIENTATION == TILESET_ORTHOGONAL)
-        renderOrtho(r, rnum);
-    else
-        renderIso(r, rnum);
+	if (TILESET_ORIENTATION == TILESET_ORTHOGONAL) {
+		sort_by_tile_ortho(r, rnum);
+		renderOrtho(r, rnum);
+	} else {
+		sort_by_tile_iso(r, rnum);
+		renderIso(r, rnum);
+	}
 }
 
 void MapIso::renderIso(Renderable r[], int rnum) {
@@ -674,7 +677,7 @@ void MapIso::renderIso(Renderable r[], int rnum) {
 
 	const Point upperright = screen_to_map(0, 0, shakycam.x, shakycam.y);
 	short x, y, tiles_width;
-	const short tiles_outside_ofscreen = 8;
+	const short tiles_outside_ofscreen = 12;
 	const short max_tiles_width = (VIEW_W / TILE_W) + 2 * tiles_outside_ofscreen;
 	const short max_tiles_height = (2 * VIEW_H / TILE_H) + 2 * tiles_outside_ofscreen;
 	j = upperright.y / UNITS_PER_TILE;
@@ -728,10 +731,22 @@ void MapIso::renderIso(Renderable r[], int rnum) {
 
 	int r_cursor = 0;
 
-	// todo: trim by screen rect
 	// object layer
-	for (j=0; j<h; j++) {
-		for (i=0; i<w; i++) {
+	j = upperright.y / UNITS_PER_TILE;
+	i = upperright.x / UNITS_PER_TILE - tiles_outside_ofscreen;
+
+	while (r[r_cursor].tile.x + r[r_cursor].tile.y < i + j)
+		r_cursor++;
+	while (r[r_cursor].tile.x < i)
+		r_cursor++;
+
+	for (y = max_tiles_height ; y; --y) {
+		tiles_width = 0;
+		for (x = max_tiles_width; x ; --x) {
+			--j; ++i;
+			++tiles_width;
+			if (j >= h || i < 0) continue;
+			if (j < 0 || i >= w) break;
 
 			current_tile = object[i][j];
 
@@ -763,9 +778,18 @@ void MapIso::renderIso(Renderable r[], int rnum) {
 				}
 
 				r_cursor++;
-
 			}
 		}
+		j += tiles_width;
+		i -= tiles_width;
+		if (y % 2)
+			i++;
+		else
+			j++;
+		while (r[r_cursor].tile.x + r[r_cursor].tile.y < i + j)
+			r_cursor++;
+		while (r[r_cursor].tile.x < i)
+			r_cursor++;
 	}
 	//render event tooltips
 	checkTooltip();
