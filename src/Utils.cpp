@@ -203,9 +203,9 @@ int zcompare_iso(const void * elem1, const void * elem2) {
 		else
 			if (r1->tile.x == r2->tile.x)
 				if (r1->map_pos.x + r1->map_pos.y > r2->map_pos.x + r2->map_pos.y)
-					return 1;
+					return 0;
 	}
-	return 0;
+	return -1;
 }
 
 void sort_by_tile_iso(Renderable r[], int rnum) {
@@ -232,9 +232,9 @@ int zcompare_ortho(const void * elem1, const void * elem2) {
 			return 1;
 		else
 			if (r1->map_pos.x + r1->map_pos.y > r2->map_pos.x + r2->map_pos.y)
-				return 1;
+				return 0;
 	}
-	return 0;
+	return -1;
 }
 
 void sort_by_tile_ortho(Renderable r[], int rnum) {
