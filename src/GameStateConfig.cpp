@@ -88,10 +88,10 @@ GameStateConfig::GameStateConfig ()
 		 settings_key[i] = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	}
 
-	input_scrollbox = new WidgetScrollBox(600, 350, 780);
+	input_scrollbox = new WidgetScrollBox(600, 350);
 	input_scrollbox->pos.x = (VIEW_W - 640)/2 + 10;
 	input_scrollbox->pos.y = (VIEW_H - 480)/2 + 30;
-	input_scrollbox->refresh();
+	input_scrollbox->resize(780);
 
 	settings_btn[0] = new WidgetButton(mods->locate("images/menus/buttons/up.png"));
 	settings_btn[1] = new WidgetButton(mods->locate("images/menus/buttons/down.png"));
@@ -695,6 +695,7 @@ void GameStateConfig::logic ()
 			input_scrollbox->logic();
 			if (isWithin(input_scrollbox->pos,inpt->mouse)) {
 				for (unsigned int i = 0; i < 50; i++) {
+					if (settings_key[i]->pressed || settings_key[i]->hover) input_scrollbox->update = true;
 					Point mouse = input_scrollbox->input_assist(inpt->mouse);
 					if (settings_key[i]->checkClick(mouse.x,mouse.y)) {
 						std::string confirm_msg;
@@ -751,10 +752,10 @@ void GameStateConfig::render ()
 
 	if (active_tab == 4) {
 		for (unsigned int i = 13; i < 38; i++) {
-			settings_lb[i]->render(input_scrollbox->contents);
+			if (input_scrollbox->update) settings_lb[i]->render(input_scrollbox->contents);
 		}
 		for (unsigned int i = 0; i < 50; i++) {
-			settings_key[i]->render(input_scrollbox->contents);
+			if (input_scrollbox->update) settings_key[i]->render(input_scrollbox->contents);
 		}
 		input_scrollbox->render();
 	}
