@@ -27,11 +27,11 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "GameStateConfig.h"
 #include "GameStateNew.h"
 #include "GameStateLoad.h"
+#include "GameStateOptions.h"
 #include "GameStatePlay.h"
 #include "Settings.h"
 #include "SharedResources.h"
 #include "WidgetButton.h"
-#include "WidgetCheckBox.h"
 #include "WidgetInput.h"
 #include "WidgetLabel.h"
 
@@ -69,19 +69,11 @@ GameStateNew::GameStateNew() : GameState() {
 	input_name = new WidgetInput();
 	input_name->setPosition(VIEW_W_HALF - input_name->pos.w/2, VIEW_H_HALF+164);
 
-	button_permadeath = new WidgetCheckBox(mods->locate(
-												"images/menus/buttons/checkbox_default.png"));
-	button_permadeath->pos.x = input_name->pos.x;
-	button_permadeath->pos.y = input_name->pos.y + input_name->pos.h + 5;
-
 	// set up labels
 	label_portrait = new WidgetLabel();
 	label_portrait->set(VIEW_W_HALF, VIEW_H_HALF-200, JUSTIFY_CENTER, VALIGN_TOP, msg->get("Choose a Portrait"), FONT_GREY);
 	label_name = new WidgetLabel();
 	label_name->set(VIEW_W_HALF, VIEW_H_HALF+148, JUSTIFY_CENTER, VALIGN_TOP, msg->get("Choose a Name"), FONT_GREY);
-	label_permadeath = new WidgetLabel();
-	label_permadeath->set(button_permadeath->pos.x + button_permadeath->pos.w + 5, button_permadeath->pos.y + button_permadeath->pos.h/2,
-															JUSTIFY_LEFT, VALIGN_CENTER, msg->get("Permadeath?"), FONT_GREY);
 
 	loadGraphics();
 	loadOptions("hero_options.txt");
@@ -144,8 +136,6 @@ void GameStateNew::loadOptions(const string& filename) {
 }
 
 void GameStateNew::logic() {
-	button_permadeath->checkClick();
-
 	// require character name
 	if (input_name->getText() == "") {
 		if (button_create->enabled) {
@@ -167,15 +157,13 @@ void GameStateNew::logic() {
 
 	if (button_create->checkClick()) {
 		// start the new game
-		GameStatePlay* play = new GameStatePlay();
-		play->pc->stats.base = base[current_option];
-		play->pc->stats.head = head[current_option];
-		play->pc->stats.portrait = portrait[current_option];
-		play->pc->stats.name = input_name->getText();
-		play->pc->stats.permadeath = button_permadeath->isChecked();
-		play->game_slot = game_slot;
-		play->resetGame();
-		requestedGameState = play;
+		GameStateOptions* options = new GameStateOptions();
+		options->base = base[current_option];
+		options->head = head[current_option];
+		options->portrait = portrait[current_option];
+		options->name = input_name->getText();
+		options->game_slot = game_slot;
+		requestedGameState = options;
 	}
 
 	// scroll through portrait options
@@ -202,7 +190,6 @@ void GameStateNew::render() {
 	button_prev->render();
 	button_next->render();
 	input_name->render();
-	button_permadeath->render();
 
 	// display portrait option
 	SDL_Rect src;
@@ -223,7 +210,6 @@ void GameStateNew::render() {
 	// display labels
 	label_portrait->render();
 	label_name->render();
-	label_permadeath->render();
 }
 
 GameStateNew::~GameStateNew() {
@@ -236,6 +222,4 @@ GameStateNew::~GameStateNew() {
 	delete label_portrait;
 	delete label_name;
 	delete input_name;
-	delete button_permadeath;
-	delete label_permadeath;
 }

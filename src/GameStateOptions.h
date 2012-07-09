@@ -16,14 +16,14 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 */
 
 /**
- * GameStateNew
+ * GameStateOptions
  * 
- * Handle player choices when starting a new game
- * (e.g. character appearance)
+ * Handle additional player options when starting a new game
+ * (e.g. difficulty, permadeath)
  */
 
-#ifndef GAMESTATENEW_H
-#define GAMESTATENEW_H
+#ifndef GAMESTATEOPTIONS_H
+#define GAMESTATEOPTIONS_H
 
 #include "GameState.h"
 
@@ -35,41 +35,33 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <sstream>
 
 class WidgetButton;
-class WidgetInput;
+class WidgetCheckBox;
 class WidgetLabel;
+class WidgetComboBox;
 
 
-const int PLAYER_OPTION_MAX = 32;
 
-class GameStateNew : public GameState {
+class GameStateOptions : public GameState {
 private:
 
-	void loadGraphics();
-	void loadPortrait(const std::string& portrait_filename);
-	void loadOptions(const std::string& option_filename);
-
-	std::string base[PLAYER_OPTION_MAX];
-	std::string head[PLAYER_OPTION_MAX];
-	std::string portrait[PLAYER_OPTION_MAX];
-	int option_count;
-	int current_option;
-
-	SDL_Surface *portrait_image;
-	SDL_Surface *portrait_border;
 	WidgetButton *button_exit;
-	WidgetButton *button_create;
-	WidgetButton *button_next;
-	WidgetButton *button_prev;
-	WidgetLabel *label_portrait;
-	WidgetLabel *label_name;
-	WidgetInput *input_name;
-
+	WidgetButton *button_start;
+	WidgetCheckBox *button_permadeath;
+	WidgetLabel *label_permadeath;
+	WidgetComboBox *button_difficulty;
+	WidgetLabel *label_difficulty;
+	
+	
 public:
-	GameStateNew();
-	~GameStateNew();
+	GameStateOptions();
+	~GameStateOptions();
 	void logic();
 	void render();
 	int game_slot;
+	std::string base;
+	std::string head;
+	std::string portrait;
+	std::string name;
 	
 };
 
