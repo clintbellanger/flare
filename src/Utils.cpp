@@ -231,6 +231,23 @@ void drawLine(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color) {
 }
 
 /**
+ * draw an arrow made of three lines
+ */
+void drawArrow(SDL_Surface *screen, Point pos0, Point pos1, Uint32 color) {
+	double angle = atan2 (pos1.y - pos0.y, pos1.x - pos0.x) + 3.1415926535898;
+
+	Point pos2,pos3;
+	pos2.x = pos1.x + 8.0 * cos(angle - 0.5);
+	pos2.y = pos1.y + 8.0 * sin(angle - 0.5);
+	pos3.x = pos1.x + 8.0 * cos(angle + 0.5);
+	pos3.y = pos1.y + 8.0 * sin(angle + 0.5);
+
+	drawLine(screen, pos0, pos1, color);
+	drawLine(screen, pos1, pos2, color);
+	drawLine(screen, pos1, pos3, color);
+}
+
+/**
  * create blank surface
  * based on example: http://www.libsdl.org/docs/html/sdlcreatergbsurface.html
  */
