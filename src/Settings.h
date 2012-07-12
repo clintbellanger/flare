@@ -57,6 +57,7 @@ extern bool COMBAT_TEXT;
 
 // Engine Settings
 extern bool MENUS_PAUSE;
+extern float DIFFICULTY;
 
 // Tile Settings
 extern int UNITS_PER_TILE;

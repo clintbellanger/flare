@@ -58,11 +58,7 @@ GameStateOptions::GameStateOptions() : GameState() {
 	button_difficulty = new WidgetComboBox(3,mods->locate("images/menus/buttons/combobox_default.png"));
 	button_difficulty->pos.x = VIEW_W_HALF - button_difficulty->pos.w/2;
 	button_difficulty->pos.y = VIEW_H_HALF;
-//	button_difficulty->set(0,"EASY");
-//	button_difficulty->set(1,"NORMAL");
-//	button_difficulty->set(2,"HARD");
-	setupDifficultyList();
-	button_difficulty->selected = 1;
+	button_difficulty->selected =setupDifficultyList();
 	button_difficulty->refresh();
 
 	button_permadeath = new WidgetCheckBox(mods->locate("images/menus/buttons/checkbox_default.png"));
@@ -78,19 +74,25 @@ GameStateOptions::GameStateOptions() : GameState() {
 															JUSTIFY_LEFT, VALIGN_CENTER, msg->get("Permadeath?"), FONT_GREY);
 }
 
-void GameStateOptions::setupDifficultyList()
+int GameStateOptions::setupDifficultyList()
 {
+	int selected = 0; 
 	FileParser infile;
 	if (infile.open(mods->locate("engine/difficulty.txt").c_str()))	
 	{
 		unsigned int i=0;
 		while (infile.next()) {
-			   	button_difficulty->set(i,infile.key);
-			   i += 1;
+				if(infile.key == "DEFAULT") {
+					selected = atoi(infile.val.c_str());
+				} else {
+					button_difficulty->set(i,infile.key);
+					i += 1;
+				}
 			}
 	} 
 	else fprintf(stderr, "Unable to open languages.txt!\n");
 	infile.close();
+	return selected;
 }
 
 void GameStateOptions::loadDifficultySettings() 
@@ -101,13 +103,13 @@ void GameStateOptions::loadDifficultySettings()
 		unsigned int i=0;
 		while (infile.next()) {
 			   if(button_difficulty->selected == i) {
-				   difficulty = atof(infile.val.c_str());
+				   DIFFICULTY = atof(infile.val.c_str());
 			   }
 			   i += 1;
 			}
 	} 
 	else {
-		difficulty = 1.0f;
+		DIFFICULTY = 1.0f;
 		fprintf(stderr, "No difficulty config found! Setting difficulty to normal by default.\n");
 	}
 

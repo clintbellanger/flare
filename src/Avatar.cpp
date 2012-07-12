@@ -679,7 +679,10 @@ bool Avatar::takeHit(Hazard h) {
 			}
 		}
 
-
+		//apply difficulty setting
+		dmg = DIFFICULTY*dmg;
+		if(dmg < 1) dmg = 1;
+		
 		int prev_hp = stats.hp;
 		combat_text->addMessage(dmg, stats.pos, DISPLAY_DAMAGE);
 		stats.takeDamage(dmg);
