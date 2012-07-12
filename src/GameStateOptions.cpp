@@ -26,6 +26,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "FileParser.h"
 #include "GameStateConfig.h"
 #include "GameStateOptions.h"
+#include "GameStateNew.h"
 #include "GameStateLoad.h"
 #include "GameStatePlay.h"
 #include "Settings.h"
@@ -44,22 +45,23 @@ GameStateOptions::GameStateOptions() : GameState() {
 	// set up buttons
 	button_start = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_start->label = msg->get("Start Game");
-	button_start->pos.x = VIEW_W_HALF - button_start->pos.w;
+	button_start->pos.x = VIEW_W_HALF;
 	button_start->pos.y = VIEW_H - button_start->pos.h;
 	button_start->refresh();
 	
 	button_exit = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_exit->label = msg->get("Cancel");
-	button_exit->pos.x = VIEW_W_HALF;
+	button_exit->pos.x = VIEW_W_HALF - button_exit->pos.w;
 	button_exit->pos.y = VIEW_H - button_exit->pos.h;
 	button_exit->refresh();
 
 	button_difficulty = new WidgetComboBox(3,mods->locate("images/menus/buttons/combobox_default.png"));
 	button_difficulty->pos.x = VIEW_W_HALF - button_difficulty->pos.w/2;
 	button_difficulty->pos.y = VIEW_H_HALF;
-	button_difficulty->set(0,"EASY");
-	button_difficulty->set(1,"NORMAL");
-	button_difficulty->set(2,"HARD");
+//	button_difficulty->set(0,"EASY");
+//	button_difficulty->set(1,"NORMAL");
+//	button_difficulty->set(2,"HARD");
+	setupDifficultyList();
 	button_difficulty->selected = 1;
 	button_difficulty->refresh();
 
@@ -76,17 +78,57 @@ GameStateOptions::GameStateOptions() : GameState() {
 															JUSTIFY_LEFT, VALIGN_CENTER, msg->get("Permadeath?"), FONT_GREY);
 }
 
+void GameStateOptions::setupDifficultyList()
+{
+	FileParser infile;
+	if (infile.open(mods->locate("engine/difficulty.txt").c_str()))	
+	{
+		unsigned int i=0;
+		while (infile.next()) {
+			   	button_difficulty->set(i,infile.key);
+			   i += 1;
+			}
+	} 
+	else fprintf(stderr, "Unable to open languages.txt!\n");
+	infile.close();
+}
+
+void GameStateOptions::loadDifficultySettings() 
+{
+	FileParser infile;
+	if (infile.open(mods->locate("engine/difficulty.txt"))) 
+	{
+		unsigned int i=0;
+		while (infile.next()) {
+			   if(button_difficulty->selected == i) {
+				   difficulty = atof(infile.val.c_str());
+			   }
+			   i += 1;
+			}
+	} 
+	else {
+		difficulty = 1.0f;
+		fprintf(stderr, "No difficulty config found! Setting difficulty to normal by default.\n");
+	}
+
+}
 
 void GameStateOptions::logic() {
-	button_difficulty->checkClick();
+	if(button_difficulty->checkClick()) button_difficulty->render();
 	button_permadeath->checkClick();
 
 	if (button_exit->checkClick()) {
 		delete requestedGameState;
-		requestedGameState = new GameStateLoad();
+		GameStateNew* newgame = new GameStateNew();
+		newgame->game_slot = game_slot;
+		newgame->name = name;
+		newgame->current_option = current_option;
+		requestedGameState = newgame;
 	}
 
 	if (button_start->checkClick()) {
+		loadDifficultySettings();
+		
 		// start the new game
 		GameStatePlay* play = new GameStatePlay();
 		play->pc->stats.base = base;
@@ -102,16 +144,15 @@ void GameStateOptions::logic() {
 }
 
 void GameStateOptions::render() {
-
+	// display labels
+	label_permadeath->render();
+	label_difficulty->render();	
+	
 	// display buttons
 	button_exit->render();
 	button_start->render();
+	button_permadeath->render();
 	button_difficulty->render();
-	button_permadeath->render();	
-
-	// display labels
-	label_difficulty->render();
-	label_permadeath->render();	
 }
 
 GameStateOptions::~GameStateOptions() {

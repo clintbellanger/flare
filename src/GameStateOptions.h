@@ -57,12 +57,16 @@ public:
 	~GameStateOptions();
 	void logic();
 	void render();
+	void setupDifficultyList();
+	void loadDifficultySettings();
+	
 	int game_slot;
 	std::string base;
 	std::string head;
 	std::string portrait;
 	std::string name;
-	
+	int current_option;	
+	float difficulty;
 };
 
 #endif

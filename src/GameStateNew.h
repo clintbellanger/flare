@@ -52,7 +52,6 @@ private:
 	std::string head[PLAYER_OPTION_MAX];
 	std::string portrait[PLAYER_OPTION_MAX];
 	int option_count;
-	int current_option;
 
 	SDL_Surface *portrait_image;
 	SDL_Surface *portrait_border;
@@ -70,7 +69,8 @@ public:
 	void logic();
 	void render();
 	int game_slot;
-	
+	std::string name;
+	int current_option;
 };
 
 #endif

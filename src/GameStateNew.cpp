@@ -47,13 +47,13 @@ GameStateNew::GameStateNew() : GameState() {
 	// set up buttons
 	button_exit = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_exit->label = msg->get("Cancel");
-	button_exit->pos.x = VIEW_W_HALF - button_exit->pos.w/2;
+	button_exit->pos.x = VIEW_W_HALF - button_exit->pos.w;
 	button_exit->pos.y = VIEW_H - button_exit->pos.h;
 	button_exit->refresh();
 
 	button_create = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_create->label = msg->get("Create Character");
-	button_create->pos.x = VIEW_W_HALF + button_create->pos.w/2;
+	button_create->pos.x = VIEW_W_HALF;
 	button_create->pos.y = VIEW_H - button_create->pos.h;
 	button_create->enabled = false;
 	button_create->refresh();
@@ -136,6 +136,12 @@ void GameStateNew::loadOptions(const string& filename) {
 }
 
 void GameStateNew::logic() {
+	// if name previously set, re-set it
+	if ((input_name->getText() == "") && !(name.empty())) {
+		input_name->setText(name);
+		loadPortrait(portrait[current_option]);
+	}
+	
 	// require character name
 	if (input_name->getText() == "") {
 		if (button_create->enabled) {
@@ -156,6 +162,7 @@ void GameStateNew::logic() {
 	}
 
 	if (button_create->checkClick()) {
+		delete requestedGameState;
 		// start the new game
 		GameStateOptions* options = new GameStateOptions();
 		options->base = base[current_option];
@@ -163,6 +170,7 @@ void GameStateNew::logic() {
 		options->portrait = portrait[current_option];
 		options->name = input_name->getText();
 		options->game_slot = game_slot;
+		options->current_option = current_option;
 		requestedGameState = options;
 	}
 
