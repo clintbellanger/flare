@@ -211,8 +211,9 @@ void StatBlock::load(const string& filename) {
 			}
 			// combat stats
 			else if (infile.key == "hp") {
-				hp = num;
-				maxhp = num;
+				//apply difficulty settings here
+				hp = num*DIFFICULTY;
+				maxhp = num*DIFFICULTY;
 			}
 			else if (infile.key == "mp") {
 				mp = num;

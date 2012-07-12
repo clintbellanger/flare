@@ -85,6 +85,7 @@ Set (FLARE_SOURCES
 	./src/GameStateTitle.cpp
 	./src/GameStateLoad.cpp
 	./src/GameStatePlay.cpp
+	./src/GameStateOptions.cpp
 	./src/GameStateNew.cpp
 	./src/GameSwitcher.cpp
 	./src/GetText.cpp

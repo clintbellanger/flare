@@ -42,6 +42,9 @@ GameStateLoad::GameStateLoad() : GameState() {
 	loading = false;
 	loaded = false;
 
+	//reset difficulty
+	DIFFICULTY = 1.0f;
+	
 	label_loading = new WidgetLabel();
 	label_slots = new WidgetLabel();
 
@@ -291,9 +294,11 @@ void GameStateLoad::logic() {
 
 	if (button_action->checkClick()) {
 		if (stats[selected_slot].name == "") {
+			delete requestedGameState;
 			// create a new game
 			GameStateNew* newgame = new GameStateNew();
 			newgame->game_slot = selected_slot + 1;
+			newgame->name = "";
 			requestedGameState = newgame;
 		}
 		else {

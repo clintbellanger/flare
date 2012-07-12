@@ -115,7 +115,7 @@ bool AUTOPICKUP_GOLD = false;
 
 // Other Settings
 bool MENUS_PAUSE = false;
-
+float DIFFICULTY = 1.0f;
 
 /**
  * Set system paths
