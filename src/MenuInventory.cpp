@@ -19,6 +19,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  * class MenuInventory
  */
 
+#include "Menu.h"
 #include "MenuInventory.h"
 #include "PowerManager.h"
 #include "SharedResources.h"
@@ -556,7 +557,7 @@ void MenuInventory::applyEquipment(ItemStack *equipped) {
 	int prev_hp = stats->hp;
 	int prev_mp = stats->mp;
 
-	Item *pc_items = this->items->items;
+	const vector<Item> &pc_items = items->items;
 
 	// calculate bonuses to basic stats and check that each equipped item fit requirements
 	bool checkRequired = true;

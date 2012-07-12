@@ -19,6 +19,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
  * class MenuTalker
  */
 
+#include "Menu.h"
 #include "MenuTalker.h"
 
 #include "NPC.h"
@@ -37,18 +38,11 @@ MenuTalker::MenuTalker(CampaignManager *_camp) {
 	msg_buffer = NULL;
 
 	advanceButton = new WidgetButton(mods->locate("images/menus/buttons/right.png"));
-	advanceButton->pos.x = VIEW_W_HALF + 288;
-	advanceButton->pos.y = VIEW_H_HALF + 112;
 
 	closeButton = new WidgetButton(mods->locate("images/menus/buttons/button_x.png"));
-	closeButton->pos.x = VIEW_W_HALF + 288;
-	closeButton->pos.y = VIEW_H_HALF + 112;
 
 	vendorButton = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
-	vendorButton->pos.x = VIEW_W_HALF + 288 - vendorButton->pos.w;
-	vendorButton->pos.y = VIEW_H_HALF + 80;
 	vendorButton->label = msg->get("Trade");
-	vendorButton->refresh();
 
 	visible = false;
 	vendor_visible = false;
@@ -85,6 +79,17 @@ void MenuTalker::chooseDialogNode() {
 	createBuffer();
 }
 
+void MenuTalker::update() {
+	advanceButton->pos.x = window_area.x + (window_area.w/2) + 288;
+	advanceButton->pos.y = window_area.y + (window_area.h/2) + 112;
+
+	closeButton->pos.x = window_area.x + (window_area.w/2) + 288;
+	closeButton->pos.y = window_area.y + (window_area.h/2) + 112;
+
+	vendorButton->pos.x = window_area.x + (window_area.w/2) + 288 - vendorButton->pos.w;
+	vendorButton->pos.y = window_area.y + (window_area.h/2) + 80;
+	vendorButton->refresh();
+}
 /**
  * Menu interaction (enter/space/click to continue)
  */
@@ -96,7 +101,7 @@ void MenuTalker::logic() {
 	closeButton->enabled = false;
 
 	// determine active button
-	if (event_cursor < NPC_MAX_EVENTS-1) {
+	if (event_cursor < npc->dialog[dialog_node].size()-1) {
 		if (npc->dialog[dialog_node][event_cursor+1].type != "") {
 			advanceButton->enabled = true;
 		}
@@ -170,8 +175,8 @@ void MenuTalker::render() {
 	SDL_Rect src;
 	SDL_Rect dest;
 
-	int offset_x = (VIEW_W - 640)/2;
-	int offset_y = (VIEW_H - 416)/2;
+	int offset_x = window_area.x;
+	int offset_y = window_area.y;
 
 	// dialog box
 	src.x = 0;
@@ -209,7 +214,7 @@ void MenuTalker::render() {
 	SDL_BlitSurface(msg_buffer, NULL, screen, &dest);
 
 	// show advance button if there are more event components, or close button if not
-	if (event_cursor < NPC_MAX_EVENTS-1) {
+	if (event_cursor < npc->dialog[dialog_node].size()-1) {
 		if (npc->dialog[dialog_node][event_cursor+1].type != "") {
 			advanceButton->render();
 		}

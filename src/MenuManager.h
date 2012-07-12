@@ -29,15 +29,15 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "ItemManager.h"
 #include "WidgetTooltip.h"
 
+class Menu;
 class MenuInventory;
 class MenuPowers;
 class MenuCharacter;
 class MenuLog;
 class MenuHUDLog;
 class MenuActionBar;
-class MenuHPMP;
+class MenuStatBar;
 class MenuMiniMap;
-class MenuExperience;
 class MenuEnemy;
 class MenuVendor;
 class MenuTalker;
@@ -85,6 +85,7 @@ public:
 	void closeLeft(bool play_sound);
 	void closeRight(bool play_sound);
 
+	std::vector<Menu*> menus;
 	ItemManager *items;
 	MenuInventory *inv;
 	MenuPowers *pow;
@@ -92,10 +93,11 @@ public:
 	MenuLog *log;
 	MenuHUDLog *hudlog;
 	MenuActionBar *act;
-	MenuHPMP *hpmp;
+	MenuStatBar *hp;
+	MenuStatBar *mp;
+	MenuStatBar *xp;
 	WidgetTooltip *tip;
 	MenuMiniMap *mini;
-	MenuExperience *xp;
 	MenuEnemy *enemy;
 	MenuVendor *vendor;
 	MenuTalker *talker;

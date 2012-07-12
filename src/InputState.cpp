@@ -180,7 +180,7 @@ void InputState::saveKeyBindings() {
 		outfile << "bar0=" << binding[BAR_0] << "," << binding_alt[BAR_0] << "\n";
 		outfile << "main1=" << binding[MAIN1] << "," << binding_alt[MAIN1] << "\n";
 		outfile << "main2=" << binding[MAIN2] << "," << binding_alt[MAIN2] << "\n";
-		outfile << "charater=" << binding[CHARACTER] << "," << binding_alt[CHARACTER] << "\n";
+		outfile << "character=" << binding[CHARACTER] << "," << binding_alt[CHARACTER] << "\n";
 		outfile << "inventory=" << binding[INVENTORY] << "," << binding_alt[INVENTORY] << "\n";
 		outfile << "powers=" << binding[POWERS] << "," << binding_alt[POWERS] << "\n";
 		outfile << "log=" << binding[LOG] << "," << binding_alt[LOG] << "\n";
