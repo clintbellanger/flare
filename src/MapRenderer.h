@@ -171,7 +171,8 @@ private:
 	unsigned short object[256][256];
 	unsigned short collision[256][256];
 
-	void renderIsoBackground();
+	// offset in screen/surface coordinates.
+	void renderIsoBackground(SDL_Surface *wheretorender, Point camwithoffset);
 	void renderIsoBackObjects(std::vector<Renderable> &r);
 	void renderIsoFrontObjects(std::vector<Renderable> &r);
 	void renderIso(std::vector<Renderable> &r);
@@ -186,6 +187,15 @@ private:
 	TileSet tset;
 	std::string tileset;
 	std::string music_filename;
+
+	// in case of animated tiles switched off, prerender background into this layer
+	SDL_Surface* backgroundsurface;
+
+	// point where the backgroundsurface was rendered. same coordinates as shakycam
+	Point backgroundsurfaceoffset;
+
+	void createBackgroundSurface();
+	SDL_Surface* objectslices[2*256];
 
 public:
 	CampaignManager *camp;
