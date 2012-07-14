@@ -1145,6 +1145,7 @@ MapRenderer::~MapRenderer() {
 	}
 	if (sfx) Mix_FreeChunk(sfx);
 
+	SDL_FreeSurface(backgroundsurface);
 	tip_buf.clear();
 	delete tip;
 }
