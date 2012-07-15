@@ -191,11 +191,14 @@ private:
 	// in case of animated tiles switched off, prerender background into this layer
 	SDL_Surface* backgroundsurface;
 
+	// only called if the background surface is actually used, i.e. ANIMATED_TILES = false;
+	void createBackgroundSurface();
+
 	// point where the backgroundsurface was rendered. same coordinates as shakycam
 	Point backgroundsurfaceoffset;
 
-	void createBackgroundSurface();
-	SDL_Surface* objectslices[2*256];
+	// force a rendering of the background in the next render step.
+	bool repaint_background;
 
 public:
 	CampaignManager *camp;

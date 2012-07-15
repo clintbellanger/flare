@@ -55,6 +55,7 @@ MapRenderer::MapRenderer(CampaignManager *_camp) {
 	shaky_cam_ticks = 0;
 
 	backgroundsurface = 0;
+	repaint_background = false;
 }
 
 void MapRenderer::clearEvents() {
@@ -787,11 +788,14 @@ void MapRenderer::renderIso(vector<Renderable> &r) {
 		renderIsoBackground(screen, off);
 	}
 	else {
-		if (abs(shakycam.x - backgroundsurfaceoffset.x) > UNITS_PER_TILE
-			|| abs(shakycam.y - backgroundsurfaceoffset.y) > UNITS_PER_TILE) {
+		if (abs(shakycam.x - backgroundsurfaceoffset.x) > 2 * UNITS_PER_TILE
+			|| abs(shakycam.y - backgroundsurfaceoffset.y) > 2 * UNITS_PER_TILE
+			|| repaint_background) {
 
 			if (!backgroundsurface)
 				createBackgroundSurface();
+
+			repaint_background = false;
 
 			backgroundsurfaceoffset = shakycam;
 
@@ -1077,6 +1081,7 @@ bool MapRenderer::executeEvent(Map_Event &ev) {
 			}
 			else if (ec->s == "background") {
 				background[ec->x][ec->y] = ec->z;
+				repaint_background = true;
 			}
 		}
 		else if (ec->type == "soundfx") {
