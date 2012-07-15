@@ -51,19 +51,20 @@ void MenuMiniMap::createMapSurface() {
 	amask = 0xff000000;
 #endif
 
-	SDL_FreeSurface(map_surface);
-
 	if (HWSURFACE)
-		map_surface = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA, 128, 128, 32, rmask, gmask, bmask, amask);
+		map_surface = SDL_CreateRGBSurface(SDL_HWSURFACE, 128, 128, 32, rmask, gmask, bmask, amask);
 	else
-		map_surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, 128, 128, 32, rmask, gmask, bmask, amask);
+		map_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 128, 128, 32, rmask, gmask, bmask, amask);
 
-	if (map_surface == NULL) {
-		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-	}
-	color_wall = SDL_MapRGBA(map_surface->format, 128,128,128, 255);
-	color_obst = SDL_MapRGBA(map_surface->format, 64,64,64, 255);
-	color_hero = SDL_MapRGBA(map_surface->format, 255,255,255, 255);
+	SDL_SetColorKey(map_surface, SDL_SRCCOLORKEY, SDL_MapRGB(map_surface->format,255,0,255));
+
+	SDL_Surface *cleanup = map_surface;
+	map_surface = SDL_DisplayFormat(map_surface);
+	SDL_FreeSurface(cleanup);
+
+	color_wall = SDL_MapRGB(map_surface->format, 128,128,128);
+	color_obst = SDL_MapRGB(map_surface->format, 64,64,64);
+	color_hero = SDL_MapRGB(map_surface->format, 255,255,255);
 }
 
 void MenuMiniMap::render() {
@@ -138,7 +139,7 @@ void MenuMiniMap::renderIso(MapCollision *collider, Point hero_pos, int map_w, i
 	}
 
 	old_hero_tile = hero_tile;
-	SDL_FillRect(map_surface, 0, SDL_MapRGBA(map_surface->format,0,0,0,0));
+	SDL_FillRect(map_surface, 0, SDL_MapRGB(map_surface->format,255,0,255));
 
 	// half the width of the minimap is used in several calculations
 	// a 2x1 pixel area correlates to a tile, so we can traverse tiles using pixel counting
@@ -203,7 +204,7 @@ void MenuMiniMap::renderIso(MapCollision *collider, Point hero_pos, int map_w, i
 	}
 	// the hero
 	drawPixel(map_surface, 64, 64, color_hero);
-	drawPixel(map_surface, 64, 64, color_hero);
+	drawPixel(map_surface, 65, 64, color_hero);
 
 	SDL_BlitSurface(map_surface, 0 ,screen, &window_area);
 }
