@@ -184,13 +184,15 @@ void drawPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 
     case 3:
         if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-            p[0] = (pixel >> 16) & 0xff;
-            p[1] = (pixel >> 8) & 0xff;
-            p[2] = pixel & 0xff;
+            p[0] = (pixel >> 24) & 0xff;
+            p[1] = (pixel >> 16) & 0xff;
+            p[2] = (pixel >> 8) & 0xff;
+            p[3] = pixel & 0xff;
         } else {
             p[0] = pixel & 0xff;
             p[1] = (pixel >> 8) & 0xff;
             p[2] = (pixel >> 16) & 0xff;
+            p[3] = (pixel >> 24) & 0xff;
         }
         break;
 

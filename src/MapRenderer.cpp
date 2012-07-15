@@ -43,14 +43,19 @@ MapRenderer::MapRenderer(CampaignManager *_camp) {
 	clearEvents();
 	enemy_awaiting_queue = false;
 	npc_awaiting_queue = false;
+	group_awaiting_queue = false;
 	new_enemy.clear();
 	new_npc.clear();
+	new_group.clear();
 
 	sfx = NULL;
 	sfx_filename = "";
 	music = NULL;
 	log_msg = "";
 	shaky_cam_ticks = 0;
+
+	backgroundsurface = 0;
+	repaint_background = false;
 }
 
 void MapRenderer::clearEvents() {
@@ -633,7 +638,36 @@ void MapRenderer::render(vector<Renderable> &r) {
 	}
 }
 
-void MapRenderer::renderIsoBackground() {
+void MapRenderer::createBackgroundSurface() {
+
+	Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+
+	SDL_FreeSurface(backgroundsurface);
+	SDL_Surface *surface;
+	if (HWSURFACE)
+		surface = SDL_CreateRGBSurface(SDL_HWSURFACE|SDL_SRCALPHA, 2 * VIEW_W, 2 * VIEW_H, 32, rmask, gmask, bmask, amask);
+	else
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_SRCALPHA, 2 * VIEW_W, 2 * VIEW_H, 32, rmask, gmask, bmask, amask);
+
+	if (surface == NULL) {
+		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+	}
+	backgroundsurface = SDL_DisplayFormat(surface);
+	SDL_FreeSurface(surface);
+}
+
+void MapRenderer::renderIsoBackground(SDL_Surface *wheretorender, Point offset) {
 	short int i;
 	short int j;
 	SDL_Rect dest;
@@ -658,11 +692,11 @@ void MapRenderer::renderIsoBackground() {
 			if (current_tile) {
 				Point p = map_to_screen(i * UNITS_PER_TILE, j * UNITS_PER_TILE, shakycam.x, shakycam.y);
 				p = center_tile(p);
-				dest.x = p.x - tset.tiles[current_tile].offset.x;
-				dest.y = p.y - tset.tiles[current_tile].offset.y;
+				dest.x = p.x - tset.tiles[current_tile].offset.x + offset.x;
+				dest.y = p.y - tset.tiles[current_tile].offset.y + offset.y;
 				// no need to set w and h in dest, as it is ignored
 				// by SDL_BlitSurface
-				SDL_BlitSurface(tset.sprites, &(tset.tiles[current_tile].src), screen, &dest);
+				SDL_BlitSurface(tset.sprites, &(tset.tiles[current_tile].src), wheretorender, &dest);
 			}
 		}
 		j += tiles_width;
@@ -749,7 +783,35 @@ void MapRenderer::renderIsoFrontObjects(vector<Renderable> &r) {
 }
 
 void MapRenderer::renderIso(vector<Renderable> &r) {
-	renderIsoBackground();
+	if (ANIMATED_TILES) {
+		Point off = {0, 0};
+		renderIsoBackground(screen, off);
+	}
+	else {
+		if (abs(shakycam.x - backgroundsurfaceoffset.x) > 2 * UNITS_PER_TILE
+			|| abs(shakycam.y - backgroundsurfaceoffset.y) > 2 * UNITS_PER_TILE
+			|| repaint_background) {
+
+			if (!backgroundsurface)
+				createBackgroundSurface();
+
+			repaint_background = false;
+
+			backgroundsurfaceoffset = shakycam;
+
+			SDL_FillRect(backgroundsurface, 0, 0);
+			Point off = {VIEW_W_HALF, VIEW_H_HALF};
+			renderIsoBackground(backgroundsurface, off);
+		}
+		Point p = map_to_screen(shakycam.x, shakycam.y , backgroundsurfaceoffset.x, backgroundsurfaceoffset.y);
+		SDL_Rect src;
+		src.x = p.x;
+		src.y = p.y;
+		src.w = 2 * VIEW_W;
+		src.h = 2 * VIEW_H;
+		SDL_BlitSurface(backgroundsurface, &src, screen , 0);
+	}
+
 	renderIsoBackObjects(r);
 	renderIsoFrontObjects(r);
 	checkTooltip();
@@ -1019,6 +1081,7 @@ bool MapRenderer::executeEvent(Map_Event &ev) {
 			}
 			else if (ec->s == "background") {
 				background[ec->x][ec->y] = ec->z;
+				repaint_background = true;
 			}
 		}
 		else if (ec->type == "soundfx") {
@@ -1089,6 +1152,7 @@ MapRenderer::~MapRenderer() {
 	}
 	if (sfx) Mix_FreeChunk(sfx);
 
+	SDL_FreeSurface(backgroundsurface);
 	tip_buf.clear();
 	delete tip;
 }
