@@ -56,15 +56,15 @@ GameStateLoad::GameStateLoad() : GameState() {
 	button_action = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_action->label = msg->get("Choose a Slot");
 	button_action->enabled = false;
-	button_action->pos.x = (VIEW_W - 640)/2 + 480 - button_action->pos.w/2;
-	button_action->pos.y = (VIEW_H - 480)/2 + 384;
+	button_action->pos.x = (VIEW_W - FRAME_W)/2 + FRAME_H - button_action->pos.w/2;
+	button_action->pos.y = (VIEW_H - FRAME_H)/2 + 384;
 	button_action->refresh();
 
 	button_alternate = new WidgetButton(mods->locate("images/menus/buttons/button_default.png"));
 	button_alternate->label = msg->get("Delete Save");
 	button_alternate->enabled = false;
-	button_alternate->pos.x = (VIEW_W - 640)/2 + 480 - button_alternate->pos.w/2;
-	button_alternate->pos.y = (VIEW_H - 480)/2 + 415;
+	button_alternate->pos.x = (VIEW_W - FRAME_W)/2 + FRAME_H - button_alternate->pos.w/2;
+	button_alternate->pos.y = (VIEW_H - FRAME_H)/2 + 415;
 	button_alternate->refresh();
 
 	load_game = false;
@@ -78,7 +78,7 @@ GameStateLoad::GameStateLoad() : GameState() {
 	readGameSlots();
 
 	for (int i=0; i<GAME_SLOT_MAX; i++) {
-		slot_pos[i].x = (VIEW_W - 640)/2;
+		slot_pos[i].x = (VIEW_W - FRAME_W)/2;
 		slot_pos[i].y = (VIEW_H - 480)/2 + (i * 96) + 32;
 		slot_pos[i].w = 288;
 		slot_pos[i].h = 96;
@@ -396,7 +396,7 @@ void GameStateLoad::render() {
 
 		src.w = src.h = 320;
 		dest.x = VIEW_W_HALF;
-		dest.y = (VIEW_H - 480)/2 + 32;
+		dest.y = (VIEW_H - FRAME_H)/2 + 32;
 
 		SDL_BlitSurface(portrait, &src, screen, &dest);
 		SDL_BlitSurface(portrait_border, &src, screen, &dest);
