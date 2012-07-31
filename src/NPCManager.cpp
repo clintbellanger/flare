@@ -45,7 +45,7 @@ NPCManager::NPCManager(MapRenderer *_map, LootManager *_loot, ItemManager *_item
 		npcs[i] = NULL;
 	}
 
-	tooltip_margin = 64;
+	tooltip_margin = ICON_SIZE_LARGE;
 }
 
 void NPCManager::addRenders(std::vector<Renderable> &r) {
