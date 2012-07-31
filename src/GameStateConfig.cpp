@@ -127,7 +127,7 @@ GameStateConfig::GameStateConfig ()
 	// Remove active mods from the available mods list
 	for (unsigned int i = 0; i<mods->mod_list.size(); i++) {
 		for (unsigned int j = 0; j<mod_dirs.size(); j++) {
-			if (mods->mod_list[i] == mod_dirs[j]) mod_dirs[j].erase();
+			if (mods->mod_list[i] == mod_dirs[j] || FALLBACK_MOD == mod_dirs[j]) mod_dirs[j].erase();
 		}
 	}
 	settings_lstb[1] = new WidgetListBox(mods_total, 10, mods->locate("images/menus/buttons/listbox_default.png"));
@@ -499,7 +499,8 @@ GameStateConfig::GameStateConfig ()
 
 	settings_lstb[1]->multi_select = true;
 	for (unsigned int i = 0; i < mods->mod_list.size() ; i++) {
-		settings_lstb[1]->append(mods->mod_list[i],"");
+		if (mods->mod_list[i] != FALLBACK_MOD)
+			settings_lstb[1]->append(mods->mod_list[i],"");
 	}
 	child_widget.push_back(settings_lstb[1]);
 	optiontab[child_widget.size()-1] = 5;
@@ -862,11 +863,10 @@ void GameStateConfig::logic ()
 
 void GameStateConfig::render ()
 {
-	SDL_Rect	pos = tabControl->getContentArea();
-	pos.x = pos.x-12;
-	pos.y = pos.y-12;
-	pos.w = 640;
-	pos.h = 380;
+	int tabheight = tabControl->getTabHeight();
+	SDL_Rect	pos;
+	pos.x = (VIEW_W-FRAME_W)/2;
+	pos.y = (VIEW_H-FRAME_H)/2 + tabheight - tabheight/16;
 
 	SDL_BlitSurface(background,NULL,screen,&pos);
 
