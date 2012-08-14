@@ -137,6 +137,10 @@ public:
 	int forced_move_speed;
 	int forced_move_duration;
 	int range;
+	int bonus_per_physical;
+	int bonus_per_mental;
+	int bonus_per_offense;
+	int bonus_per_defense;
 
 	//steal effects (in %, eg. hp_steal=50 turns 50% damage done into HP regain.)
 	int hp_steal;
@@ -275,6 +279,11 @@ public:
 		spawn_type = "";
 		spawn_num = 1;
 		target_neighbor = 0;
+
+		bonus_per_physical = 0;
+		bonus_per_mental = 0;
+		bonus_per_offense = 0;
+		bonus_per_defense = 0;
 	}
 
 };
