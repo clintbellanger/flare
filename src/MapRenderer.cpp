@@ -1005,14 +1005,12 @@ void MapRenderer::checkEventClick() {
 		// skip events on cooldown
 		if ((*it).cooldown_ticks != 0) continue;
 
-		p = map_to_screen((*it).location.x * UNITS_PER_TILE + UNITS_PER_TILE/2, (*it).location.y * UNITS_PER_TILE + UNITS_PER_TILE/2, cam.x, cam.y);
-		r.x = p.x + (*it).hotspot.x;
-		r.y = p.y + (*it).hotspot.y;
-		r.h = (*it).hotspot.h;
-		r.w = (*it).hotspot.w;
+		p = screen_to_map(inpt->mouse.x, inpt->mouse.y, cam.x, cam.y);
+		p = map_to_collision(p);
+		r = (*it).hotspot;
 
 		// execute if mouse in hotspot && hero within range
-		if (isWithin(r, inpt->mouse)
+		if (isWithin(r,p)
 				&& (abs(cam.x - (*it).location.x * UNITS_PER_TILE) < CLICK_RANGE
 				&& abs(cam.y - (*it).location.y * UNITS_PER_TILE) < CLICK_RANGE)) {
 
@@ -1053,13 +1051,12 @@ void MapRenderer::checkTooltip() {
 	for (it = events.begin(); it != events.end(); it++) {
 		if(!isActive(*it)) continue;
 
-		p = map_to_screen((*it).location.x * UNITS_PER_TILE + UNITS_PER_TILE/2, (*it).location.y * UNITS_PER_TILE + UNITS_PER_TILE/2, cam.x, cam.y);
-		r.x = p.x + (*it).hotspot.x;
-		r.y = p.y + (*it).hotspot.y;
-		r.h = (*it).hotspot.h;
-		r.w = (*it).hotspot.w;
+		p = screen_to_map(inpt->mouse.x, inpt->mouse.y, cam.x, cam.y);
+		p = map_to_collision(p);
+		r = (*it).hotspot;
 
 		// DEBUG TOOL: outline hotspot
+		// TODO rewrite this to draw a pixel at the center of each tile within the hotspot
 #ifdef DEBUG
 		SDL_Rect screen_size;
 		screen_size.x = screen_size.y = 0;
@@ -1084,7 +1081,7 @@ void MapRenderer::checkTooltip() {
 			drawPixel(screen, r.x+r.w, r.y+r.h, 255);
 #endif
 
-		if (isWithin(r,inpt->mouse) && (*it).tooltip != "") {
+		if (isWithin(r,p) && (*it).tooltip != "") {
 
 			// new tooltip?
 			if (tip_buf.lines[0] != (*it).tooltip) {
@@ -1093,9 +1090,8 @@ void MapRenderer::checkTooltip() {
 				tip_buf.lines[0] = (*it).tooltip;
 			}
 
-			tip_pos.x = r.x + r.w/2;
-			// FIXME should depend on art resolution
-			tip_pos.y = r.y;
+			tip_pos = map_to_screen(r.x * UNITS_PER_TILE + UNITS_PER_TILE/2, r.y * UNITS_PER_TILE + UNITS_PER_TILE/2, cam.x, cam.y);
+			tip_pos.y -= UNITS_PER_TILE/2;
 			tip->render(tip_buf, tip_pos, STYLE_TOPLABEL);
 		}
 	}
