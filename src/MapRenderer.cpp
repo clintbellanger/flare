@@ -1091,7 +1091,7 @@ void MapRenderer::checkTooltip() {
 			}
 
 			tip_pos = map_to_screen(r.x * UNITS_PER_TILE + UNITS_PER_TILE/2, r.y * UNITS_PER_TILE + UNITS_PER_TILE/2, cam.x, cam.y);
-			tip_pos.y -= UNITS_PER_TILE/2;
+			tip_pos.y -= UNITS_PER_TILE/4;
 			tip->render(tip_buf, tip_pos, STYLE_TOPLABEL);
 		}
 	}
