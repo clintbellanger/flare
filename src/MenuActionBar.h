@@ -58,6 +58,8 @@ private:
 	WidgetLabel *labels[16];
 	int default_M1;
 
+	int attention_ticks;
+
 public:
 
 	MenuActionBar(PowerManager *_powers, StatBlock *hero, SDL_Surface *icons);
