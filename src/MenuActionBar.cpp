@@ -49,6 +49,7 @@ MenuActionBar::MenuActionBar(PowerManager *_powers, StatBlock *_hero, SDL_Surfac
 	src.h = ICON_SIZE_SMALL;
 	drag_prev_slot = -1;
 	default_M1 = -1;
+	attention_ticks = 0;
 
 	clear();
 
@@ -261,10 +262,10 @@ void MenuActionBar::renderIcon(int icon_id, int x, int y) {
 void MenuActionBar::renderAttention(int menu_id) {
 	SDL_Rect dest;
 
-    // x-value is 12 hotkeys and 4 empty slots over
+	// x-value is 12 hotkeys and 4 empty slots over
 	dest.x = window_area.x + (menu_id * ICON_SIZE_SMALL) + ICON_SIZE_SMALL*15;
 	dest.y = window_area.y+3;
-    dest.w = dest.h = ICON_SIZE_SMALL;
+	dest.w = dest.h = ICON_SIZE_SMALL;
 	SDL_BlitSurface(attention, NULL, screen, &dest);
 }
 
@@ -320,9 +321,16 @@ void MenuActionBar::render() {
 	renderItemCounts();
 
     // render log attention notifications
-    for (int i=0; i<4; i++)
-        if (requires_attention[i])
-            renderAttention(i);
+	if (attention_ticks > 0 && attention_ticks <= 30) {
+		for (int i=0; i<4; i++)
+			if (requires_attention[i])
+				renderAttention(i);
+	} else if (attention_ticks == 0) {
+		attention_ticks = 60;
+	}
+
+	if (attention_ticks > 0)
+		attention_ticks--;
 
 	// draw hotkey labels
 	for (int i=0; i<16;i++) {
