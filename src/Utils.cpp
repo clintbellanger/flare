@@ -356,3 +356,20 @@ bool checkPixel(Point px, SDL_Surface *surface) {
 
 	return true;
 }
+
+std::string strToUpper(std::string _str) {
+	std::string str = _str;
+	bool new_word = true;
+
+	for (unsigned int i=0; i<str.length(); i++) {
+		if (new_word) {
+			str[i] = toupper((unsigned char)str[i]);
+			new_word = false;
+		}
+		if (str[i] == ' ') {
+			new_word = true;
+		}
+	}
+
+	return str;
+}

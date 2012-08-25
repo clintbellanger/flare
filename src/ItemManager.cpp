@@ -394,13 +394,13 @@ TooltipData ItemManager::getTooltip(int item, StatBlock *stats, bool vendor_view
 	// type
 	if (items[item].type != "other") {
 		if (items[item].type == "main")
-			tip.lines[tip.num_lines++] = msg->get("main hand");
+			tip.lines[tip.num_lines++] = msg->get("Main Hand");
 		else if (items[item].type == "off")
-			tip.lines[tip.num_lines++] = msg->get("off hand");
+			tip.lines[tip.num_lines++] = msg->get("Off Hand");
 		else if (items[item].type == "quest")
-			tip.lines[tip.num_lines++] = msg->get("quest item");
+			tip.lines[tip.num_lines++] = msg->get("Quest Item");
 		else
-			tip.lines[tip.num_lines++] = msg->get(items[item].type);
+			tip.lines[tip.num_lines++] = msg->get(strToUpper(items[item].type));
 	}
 
 	// damage
