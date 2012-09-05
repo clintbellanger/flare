@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -31,6 +32,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Settings.h"
 #include "UtilsParsing.h"
 #include "WidgetLabel.h"
+#include "GameTime.h"
 
 #include <algorithm>
 
@@ -98,6 +100,9 @@ GameStateLoad::GameStateLoad() : GameState() {
 		} else if (infile.key == "level") {
 			level_pos.x = eatFirstInt(infile.val, ',');
 			level_pos.y = eatFirstInt(infile.val, ',');
+		} else if (infile.key == "duration") {
+			duration_pos.x = eatFirstInt(infile.val, ',');
+			duration_pos.y = eatFirstInt(infile.val, ',');
 		} else if (infile.key == "map") {
 			map_pos.x = eatFirstInt(infile.val, ',');
 			map_pos.y = eatFirstInt(infile.val, ',');
@@ -283,6 +288,12 @@ void GameStateLoad::readGameSlot(int slot) {
 		}
 		else if (infile.key == "spawn") {
 			current_map[slot] = getMapName(infile.nextValue());
+		}
+		else if (infile.key == "time") {
+		        Time ig,r;
+			ig.fromCanonicalString(infile.nextValue());
+			r.fromCanonicalString(infile.nextValue());
+			game_play_duration[slot] = r.toString(false); // real game play time
 		}
 	}
 	infile.close();
@@ -575,6 +586,12 @@ void GameStateLoad::render() {
 			label.x = slot_pos[slot].x + map_pos.x;
 			label.y = slot_pos[slot].y + map_pos.y;
 			label_slots->set(label.x, label.y, JUSTIFY_LEFT, VALIGN_TOP, current_map[slot], color_normal);
+			label_slots->render();
+
+			// game play duration
+			label.x = slot_pos[slot].x + duration_pos.x;
+			label.y = slot_pos[slot].y + duration_pos.y;
+			label_slots->set(label.x, label.y, JUSTIFY_LEFT, VALIGN_TOP, game_duration[slot], color_normal);
 			label_slots->render();
 
 			// render character preview
