@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -44,6 +45,7 @@ class NPCManager;
 class PowerManager;
 class QuestLog;
 class WidgetLabel;
+class GameTime;
 
 class GameStatePlay : public GameState {
 private:
@@ -60,6 +62,7 @@ private:
 	NPCManager *npcs;
 	CampaignManager *camp;
 	QuestLog *quests;
+	GameTime *game_time;
 
 	WidgetLabel *label_fps;
 	WidgetLabel *loading;

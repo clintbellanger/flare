@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -39,6 +40,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "Settings.h"
 #include "UtilsFileSystem.h"
 #include "UtilsParsing.h"
+#include "GameTime.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -119,7 +121,11 @@ void GameStatePlay::saveGame() {
 		// campaign data
 		outfile << "campaign=";
 		outfile << camp->getAll();
+		outfile << "\n";
 
+		// game time
+		outfile << "time=";
+		outfile << game_time->ingame.toCanonicalString() << "," << game_time->real.toCanonicalString();
 		outfile << endl;
 
 		if (outfile.bad()) fprintf(stderr, "Unable to save the game. No write access or disk is full!\n");
@@ -239,6 +245,10 @@ void GameStatePlay::loadGame() {
 				}
 			}
 			else if (infile.key == "campaign") camp->setAll(infile.val);
+			else if (infile.key == "time") {
+			  game_time->ingame.fromCanonicalString(infile.nextValue());
+			  game_time->real.fromCanonicalString(infile.nextValue());
+			}
 		}
 
 		infile.close();
