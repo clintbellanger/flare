@@ -1,6 +1,7 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
 Copyright © 2012 Igor Paliychuk
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -150,7 +151,7 @@ bool MENUS_PAUSE = false;
 std::string DEFAULT_NAME = "";
 bool SAVE_HPMP = false;
 bool ENABLE_PLAYGAME = false;
-
+int TIME_FACTOR = 1;
 
 /**
  * Set system paths
@@ -370,6 +371,9 @@ void loadMiscSettings() {
 		while (infile.next()) {
 			if (infile.key == "enable_playgame") {
 				ENABLE_PLAYGAME = toInt(infile.val);
+			}
+			else if (infile.key == "time_factor") {
+			        TIME_FACTOR = toInt(infile.val);
 			}
 		}
 		infile.close();
