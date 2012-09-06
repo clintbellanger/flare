@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -21,7 +22,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 
 #ifndef SETTINGS_H
 #define SETTINGS_H
-
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -78,6 +79,7 @@ extern bool MENUS_PAUSE;
 extern std::string DEFAULT_NAME;
 extern bool SAVE_HPMP;
 extern bool ENABLE_PLAYGAME;
+extern int TIME_FACTOR;
 
 // Tile Settings
 extern unsigned short UNITS_PER_TILE;

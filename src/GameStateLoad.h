@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -71,6 +72,7 @@ private:
 	std::vector<std::string> preview_layer;
 	SDL_Rect slot_pos[GAME_SLOT_MAX];
 	std::string current_map[GAME_SLOT_MAX];
+	std::string game_play_duration[GAME_SLOT_MAX];
 
 	bool loading_requested;
 	bool loading;
@@ -79,6 +81,7 @@ private:
 	Point name_pos;
 	Point level_pos;
 	Point map_pos;
+	Point duration_pos;
 	Point sprites_pos;
 	Point loading_pos;
 	

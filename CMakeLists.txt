@@ -97,6 +97,7 @@ Set (FLARE_SOURCES
 	./src/GameStatePlay.cpp
 	./src/GameStateNew.cpp
 	./src/GameSwitcher.cpp
+	./src/GameTime.cpp
 	./src/GetText.cpp
 	./src/Hazard.cpp
 	./src/HazardManager.cpp

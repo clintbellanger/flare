@@ -50,6 +50,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include "QuestLog.h"
 #include "WidgetLabel.h"
 #include "SharedResources.h"
+#include "GameTime.h"
 
 using namespace std;
 
@@ -75,6 +76,7 @@ GameStatePlay::GameStatePlay() : GameState() {
 	loot = new LootManager(items, map, &pc->stats);
 	npcs = new NPCManager(map, loot, items, &pc->stats);
 	quests = new QuestLog(camp, menu->log);
+	game_time = new GameTime();
 
 	// assign some object pointers after object creation, based on dependency order
 	camp->items = items;
@@ -86,6 +88,7 @@ GameStatePlay::GameStatePlay() : GameState() {
 	color_normal = font->getColor("menu_normal");
 
 	label_fps = new WidgetLabel();
+	
 	loading = new WidgetLabel();
 	loading->set(VIEW_W_HALF, VIEW_H_HALF, JUSTIFY_CENTER, VALIGN_CENTER, "Loading...", color_normal);
 
@@ -115,6 +118,7 @@ void GameStatePlay::resetGame() {
 	menu->inv->currency = 0;
 	menu->log->clear();
 	quests->createQuestList();
+	game_time->reset();
 	menu->hudlog->clear();
 	loadStash();
 
@@ -550,6 +554,7 @@ void GameStatePlay::logic() {
 	if (!menu->pause) {
 
 		// these actions only occur when the game isn't paused
+	        game_time->update();
 		checkLoot();
 		checkEnemyFocus();
 		checkNPCInteraction();
