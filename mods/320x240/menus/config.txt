@@ -24,6 +24,7 @@ sound_volume=112,20,128,16
 [interface]
 combat_text=112,4,128,4
 language=112,20,128,16
+show_fps=112,36,128,28
 
 [input]
 mouse_move=112,4,128,4

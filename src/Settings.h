@@ -53,7 +53,7 @@ extern unsigned short MUSIC_VOLUME;
 extern unsigned short SOUND_VOLUME;
 extern bool FULLSCREEN;
 extern unsigned char BITS_PER_PIXEL;
-extern unsigned short FRAMES_PER_SEC;
+extern unsigned short MAX_FRAMES_PER_SEC;
 extern unsigned short VIEW_W;
 extern unsigned short VIEW_H;
 extern unsigned short VIEW_W_HALF;
@@ -80,6 +80,7 @@ extern bool MENUS_PAUSE;
 extern std::string DEFAULT_NAME;
 extern bool SAVE_HPMP;
 extern bool ENABLE_PLAYGAME;
+extern bool SHOW_FPS;
 extern int TIME_FACTOR;
 
 // Tile Settings
