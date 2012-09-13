@@ -251,7 +251,7 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 	SDL_Rect dest_rect;
 	dest_rect.x = dest_x;
 	dest_rect.y = dest_y;
-	TTF_Font *ttfont;
+	TTF_Font *ttfont = NULL;
 
 	for (unsigned int i=0; i<fonts.size(); i++) {
 		if (fonts[i].name == _font) {
@@ -259,6 +259,8 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 			break;
 		}
 	}
+
+	if (ttfont == NULL) return;
 
 	if (render_blended && target != screen) {
 		ttf = TTF_RenderUTF8_Blended(ttfont, text.c_str(), color);
