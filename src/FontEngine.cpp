@@ -38,6 +38,8 @@ FontEngine::FontEngine() {
 		exit(2);
 	}
 
+	render_blended = false;
+
 	// load the font
 	int font_count = 0;
 	FileParser infile;
@@ -256,6 +258,7 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 	for (unsigned int i=0; i<fonts.size(); i++) {
 		if (fonts[i].name == _font) {
 			ttfont = fonts[i].ttfont;
+			render_blended = fonts[i].render_blended;
 			break;
 		}
 	}
