@@ -56,12 +56,14 @@ private:
 	int justify;
 	int valign;
 	SDL_Surface *text_buffer;
+	std::string font_name;
 
 public:
 	WidgetLabel();
 	~WidgetLabel();
 	void render(SDL_Surface *target = NULL);
 	void set(int _x, int _y, int _justify, int _valign, const std::string& _text, SDL_Color _color);
+	void set(int _x, int _y, int _justify, int _valign, const std::string& _text, SDL_Color _color, std::string _font);
 	void setX(int _x);
 	void setY(int _y);
 	int getX();
@@ -71,6 +73,7 @@ public:
 	void setColor(SDL_Color _color);
 
 	void set(const std::string& _text);
+	void set(const std::string& _text, std::string _font);
 	std::string get() {return text;}
 
 	SDL_Rect bounds;

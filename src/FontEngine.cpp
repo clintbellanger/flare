@@ -32,28 +32,32 @@ using namespace std;
 
 
 FontEngine::FontEngine() {
-	font_pt = 10;
-	render_blended = false;
-
 	// Initiate SDL_ttf
 	if(!TTF_WasInit() && TTF_Init()==-1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
 
+	render_blended = false;
+
 	// load the font
-	string font_path;
+	int font_count = 0;
 	FileParser infile;
 	if (infile.open(mods->locate("engine/font_settings.txt"))) {
 		while (infile.next()) {
-			if (infile.key == "font_regular") {
-				font_path = infile.val;
+			if (infile.key == "name") {
+				font_count++;
+				fonts.resize(font_count);
+				fonts.back().name = infile.val;
+			}
+			else if (infile.key == "font") {
+				fonts.back().font = infile.val;
 			}
 			else if (infile.key == "ptsize") {
-				font_pt = atoi(infile.val.c_str());
+				fonts.back().size = atoi(infile.val.c_str());
 			}
 			else if (infile.key == "render") {
-				if (infile.val == "blended") render_blended = true;
+				if (infile.val == "blended") fonts.back().render_blended = true;
 			}
 		}
 		infile.close();
@@ -66,19 +70,26 @@ FontEngine::FontEngine() {
 			   local_font = infile.nextValue();// Ignore full language name
 			   local_font = infile.nextValue();
 			   if (local_font != "") {
-				   font_path = local_font; font_pt = atoi(infile.nextValue().c_str());
+				   for (unsigned int i=0; i< fonts.size(); i++) {
+					   fonts[i].font = local_font;
+					   fonts[i].size *= atof(infile.nextValue().c_str());
+				   }
 			   }
 			}
 		}
 		infile.close();
 	} else fprintf(stderr, "Unable to open engine/languages.txt!\n");
-	font_path = mods->locate("fonts/" + font_path);
-	ttfont = TTF_OpenFont(font_path.c_str(), font_pt);
-	if(!ttfont) printf("TTF_OpenFont: %s\n", TTF_GetError());
 
-	// calculate the optimal line height
-	line_height = TTF_FontLineSkip(ttfont);
-	font_height = TTF_FontHeight(ttfont);
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		// open each font
+		std::string font_path = mods->locate("fonts/" + fonts[i].font);
+		fonts[i].ttfont = TTF_OpenFont(font_path.c_str(), fonts[i].size);
+		if(!fonts[i].ttfont) printf("TTF_OpenFont: %s\n", TTF_GetError());
+
+		// calculate the optimal line height
+		fonts[i].height = TTF_FontHeight(fonts[i].ttfont);
+		fonts[i].line_height = TTF_FontLineSkip(fonts[i].ttfont);
+	}
 
 	// set the font colors
 	// RGB values, the last value is 'unused'. For info,
@@ -108,16 +119,21 @@ SDL_Color FontEngine::getColor(string _color) {
 /**
  * For single-line text, just calculate the width
  */
-int FontEngine::calc_width(const std::string& text) {
+int FontEngine::calc_width(const std::string& text, std::string _font) {
 	int w, h;
-	TTF_SizeUTF8(ttfont, text.c_str(), &w, &h);
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		if (fonts[i].name == _font) {
+			TTF_SizeUTF8(fonts[i].ttfont, text.c_str(), &w, &h);
+			return w;
+		}
+	}
 	return w;
 }
 
 /**
  * Using the given wrap width, calculate the width and height necessary to display this text
  */
-Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
+Point FontEngine::calc_size(const std::string& text_with_newlines, int width, std::string _font) {
 	char newline = 10;
 
 	string text = text_with_newlines;
@@ -125,8 +141,8 @@ Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
 	// if this contains newlines, recurse
 	size_t check_newline = text.find_first_of(newline);
 	if (check_newline != string::npos) {
-		Point p1 = calc_size(text.substr(0, check_newline), width);
-		Point p2 = calc_size(text.substr(check_newline+1, text.length()), width);
+		Point p1 = calc_size(text.substr(0, check_newline), width, _font);
+		Point p2 = calc_size(text.substr(check_newline+1, text.length()), width, _font);
 		Point p3;
 
 		if (p1.x > p2.x) p3.x = p1.x;
@@ -154,12 +170,12 @@ Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
 	while(cursor != string::npos) {
 		builder << next_word;
 
-		if (calc_width(builder.str()) > width) {
+		if (calc_width(builder.str(),_font) > width) {
 
 			// this word can't fit on this line, so word wrap
-			height = height + getLineHeight();
-			if (calc_width(builder_prev.str()) > max_width) {
-				max_width = calc_width(builder_prev.str());
+			height = height + getLineHeight(_font);
+			if (calc_width(builder_prev.str(),_font) > max_width) {
+				max_width = calc_width(builder_prev.str(),_font);
 			}
 
 			builder_prev.str("");
@@ -175,9 +191,9 @@ Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
 		next_word = getNextToken(fulltext, cursor, space); // get next word
 	}
 
-	height = height + getLineHeight();
+	height = height + getLineHeight(_font);
 	builder.str(trim(builder.str(), ' ')); //removes whitespace that shouldn't be included in the size
-	if (calc_width(builder.str()) > max_width) max_width = calc_width(builder.str());
+	if (calc_width(builder.str(),_font) > max_width) max_width = calc_width(builder.str(),_font);
 
 	Point size;
 	size.x = max_width;
@@ -185,12 +201,27 @@ Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
 	return size;
 }
 
+int FontEngine::getFontHeight(std::string _font) {
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		if (fonts[i].name == _font)
+			return fonts[i].height;
+	}
+	return 0;
+}
+
+int FontEngine::getLineHeight(std::string _font) {
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		if (fonts[i].name == _font)
+			return fonts[i].line_height;
+	}
+	return 0;
+}
 
 /**
  * Render the given text at (x,y) on the target image.
  * Justify is left, right, or center
  */
-void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color) {
+void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font) {
 	int dest_x = -1;
 	int dest_y = -1;
 
@@ -204,11 +235,11 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 		dest_y = y;
 	}
 	else if (justify == JUSTIFY_RIGHT) {
-		dest_x = x - calc_width(text);
+		dest_x = x - calc_width(text,_font);
 		dest_y = y;
 	}
 	else if (justify == JUSTIFY_CENTER) {
-		dest_x = x - calc_width(text)/2;
+		dest_x = x - calc_width(text,_font)/2;
 		dest_y = y;
 	}
 	else {
@@ -222,6 +253,17 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 	SDL_Rect dest_rect;
 	dest_rect.x = dest_x;
 	dest_rect.y = dest_y;
+	TTF_Font *ttfont = NULL;
+
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		if (fonts[i].name == _font) {
+			ttfont = fonts[i].ttfont;
+			render_blended = fonts[i].render_blended;
+			break;
+		}
+	}
+
+	if (ttfont == NULL) return;
 
 	if (render_blended && target != screen) {
 		ttf = TTF_RenderUTF8_Blended(ttfont, text.c_str(), color);
@@ -241,7 +283,7 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 /**
  * Word wrap to width
  */
-void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color) {
+void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font) {
 
 	string fulltext = text + " ";
 	cursor_y = y;
@@ -261,9 +303,9 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 
 		builder << next_word;
 
-		if (calc_width(builder.str()) > width) {
-			render(builder_prev.str(), x, cursor_y, justify, target, color);
-			cursor_y += getLineHeight();
+		if (calc_width(builder.str(),_font) > width) {
+			render(builder_prev.str(), x, cursor_y, justify, target, color, _font);
+			cursor_y += getLineHeight(_font);
 			builder_prev.str("");
 			builder.str("");
 
@@ -277,24 +319,26 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 		next_word = getNextToken(fulltext, cursor, space); // next word
 	}
 
-	render(builder.str(), x, cursor_y, justify, target, color);
-	cursor_y += getLineHeight();
+	render(builder.str(), x, cursor_y, justify, target, color, _font);
+	cursor_y += getLineHeight(_font);
 
 }
 
-void FontEngine::renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color) {
-	render(text, x+1, y+1, justify, target, FONT_BLACK);
-	render(text, x, y, justify, target, color);
+void FontEngine::renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font) {
+	render(text, x+1, y+1, justify, target, FONT_BLACK, _font);
+	render(text, x, y, justify, target, color, _font);
 }
 
-void FontEngine::renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color) {
-	render(text, x+1, y+1, justify, target, width, FONT_BLACK);
-	render(text, x, y, justify, target, width, color);
+void FontEngine::renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font) {
+	render(text, x+1, y+1, justify, target, width, FONT_BLACK, _font);
+	render(text, x, y, justify, target, width, color, _font);
 }
 
 FontEngine::~FontEngine() {
 	SDL_FreeSurface(ttf);
-	TTF_CloseFont(ttfont);
+	for (unsigned int i=0; i<fonts.size(); i++) {
+		TTF_CloseFont(fonts[i].ttfont);
+	}
 	TTF_Quit();
 }
 
