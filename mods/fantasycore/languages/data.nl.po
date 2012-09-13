@@ -2414,11 +2414,11 @@ msgstr "Laarzen van de Bescherming"
 
 #: ../items/items.txt:8794
 msgid "Windwalker Boots"
-msgstr "Flügelschuhe"
+msgstr "Gevleugelde Laarzen"
 
 #: ../items/items.txt:8806
 msgid "Phase Step Boots"
-msgstr "PhasenwechslerLaarzen"
+msgstr "Fase Stap Laarzen"
 
 #: ../items/items.txt:8818
 msgid "Ring"
