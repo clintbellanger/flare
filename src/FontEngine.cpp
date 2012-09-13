@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger and Thane Brimhall
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -223,19 +224,16 @@ void FontEngine::render(const std::string& text, int x, int y, int justify, SDL_
 	dest_rect.x = dest_x;
 	dest_rect.y = dest_y;
 
-	if (render_blended && target != screen) {
-		ttf = TTF_RenderUTF8_Blended(ttfont, text.c_str(), color);
-		
-		// preserve alpha transparency of text buffers
-		if (ttf != NULL) SDL_gfxBlitRGBA(ttf, NULL, target, &dest_rect);
-	}
-	else {
-		ttf = TTF_RenderUTF8_Solid(ttfont, text.c_str(), color);
-		if (ttf != NULL) SDL_BlitSurface(ttf, NULL, target, &dest_rect);
-	}
+	bool blended = (render_blended && target != screen);
+	SDL_Surface *ts = get_surface(text, color, blended);
+	if (!ts)
+		return;
+
+	if (blended)
+		SDL_gfxBlitRGBA(ts, NULL, target, &dest_rect);
+	else
+		SDL_BlitSurface(ts, NULL, target, &dest_rect);
 	
-	SDL_FreeSurface(ttf);
-	ttf = NULL;
 }
 
 /**
@@ -293,8 +291,45 @@ void FontEngine::renderShadowed(const std::string& text, int x, int y, int justi
 }
 
 FontEngine::~FontEngine() {
-	SDL_FreeSurface(ttf);
 	TTF_CloseFont(ttfont);
+	while (!cache.empty())
+		cache.pop_front();
 	TTF_Quit();
 }
 
+SDL_Surface *FontEngine::get_surface(std::string text, SDL_Color color, bool blended) {
+	// lookup text in surface cache
+	SDL_Surface *surface = NULL;
+	const Text_Surface *ts = cache_lookup(text, color, blended);
+
+	if (ts)
+		surface = ts->surface;
+	else {
+		cache.push_back(Text_Surface());
+		cache.back().text = text;
+		cache.back().color = color;
+		cache.back().blended = blended;
+		if (blended)
+			cache.back().surface = TTF_RenderUTF8_Blended(ttfont, text.c_str(), color);
+		else
+			cache.back().surface = TTF_RenderUTF8_Solid(ttfont, text.c_str(), color);
+
+		surface= cache.back().surface;
+
+		if (cache.size() > 20)
+			cache.pop_front();
+	}
+
+	return surface;
+}
+
+const Text_Surface * FontEngine::cache_lookup(std::string text, SDL_Color color, bool blended) {
+	std::list<Text_Surface>::iterator it;
+	it = cache.end();
+	while(--it != cache.begin()) {
+		if ((*it).text == text && (*it).blended == blended &&
+		    !memcmp(&(*it).color, &color,sizeof(SDL_Color)))
+			return &(*it);
+	}
+	return NULL;
+}
