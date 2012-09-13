@@ -1,5 +1,6 @@
 /*
 Copyright © 2011-2012 Clint Bellanger and Thane Brimhall
+Copyright © 2012 Henrik Andersson
 
 This file is part of FLARE.
 
@@ -27,7 +28,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <fstream>
 #include <string>
 #include <map>
-
+#include <list>
 
 const int JUSTIFY_LEFT = 0;
 const int JUSTIFY_RIGHT = 1;
@@ -35,6 +36,21 @@ const int JUSTIFY_CENTER = 2;
 
 const SDL_Color FONT_WHITE = {255,255,255,0};
 const SDL_Color FONT_BLACK = {0,0,0,0};
+
+class Text_Surface {
+public:
+	Text_Surface() {
+		surface = NULL;
+	}
+	~Text_Surface() {
+		if (surface) SDL_FreeSurface(surface);
+	}
+
+	std::string text;
+	bool blended;
+	SDL_Color color;
+	SDL_Surface *surface;
+};
 
 /**
  * class FontEngine
@@ -49,11 +65,13 @@ private:
 	int line_height;
 	SDL_Rect src;
 	SDL_Rect dest;
-	SDL_Surface *ttf;
 	TTF_Font *ttfont;
 	bool render_blended;
 	std::map<std::string,SDL_Color> color_map;
+	std::list<Text_Surface> cache;
 
+	const Text_Surface *cache_lookup(std::string text, SDL_Color color, bool blended);
+	SDL_Surface *get_surface(std::string text, SDL_Color color, bool blended);
 public:
 	FontEngine();
 	~FontEngine();
