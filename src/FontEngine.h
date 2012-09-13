@@ -65,21 +65,31 @@ public:
 	FontEngine();
 	~FontEngine();
 
-	int getLineHeight();
-	int getLineHeight(std::string _font);
-	int getFontHeight();
-	int getFontHeight(std::string _font);
-	
 	SDL_Color getColor(std::string _color);
-	int calc_width(const std::string& text);
+
+	int getLineHeight(std::string _font);
+	int getLineHeight() { return getLineHeight("font_normal"); }
+
+	int getFontHeight(std::string _font);
+	int getFontHeight() { return getFontHeight("font_normal"); }	
+
 	int calc_width(const std::string& text, std::string _font);
-	Point calc_size(const std::string& text_with_newlines, int width);
+	int calc_width(const std::string& text) { return calc_width(text,"font_normal"); }
+
 	Point calc_size(const std::string& text_with_newlines, int width, std::string _font);
+	Point calc_size(const std::string& text_with_newlines, int width) { return calc_size(text_with_newlines,width,"font_normal"); }
 
 	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font);
+	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color) { return render(text,x,y,justify,target,color,"font_normal"); }
+
 	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font);
+	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color) { return render(text,x,y,justify,target,width,color,"font_normal"); }
+
 	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font);
+	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color) { return renderShadowed(text,x,y,justify,target,color,"font_normal"); }
+
 	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font);
+	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color) { return renderShadowed(text,x,y,justify,target,width,color,"font_normal"); }
 
 	int cursor_y;
 };

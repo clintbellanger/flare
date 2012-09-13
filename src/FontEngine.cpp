@@ -130,10 +130,6 @@ int FontEngine::calc_width(const std::string& text, std::string _font) {
 	return w;
 }
 
-int FontEngine::calc_width(const std::string& text) {
-	return calc_width(text,"font_normal");
-}
-
 /**
  * Using the given wrap width, calculate the width and height necessary to display this text
  */
@@ -205,10 +201,6 @@ Point FontEngine::calc_size(const std::string& text_with_newlines, int width, st
 	return size;
 }
 
-Point FontEngine::calc_size(const std::string& text_with_newlines, int width) {
-	return calc_size(text_with_newlines, width, "font_normal");
-}
-
 int FontEngine::getFontHeight(std::string _font) {
 	for (unsigned int i=0; i<fonts.size(); i++) {
 		if (fonts[i].name == _font)
@@ -217,20 +209,12 @@ int FontEngine::getFontHeight(std::string _font) {
 	return 0;
 }
 
-int FontEngine::getFontHeight() {
-	return getFontHeight("font_normal");
-}
-
 int FontEngine::getLineHeight(std::string _font) {
 	for (unsigned int i=0; i<fonts.size(); i++) {
 		if (fonts[i].name == _font)
 			return fonts[i].line_height;
 	}
 	return 0;
-}
-
-int FontEngine::getLineHeight() {
-	return getLineHeight("font_normal");
 }
 
 /**

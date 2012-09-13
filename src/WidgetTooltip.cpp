@@ -144,7 +144,7 @@ void WidgetTooltip::createBuffer(TooltipData &tip) {
 	int cursor_y = margin;
 
 	for (int i=0; i<tip.num_lines; i++) {
-		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer, size.x, tip.colors[i], "font_normal");
+		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer, size.x, tip.colors[i]);
 		cursor_y = font->cursor_y;
 	}
 
