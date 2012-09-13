@@ -1,8 +1,13 @@
 # Only .ttf files are supported, due to limitations in SDL_ttf
 # The font must be placed in /fonts
+# name= must be the first key of each font
+# font_normal is the default font for many things, so changing is ill-advised
+
+name=font_normal
+font=LiberationSans-Regular.ttf
 ptsize=12
 render=blended
-font_regular=LiberationSans-Regular.ttf
+
 # NOT YET IMPLEMENTED
 #font_italic=LiberationSans-Italic.ttf
 #font_bold=LiberationSans-Bold.ttf

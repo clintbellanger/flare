@@ -99,10 +99,15 @@ void WidgetLabel::render(SDL_Surface *target) {
 }
 
 
+
+void WidgetLabel::set(int _x, int _y, int _justify, int _valign, const string& _text, SDL_Color _color) {
+	set(_x,_y,_justify,_valign,_text,_color,"font_normal");
+}
+
 /**
  * A shortcut function to set all attributes simultaneously.
  */
-void WidgetLabel::set(int _x, int _y, int _justify, int _valign, const string& _text, SDL_Color _color) {
+void WidgetLabel::set(int _x, int _y, int _justify, int _valign, const string& _text, SDL_Color _color, std::string _font) {
 
 	bool changed = false;
 
@@ -128,6 +133,10 @@ void WidgetLabel::set(int _x, int _y, int _justify, int _valign, const string& _
 	}
 	if (y_origin != _y) {
 		y_origin = _y;
+		changed = true;
+	}
+	if (font_name != _font) {
+		font_name = _font;
 		changed = true;
 	}
 	
@@ -211,8 +220,10 @@ void WidgetLabel::setColor(SDL_Color _color) {
  */
 void WidgetLabel::applyOffsets() {
 
-	bounds.w = font->calc_width(text);
-	bounds.h = font->getFontHeight();
+	if (font_name != "") {
+		bounds.w = font->calc_width(text,font_name);
+		bounds.h = font->getFontHeight(font_name);
+	}
 
 	// apply JUSTIFY
 	if (justify == JUSTIFY_LEFT)
@@ -235,12 +246,25 @@ void WidgetLabel::applyOffsets() {
 	
 }
 
+void WidgetLabel::set(const string& _text) {
+	set(_text,"font_normal");
+}
 /**
  * Update the label text only
  */
-void WidgetLabel::set(const string& _text) {
+void WidgetLabel::set(const string& _text, std::string _font) {
+	bool changed = false;
+
 	if (text != _text) {
 		this->text = _text;
+		changed = true;
+	}
+	if (font_name != _font) {
+		font_name = _font;
+		changed = true;
+	}
+
+	if (changed) {
 		applyOffsets();
 		refresh();
 	}
@@ -254,7 +278,7 @@ void WidgetLabel::refresh() {
 
 	SDL_FreeSurface(text_buffer);
 	text_buffer = createAlphaSurface(bounds.w, bounds.h);
-	font->renderShadowed(text, 0, 0, JUSTIFY_LEFT, text_buffer, color);
+	font->renderShadowed(text, 0, 0, JUSTIFY_LEFT, text_buffer, color, font_name);
 	
 }
 

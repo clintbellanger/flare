@@ -120,8 +120,8 @@ void GameSwitcher::loadFPS() {
 	} else fprintf(stderr, "Unable to open menus/fps.txt!\n");
 
 	// this is a dummy string used to approximate the fps position when aligned to the right
-	int w = font->calc_width("00 fps");
-	int h = font->getLineHeight();
+	int w = font->calc_width("00 fps", "font_normal");
+	int h = font->getLineHeight("font_normal");
 
 	if (fps_corner == "top_left") {
 		// relative to {0,0}, so no changes

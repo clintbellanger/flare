@@ -27,6 +27,7 @@ FLARE.  If not, see http://www.gnu.org/licenses/
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
 
 const int JUSTIFY_LEFT = 0;
@@ -44,13 +45,19 @@ const SDL_Color FONT_BLACK = {0,0,0,0};
 
 class FontEngine {
 private:
-	int font_pt;
-	int font_height;
-	int line_height;
+	struct Font {
+		std::string name;
+		std::string font;
+		int size;
+		bool render_blended;
+		int height;
+		int line_height;
+		TTF_Font *ttfont;
+	};
+	std::vector<Font> fonts;
 	SDL_Rect src;
 	SDL_Rect dest;
 	SDL_Surface *ttf;
-	TTF_Font *ttfont;
 	bool render_blended;
 	std::map<std::string,SDL_Color> color_map;
 
@@ -58,17 +65,17 @@ public:
 	FontEngine();
 	~FontEngine();
 
-	int getLineHeight() { return line_height; }
-	int getFontHeight() { return font_height; }
+	int getLineHeight(std::string _font);
+	int getFontHeight(std::string _font);
 	
 	SDL_Color getColor(std::string _color);
-	int calc_width(const std::string& text);
-	Point calc_size(const std::string& text_with_newlines, int width);
+	int calc_width(const std::string& text, std::string _font);
+	Point calc_size(const std::string& text_with_newlines, int width, std::string _font);
 
-	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color);
-	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color);
-	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color);
-	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color);
+	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font);
+	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font);
+	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font);
+	void renderShadowed(const std::string& text, int x, int y, int justify, SDL_Surface *target, int width, SDL_Color color, std::string _font);
 
 	int cursor_y;
 };

@@ -129,7 +129,7 @@ void WidgetTooltip::createBuffer(TooltipData &tip) {
 	}
 
 	// calculate the full size to display a multi-line tooltip
-	Point size = font->calc_size(fulltext, width);
+	Point size = font->calc_size(fulltext, width, "font_normal");
 
 	// WARNING: dynamic memory allocation. Be careful of memory leaks.
 	tip.tip_buffer = createAlphaSurface(size.x + margin+margin, size.y + margin+margin);
@@ -144,7 +144,7 @@ void WidgetTooltip::createBuffer(TooltipData &tip) {
 	int cursor_y = margin;
 
 	for (int i=0; i<tip.num_lines; i++) {
-		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer, size.x, tip.colors[i]);
+		font->render(tip.lines[i], margin, cursor_y, JUSTIFY_LEFT, tip.tip_buffer, size.x, tip.colors[i], "font_normal");
 		cursor_y = font->cursor_y;
 	}
 

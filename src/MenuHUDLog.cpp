@@ -30,7 +30,7 @@ MenuHUDLog::MenuHUDLog() {
 
 	list_area.x = 224;
 	list_area.y = 416;
-	paragraph_spacing = font->getLineHeight()/2;
+	paragraph_spacing = font->getLineHeight("font_normal")/2;
 
 	color_normal = font->getColor("menu_normal");
 }
@@ -97,9 +97,9 @@ void MenuHUDLog::add(const string& s) {
 	}
 
 	// render the log entry and store it in a buffer
-	Point size = font->calc_size(s, window_area.w);
+	Point size = font->calc_size(s, window_area.w, "font_normal");
 	msg_buffer.push_back(createAlphaSurface(size.x, size.y));
-	font->renderShadowed(s, 0, 0, JUSTIFY_LEFT, msg_buffer.back(), window_area.w, color_normal);
+	font->renderShadowed(s, 0, 0, JUSTIFY_LEFT, msg_buffer.back(), window_area.w, color_normal, "font_normal");
 }
 
 /**
