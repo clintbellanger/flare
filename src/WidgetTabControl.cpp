@@ -110,7 +110,7 @@ void WidgetTabControl::updateHeader()
 		if (i==0) tabs[i].x = tabsArea.x;
 		else tabs[i].x = tabs[i-1].x + tabs[i-1].w;
 
-		tabs[i].w = tabPadding.x + font->calc_width(titles[i],"font_normal") + tabPadding.x;
+		tabs[i].w = tabPadding.x + font->calc_width(titles[i]) + tabPadding.x;
 
 	}
 }

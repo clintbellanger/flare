@@ -65,11 +65,15 @@ public:
 	FontEngine();
 	~FontEngine();
 
+	int getLineHeight();
 	int getLineHeight(std::string _font);
+	int getFontHeight();
 	int getFontHeight(std::string _font);
 	
 	SDL_Color getColor(std::string _color);
+	int calc_width(const std::string& text);
 	int calc_width(const std::string& text, std::string _font);
+	Point calc_size(const std::string& text_with_newlines, int width);
 	Point calc_size(const std::string& text_with_newlines, int width, std::string _font);
 
 	void render(const std::string& text, int x, int y, int justify, SDL_Surface *target, SDL_Color color, std::string _font);

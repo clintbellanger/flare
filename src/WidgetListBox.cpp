@@ -448,8 +448,8 @@ void WidgetListBox::refresh() {
 		if (i<list_amount) {
 			// gets the maxiumum value length that can fit in the listbox
 			// maybe there is a better way to do this?
-			unsigned int max_length = (float)(pos.w-right_margin)/font->calc_width("X","font_normal");
-			if (font->calc_width(values[i+cursor],"font_normal") > pos.w-right_margin) {
+			unsigned int max_length = (float)(pos.w-right_margin)/font->calc_width("X");
+			if (font->calc_width(values[i+cursor]) > pos.w-right_margin) {
 				temp = values[i+cursor].substr(0,max_length);
 				temp.append("...");
 			} else {
