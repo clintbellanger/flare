@@ -9,8 +9,14 @@ frames=4
 duration=180
 type=back_forth
 
-[run]
+[hop]
 position=4
+frames=8
+duration=60
+type=looped
+
+[run]
+position=12
 frames=8
 duration=60
 type=looped
