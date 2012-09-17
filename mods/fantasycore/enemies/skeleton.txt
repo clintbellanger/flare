@@ -4,7 +4,7 @@ level=2
 categories=skeleton,undead,dungeon
 xp=2
 
-sfx_prefix=skeleton
+sfx_prefix=skeleton_weak
 gfx_prefix=skeleton_weak
 
 loot_chance=25
