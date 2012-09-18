@@ -1,2 +1,0 @@
-# If default font should be overriden, specify it's filename and ptsize
-en=English
